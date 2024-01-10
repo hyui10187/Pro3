@@ -13,12 +13,12 @@ public class Inventory : MonoBehaviour {
     public OnchangeItem onChangeItem;
 
     public List<Item> possessItems;
-    public int slotCnt; // 슬롯의 갯수
+    public int curSlotCnt; // 슬롯의 갯수
 
-    public int SlotCnt {
-        get => slotCnt;
+    public int CurSlotCnt {
+        get => curSlotCnt;
         set {
-            slotCnt = value;
+            curSlotCnt = value;
 //            onSlotCountChange.Invoke(slotCnt);
         }
     }
@@ -29,7 +29,7 @@ public class Inventory : MonoBehaviour {
 
     private bool AddItem(Item eatItem) {
         
-        if(possessItems.Count < SlotCnt) {
+        if(possessItems.Count < CurSlotCnt) {
             possessItems.Add(eatItem);
 
             if(onChangeItem != null) {

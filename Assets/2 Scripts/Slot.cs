@@ -8,16 +8,16 @@ public class Slot : MonoBehaviour, IPointerUpHandler {
 
     public int slotNum;
     public Item item;
-    public Image itemIcon;
+    public Image itemImage;
 
     public void UpdateSlotUI() {
-        itemIcon.sprite = item.itemImage;
-        itemIcon.gameObject.SetActive(true);
+        itemImage.sprite = item.itemImage;
+        itemImage.gameObject.SetActive(true);
     }
 
     public void RemoveSlot() {
         item = null;
-        itemIcon.gameObject.SetActive(false);
+        itemImage.gameObject.SetActive(false);
     }
 
     public void OnPointerUp(PointerEventData eventData) { // 포인터를 뗄때 호출되는 메소드
