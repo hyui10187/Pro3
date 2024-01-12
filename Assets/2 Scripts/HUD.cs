@@ -6,15 +6,15 @@ using UnityEngine.UI;
 
 public class HUD : MonoBehaviour {
     
-    public enum InfoType { Health, Mana, Exp }
+    public enum InfoType { Health, Mana, Time, Exp }
 
     public InfoType type;
 
-    private Text text;
+    private Text uiText;
     private Slider slider;
 
     private void Awake() {
-        text = GetComponent<Text>();
+        uiText = GetComponent<Text>();
         slider = GetComponent<Slider>();
     }
 
@@ -32,6 +32,13 @@ public class HUD : MonoBehaviour {
                 float curMana = GameManager.instance.curMana;
                 float maxMana = GameManager.instance.maxMana;
                 slider.value = curMana / maxMana;
+                break;
+
+            case InfoType.Time:
+                float curTime = GameManager.instance.curGameTime;
+                int hour = Mathf.FloorToInt(curTime / 3600) % 24; // 시간을 24시간 형식으로 표현
+                int min = Mathf.FloorToInt((curTime % 3600) / 60); // 분
+                uiText.text = string.Format("{0:D2}:{1:D2}", hour, min);
                 break;
             
             case InfoType.Exp:

@@ -25,6 +25,7 @@ public class TalkManager : MonoBehaviour {
         // 사물 대사
         talkData.Add(3000, new string[] { "영롱한 촛불이다." });
         talkData.Add(4000, new string[] { "따뜻한 모닥불 앞에 있었더니 체력이 회복되었다." });
+        talkData.Add(5000, new string[] { "고풍스러운 괘종시계이다. 현재 시간은..." });
         
         // NPC 대사
         talkData.Add(1000, new string[] { "안녕?", "이곳에 처음 왔구나?", "편하게 쉬다 가렴" });
@@ -35,7 +36,7 @@ public class TalkManager : MonoBehaviour {
         
         talkData.Add(1000 + 20, new string[] { "루도의 동전?", "돈을 흘리고 다니면 못쓰지", "나중에 루도에게 한마디 해야겠어" });
         talkData.Add(2000 + 20, new string[] { "찾으면 꼭 좀 가져다 줘" });
-        talkData.Add(5000 + 20, new string[] { "근처에서 동전을 찾았다" });
+        talkData.Add(6000 + 20, new string[] { "근처에서 동전을 찾았다" });
         
         talkData.Add(2000 + 21, new string[] { "엇 찾아줘서 고마워" });
     }

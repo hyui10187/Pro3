@@ -27,7 +27,7 @@ public class Inventory : MonoBehaviour {
         instance = this;
     }
 
-    private bool AddItem(Item eatItem) {
+    public bool AddItem(Item eatItem) {
         
         if(possessItems.Count < CurSlotCnt) {
             possessItems.Add(eatItem);

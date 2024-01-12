@@ -19,10 +19,14 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI")]
     public GameObject talkPanel; // 대화창
+    public GameObject timePanel; // 대화창
     public Text talkText; // 대화창의 대화 내용
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject gaugeUI;
     public GameObject frozen;
+
+    [Header("Game Control")]
+    public float curGameTime; // 현재 게임시간
     
     [Header("Player Info")]
     public float curHealth;
@@ -50,7 +54,13 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Update() {
+
+        if(Player.instance.isDead) {
+            return;
+        }
+        
         ControlGaugeUI();
+        curGameTime += Time.deltaTime;
     }
 
     public void Action(GameObject scanObj) {
@@ -66,6 +76,9 @@ public class GameManager : MonoBehaviour {
             if(curHealth > maxHealth) { // +20 된 체력이 최대 체력보다 크다면
                 curHealth = maxHealth; // 플레이어의 현재 체력을 최대 체력으로 바꿔주기
             }
+        } else if(scanObject.CompareTag("QuestItem")) {
+            FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
+            Inventory.instance.AddItem(fieldItems.GetItem());
         }
     }
 
@@ -78,9 +91,14 @@ public class GameManager : MonoBehaviour {
         int questTalkIndex = questManager.GetQuestTalkIndex(objId);
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
 
+        if(objId == 5000) { // 괘종시계에 말을 걸었으면
+            timePanel.SetActive(true); // 시계 패널을 켜주기
+        }
+        
         // End Talk
         if(talkData == null) { // 더이상 다음 대화가 없다면 isAction을 false로 줘서 대화창 끄기
             isAction = false;
+            timePanel.SetActive(false);
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
             return;

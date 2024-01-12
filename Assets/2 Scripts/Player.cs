@@ -8,7 +8,6 @@ public class Player : MonoBehaviour {
     
     public static Player instance;
 
-    public GameManager gameManager;
     public float moveSpeed = 5f; // 이동속도
     
     private Rigidbody2D rigid;
@@ -40,14 +39,14 @@ public class Player : MonoBehaviour {
         }
         
         // Move Value
-        h = gameManager.isAction ? 0 : Input.GetAxisRaw("Horizontal"); // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
-        v = gameManager.isAction ? 0 : Input.GetAxisRaw("Vertical");
+        h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal"); // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
+        v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical");
 
         // Check Button Down & Up
-        bool hDown = gameManager.isAction ? false : Input.GetButtonDown("Horizontal"); // 버튼을 누른 여부를 저장하는 변수들도 isAction 플래그값을 기준으로 결정한다
-        bool vDown = gameManager.isAction ? false : Input.GetButtonDown("Vertical");
-        bool hUp = gameManager.isAction ? false : Input.GetButtonUp("Horizontal");
-        bool vUp = gameManager.isAction ? false : Input.GetButtonUp("Vertical");
+        bool hDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Horizontal"); // 버튼을 누른 여부를 저장하는 변수들도 isAction 플래그값을 기준으로 결정한다
+        bool vDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Vertical");
+        bool hUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Horizontal");
+        bool vUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Vertical");
 
         // Check Horizontal Move
         if(hDown) {
@@ -83,12 +82,12 @@ public class Player : MonoBehaviour {
 
         // Scan Object
         if(Input.GetButtonDown("Jump") && scanObj != null) { // 플레이어가 스페이스 바를 눌렀으면서 스캔한 오브젝트가 있는 경우
-            gameManager.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
+            GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
         }
 
         // Inventory Open/Close
         if(Input.GetButtonDown("Inventory")) { // 플레이어가 I 키를 눌렀으면
-            gameManager.ControlInventory();
+            GameManager.instance.ControlInventory();
         }
         
     }
@@ -190,8 +189,14 @@ public class Player : MonoBehaviour {
     }
 
     public void PlayerDead() {
+        
+        if(isDead) {
+            return;
+        }
+        
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
+        GameManager.instance.ControlInventory();
         GameManager.instance.gaugeUI.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기
