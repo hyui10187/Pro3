@@ -5,11 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class Item {
     
-    public enum ItemType { Equipment, Consumables, Etc }
+    public enum ItemType { Equipment, Consumables, Quest, Etc }
 
     public ItemType itemType;
     public string itemName;
     public Sprite itemImage;
+    public int itemCount;
     public List<ItemEffect> itemEffects;
 
     public bool Use() {

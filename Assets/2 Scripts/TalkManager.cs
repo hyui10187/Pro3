@@ -14,31 +14,30 @@ public class TalkManager : MonoBehaviour {
 
     private void GenerateData() {
         
-        // talkData.Add(102, new string[] { "평범한 나무상자다." });
-        // talkData.Add(103, new string[] { "게시판에 안내사항이 써있다." });
-        // talkData.Add(104, new string[] { "어려운 책들이 꽂혀있다." });
-        // talkData.Add(105, new string[] { "창문 밖에 눈보라가 휘몰아치고 있다." });
-        // talkData.Add(106, new string[] { "잘 자라고 있는 식물이다." });
-        // talkData.Add(107, new string[] { "단단한 울타리이다." });
-        // talkData.Add(108, new string[] { "아늑해 보이는 소파이다." });
-        
         // 사물 대사
-        talkData.Add(3000, new string[] { "영롱한 촛불이다." });
-        talkData.Add(4000, new string[] { "따뜻한 모닥불 앞에 있었더니 체력이 회복되었다." });
-        talkData.Add(5000, new string[] { "고풍스러운 괘종시계이다. 현재 시간은..." });
-        
-        // NPC 대사
-        talkData.Add(1000, new string[] { "안녕?", "이곳에 처음 왔구나?", "편하게 쉬다 가렴" });
-        talkData.Add(1000 + 10, new string[] { "어서와", "이 마을에 놀라운 전설이 있다는데", "오른쪽 호수에 루도가 알려줄꺼야" });
+        talkData.Add(100, new string[] { "영롱한 촛불이다." });
+        talkData.Add(200, new string[] { "따뜻한 모닥불 앞에 있었더니 체력이 회복되었다." });
+        talkData.Add(300, new string[] { "고풍스러운 괘종시계이다. 현재 시간은..." });
+        talkData.Add(400, new string[] { "평범한 나무상자다." });
+        talkData.Add(500, new string[] { "게시판에 안내사항이 써있다." });
+        talkData.Add(600, new string[] { "어려운 책들이 꽂혀있다." });
+        talkData.Add(700, new string[] { "창문 밖에 눈보라가 휘몰아치고 있다." });
+        talkData.Add(800, new string[] { "잘 자라고 있는 식물이다." });
+        talkData.Add(900, new string[] { "단단한 울타리이다." });
+        talkData.Add(1000, new string[] { "아늑해 보이는 소파이다." });
 
-        talkData.Add(2000, new string[] { "처음보는 얼굴이네?", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
-        talkData.Add(2000 + 11, new string[] { "여어", "이 호수의 전설을 들으러 온거야?", "그럼 일좀 하나 해주면 좋을텐데", "근처에 떨어진 동전을 주워줘" });
+        // NPC 대사
+        talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
+        talkData.Add(10000 + 10, new string[] { "어서와", "이 마을이 아직 낯설지?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });
+
+        talkData.Add(20000, new string[] { "모닥불이 따뜻해서 너무 좋아", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
+        talkData.Add(20000 + 11, new string[] { "어떡하면 좋지?", "동전을 잃어버렸는데 못찾겠어", "혹시 너가 찾아줄 수 있니?" });
         
-        talkData.Add(1000 + 20, new string[] { "루도의 동전?", "돈을 흘리고 다니면 못쓰지", "나중에 루도에게 한마디 해야겠어" });
-        talkData.Add(2000 + 20, new string[] { "찾으면 꼭 좀 가져다 줘" });
-        talkData.Add(6000 + 20, new string[] { "근처에서 동전을 찾았다" });
+        talkData.Add(10000 + 20, new string[] { "루나가 동전을 잃어버렸구나", "얼른 찾았으면 좋겠다" });
+        talkData.Add(20000 + 20, new string[] { "찾으면 꼭 좀 가져다 줘" });
+        talkData.Add(30000 + 20, new string[] { "근처에서 동전을 찾았다" });
         
-        talkData.Add(2000 + 21, new string[] { "엇 찾아줘서 고마워" });
+        talkData.Add(20000 + 21, new string[] { "정말 고마워", "이건 내 작은 보답이야" });
     }
 
     public string GetTalk(int sumId, int talkIndex) {

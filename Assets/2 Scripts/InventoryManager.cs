@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour {
 
+    public static InventoryManager instance;
+    
     public GameObject inventoryPanel;
     public Slot[] slots;
     public Transform slotHolder;
@@ -40,7 +42,7 @@ public class InventoryManager : MonoBehaviour {
 
         for(int i = 0; i < inventory.possessItems.Count; i++) {
             slots[i].item = inventory.possessItems[i];
-            slots[i].UpdateSlotUI();
+            slots[i].UpdateSlot();
         }
     }
 

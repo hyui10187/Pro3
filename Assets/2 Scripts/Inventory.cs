@@ -29,8 +29,32 @@ public class Inventory : MonoBehaviour {
 
     public bool AddItem(Item eatItem) {
         
+        Debug.Log("Add Item 실행............................");
+        
         if(possessItems.Count < CurSlotCnt) {
-            possessItems.Add(eatItem);
+
+            Debug.Log("첫번째 if문 진입......................");
+            
+            if(possessItems.Count > 0) {
+                
+                Debug.Log("두번째 if문 진입..........................");
+                
+                for(int i = 0; i < possessItems.Count; i++) {
+
+                    if(possessItems[i].itemName == eatItem.itemName) {
+                        // 기존에 가지고 있눈 아이템일 경우
+                        possessItems[i].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
+                        
+                    } else { // 기존에 가지고 있지 않은 아이템일 경우
+                        possessItems.Add(eatItem); // 새롭게 아이템을 추가해줌
+                    }
+                }
+            } else {
+
+                Debug.Log("else if문 진입.......................");
+                
+                possessItems.Add(eatItem); // 새롭게 아이템을 추가해줌
+            }
 
             if(onChangeItem != null) {
                 onChangeItem.Invoke();   
@@ -53,6 +77,9 @@ public class Inventory : MonoBehaviour {
             FieldItems fieldItems = other.GetComponent<FieldItems>();
 
             if(AddItem(fieldItems.GetItem())) {
+                
+                Debug.Log("Field Item 비활성화........................");
+                
                 fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
             }
         }

@@ -6,13 +6,16 @@ using UnityEngine.UI;
 
 public class Slot : MonoBehaviour, IPointerUpHandler {
 
-    public int slotNum;
+    public int slotNum; // 슬롯 번호
     public Item item;
     public Image itemImage;
-
-    public void UpdateSlotUI() {
+    public Text itemCount; // 보유한 아이템 갯수
+    
+    public void UpdateSlot() {
         itemImage.sprite = item.itemImage;
-        itemImage.gameObject.SetActive(true);
+        itemImage.gameObject.SetActive(true); // 슬롯의 아이템 이미지 켜주기
+        itemCount.text = item.itemCount.ToString();
+        itemCount.gameObject.SetActive(true); // 슬롯의 아이템 갯수 켜주기
     }
 
     public void RemoveSlot() {

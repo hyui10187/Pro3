@@ -1,31 +1,48 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class QuestManager : MonoBehaviour {
 
+    [Header("Quest Info")]
     public int questId;
     public int questActionIndex;
-    public GameObject[] questObject;
+
+    [Header("UI")]
     public GameObject quest;
     public GameObject questText;
     public GameObject offButton;
     public GameObject onButton;
-
+    
+    [Header("Quest Item")]
+    public List<GameObject> questItem;
+    public GameObject coinPrefab;
+    public Transform[] questItemSpawnPos;
+    public GameObject questItemParent;
+    
     private Dictionary<int, QuestData> questList;
 
     private void Awake() {
+        questItem = new List<GameObject>();
         questList = new Dictionary<int, QuestData>();
         GenerateData();
+        GenerateQuestItem();
     }
 
     private void GenerateData() {
-        questList.Add(10, new QuestData("마을 사람들과 대화하기", new int[] { 1000, 2000 }));
-        questList.Add(20, new QuestData("루도의 동전 찾아주기", new int[] { 6000, 2000 }));
+        questList.Add(10, new QuestData("콜린과 대화하기", new int[] { 10000, 20000 }));
+        questList.Add(20, new QuestData("루나의 동전 찾아주기", new int[] { 30000, 20000 }));
         questList.Add(30, new QuestData("퀘스트 올 클리어", new int[] { 0 }));
     }
 
+    private void GenerateQuestItem() {
+        GameObject coin = Instantiate(coinPrefab, questItemSpawnPos[0].position, quaternion.identity, questItemParent.transform);
+        coin.SetActive(false);
+        questItem.Add(coin);
+    }
+    
     public int GetQuestTalkIndex(int objId) {
         return questId + questActionIndex;
     }
@@ -63,13 +80,22 @@ public class QuestManager : MonoBehaviour {
         switch(questId) {
             case 10:
                 if(questActionIndex == 2) { // 대화를 2번 모두 마쳤을때
-                    questObject[0].SetActive(true); // 동전 켜주기
+                    questItem[0].SetActive(true); // 동전 켜주기
                 }
                 break;
             
             case 20:
                 if(questActionIndex == 1) { // 동전을 먹었으면
-                    questObject[0].SetActive(false); // 동전 꺼주기
+                    questItem[0].SetActive(false); // 동전 꺼주기
+                } else if(questActionIndex == 2) {
+
+                    int num = Inventory.instance.possessItems.Count;
+                    
+                   //  for(int i = 0; i < num; i++) {
+                   //      Inventory.instance.possessItems[i].itemType == quest;
+                   //  }
+                   //  
+                   // Inventory.instance.RemoveItem();
                 }
                 break;
         }

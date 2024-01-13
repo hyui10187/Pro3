@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour {
     public bool isAction; // 대화를 하는중인지 체크하기 위한 플래그값
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
     public bool isFlicker; // UI가 깜빡거리고 잇는지 플래그
+    public bool hasQuestItem;
 
     [Header("Etc")]
     public int talkIndex;
@@ -76,9 +77,10 @@ public class GameManager : MonoBehaviour {
             if(curHealth > maxHealth) { // +20 된 체력이 최대 체력보다 크다면
                 curHealth = maxHealth; // 플레이어의 현재 체력을 최대 체력으로 바꿔주기
             }
-        } else if(scanObject.CompareTag("QuestItem")) {
+        } else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) {
             FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
             Inventory.instance.AddItem(fieldItems.GetItem());
+            hasQuestItem = true;
         }
     }
 
@@ -91,7 +93,7 @@ public class GameManager : MonoBehaviour {
         int questTalkIndex = questManager.GetQuestTalkIndex(objId);
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
 
-        if(objId == 5000) { // 괘종시계에 말을 걸었으면
+        if(objId == 300) { // 괘종시계에 말을 걸었으면
             timePanel.SetActive(true); // 시계 패널을 켜주기
         }
         
