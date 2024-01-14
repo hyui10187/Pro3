@@ -21,10 +21,16 @@ public class Slot : MonoBehaviour, IPointerUpHandler {
     public void RemoveSlot() {
         item = null;
         itemImage.gameObject.SetActive(false);
+        itemCount.gameObject.SetActive(false);
     }
 
     public void OnPointerUp(PointerEventData eventData) { // 포인터를 뗄때 호출되는 메소드
-        bool isUse = item.Use();
+
+        bool isUse = false;
+        
+        if(item != null) {
+            isUse = item.Use();   
+        }
 
         if(isUse) {
             Inventory.instance.RemoveItem(slotNum);

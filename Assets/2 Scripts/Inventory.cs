@@ -28,31 +28,28 @@ public class Inventory : MonoBehaviour {
     }
 
     public bool AddItem(Item eatItem) {
-        
-        Debug.Log("Add Item 실행............................");
-        
-        if(possessItems.Count < CurSlotCnt) {
 
-            Debug.Log("첫번째 if문 진입......................");
-            
+        bool isAdded = false;
+        int index = -1;
+        
+        if(possessItems.Count < CurSlotCnt) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
             if(possessItems.Count > 0) {
-                
-                Debug.Log("두번째 if문 진입..........................");
-                
                 for(int i = 0; i < possessItems.Count; i++) {
-
                     if(possessItems[i].itemName == eatItem.itemName) {
-                        // 기존에 가지고 있눈 아이템일 경우
-                        possessItems[i].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
-                        
-                    } else { // 기존에 가지고 있지 않은 아이템일 경우
-                        possessItems.Add(eatItem); // 새롭게 아이템을 추가해줌
+                        isAdded = true;
+                        index = i;
+                        break;
                     }
                 }
-            } else {
 
-                Debug.Log("else if문 진입.......................");
-                
+                if(isAdded) { // 기존에 가지고 있눈 아이템일 경우
+                    possessItems[index].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
+                    
+                } else { // 기존에 가지고 있지 않은 아이템일 경우
+                    possessItems.Add(eatItem);
+                }
+
+            } else {
                 possessItems.Add(eatItem); // 새롭게 아이템을 추가해줌
             }
 
@@ -61,13 +58,36 @@ public class Inventory : MonoBehaviour {
             }
             
             return true; // 아이템 슬롯의 갯수에 여유가 있으면 아이템을 먹어서 인벤토리에 추가해주고 true 반환
-        }
+            
+        } else { // 현재 보유 슬롯과 현재 보유중인 아이템의 갯수가 같으면
+            for(int i = 0; i < possessItems.Count; i++) {
+                if(possessItems[i].itemName == eatItem.itemName) {
+                    isAdded = true;
+                    index = i;
+                    break;
+                }
+            }
 
-        return false; // 아이템 슬롯에 여유가 없으면 아이템을 그대로 두고 false 반환
+            if(isAdded) { // 기존에 가지고 있눈 아이템일 경우
+                possessItems[index].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
+                if(onChangeItem != null) {
+                    onChangeItem.Invoke();   
+                }
+                return true;
+            } else {
+                return false; // 아이템 슬롯에 여유가 없으면 아이템을 그대로 두고 false 반환
+            }
+        }
     }
 
     public void RemoveItem(int index) {
-        possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용
+
+        if(possessItems[index].itemCount > 1) {
+            possessItems[index].itemCount--;
+        } else {
+            possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
+        }
+        
         onChangeItem.Invoke();
     }
 
@@ -75,11 +95,9 @@ public class Inventory : MonoBehaviour {
         
         if(other.CompareTag("FieldItem")) {
             FieldItems fieldItems = other.GetComponent<FieldItems>();
+            bool canEat = AddItem(fieldItems.GetItem()); // 아이템을 먹을 수 있는지 판단하는 플래그값
 
-            if(AddItem(fieldItems.GetItem())) {
-                
-                Debug.Log("Field Item 비활성화........................");
-                
+            if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
                 fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
             }
         }

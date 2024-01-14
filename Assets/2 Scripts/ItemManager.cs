@@ -23,7 +23,7 @@ public class ItemManager : MonoBehaviour {
         for(int i = 0; i < itemSpawnNum; i++) {
             GameObject obj = Instantiate(fieldItemPrefab, itemSpawnPos[i].position, Quaternion.identity, fieldItemParent.transform);
             FieldItems fieldItems = obj.GetComponent<FieldItems>();
-            fieldItems.SetItem(itemDB[Random.Range(0, 3)]); // 0, 1, 2 중에서 무작위로 설정해줌
+            fieldItems.SetItem(itemDB[Random.Range(0, 5)]); // 0, 1, 2 중에서 무작위로 설정해줌
         }
     }
     

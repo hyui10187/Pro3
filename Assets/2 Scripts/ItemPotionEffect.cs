@@ -12,6 +12,14 @@ public class ItemPotionEffect : ItemEffect {
 
         GameManager.instance.curHealth += recoveryHealthPoint;
         GameManager.instance.curMana += recoveryManaPoint;
+
+        if(GameManager.instance.curHealth > GameManager.instance.maxHealth) {
+            GameManager.instance.curHealth = GameManager.instance.maxHealth;
+        }
+
+        if(GameManager.instance.curMana > GameManager.instance.maxMana) {
+            GameManager.instance.curMana = GameManager.instance.maxMana;
+        }
         
         return true;
     }
