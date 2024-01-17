@@ -91,11 +91,11 @@ public class QuestManager : MonoBehaviour {
 
                     int num = Inventory.instance.possessItems.Count;
                     
-                   //  for(int i = 0; i < num; i++) {
-                   //      Inventory.instance.possessItems[i].itemType == quest;
-                   //  }
-                   //  
-                   // Inventory.instance.RemoveItem();
+                    for(int i = 0; i < num; i++) {
+                        if(Inventory.instance.possessItems[i].itemType == Item.ItemType.Quest) {
+                            Inventory.instance.RemoveItem(i);
+                        }
+                    }
                 }
                 break;
         }

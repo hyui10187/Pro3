@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &866789571067964859
 SpriteRenderer:
@@ -184,5 +184,6 @@ MonoBehaviour:
     itemType: 2
     itemName: Coin
     itemImage: {fileID: 6582046967323461550, guid: 274d64617113287499ed1c4165d1d8f3, type: 3}
+    itemCount: 1
     itemEffects: []
   image: {fileID: 866789571067964859}

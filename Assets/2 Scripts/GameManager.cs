@@ -81,6 +81,9 @@ public class GameManager : MonoBehaviour {
             FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
             Inventory.instance.AddItem(fieldItems.GetItem());
             hasQuestItem = true;
+            
+        } else if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
+            timePanel.SetActive(true); // 시계 패널을 켜주기
         }
     }
 
@@ -93,14 +96,10 @@ public class GameManager : MonoBehaviour {
         int questTalkIndex = questManager.GetQuestTalkIndex(objId);
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
 
-        if(objId == 300) { // 괘종시계에 말을 걸었으면
-            timePanel.SetActive(true); // 시계 패널을 켜주기
-        }
-        
         // End Talk
         if(talkData == null) { // 더이상 다음 대화가 없다면 isAction을 false로 줘서 대화창 끄기
             isAction = false;
-            timePanel.SetActive(false);
+            timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
             return;
