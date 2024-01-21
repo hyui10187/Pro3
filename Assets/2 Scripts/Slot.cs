@@ -25,7 +25,7 @@ public class Slot : MonoBehaviour, IPointerUpHandler {
     }
 
     public void OnPointerUp(PointerEventData eventData) { // 포인터를 뗄때 호출되는 메소드
-
+        
         bool isUse = false;
         
         if(item != null) {

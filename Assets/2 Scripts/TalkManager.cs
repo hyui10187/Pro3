@@ -42,6 +42,8 @@ public class TalkManager : MonoBehaviour {
 
     public string GetTalk(int sumId, int talkIndex) {
 
+        Debug.Log("TalkManager의 GetTalk 진입..........................");
+        
         if(!talkData.ContainsKey(sumId)) {
             if(!talkData.ContainsKey(sumId - sumId % 10)) {
                 // 퀘스트 맨 처음 대사마저 없을때

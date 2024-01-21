@@ -18,8 +18,7 @@ public class ItemManager : MonoBehaviour {
         instance = this;
     }
 
-    private void Start() {
-        
+    public void GenerateItem() {
         for(int i = 0; i < itemSpawnNum; i++) {
             GameObject obj = Instantiate(fieldItemPrefab, itemSpawnPos[i].position, Quaternion.identity, fieldItemParent.transform);
             FieldItems fieldItems = obj.GetComponent<FieldItems>();

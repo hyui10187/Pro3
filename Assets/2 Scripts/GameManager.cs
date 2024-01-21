@@ -18,26 +18,34 @@ public class GameManager : MonoBehaviour {
     public Transform winterFieldPos;
 
     [Header("UI")]
+    public GameObject startPanel; // 게임 시작 패널
     public GameObject talkPanel; // 대화창
-    public GameObject timePanel; // 대화창
+    public GameObject buffPanel; // 대화창
     public Text talkText; // 대화창의 대화 내용
+    public GameObject timePanel; // 시계 패널
+    public GameObject questPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject gaugeUI;
-    public GameObject frozen;
+    public GameObject weatherUI; // 날씨
+    public GameObject frozenEffect;
+    public GameObject speedEffect;
 
     [Header("Game Control")]
     public float curGameTime; // 현재 게임시간
-    
+
     [Header("Player Info")]
+    public float curMoveSpeed;
+    public float originMoveSpeed;
     public float curHealth;
     public float maxHealth;
     public float curMana;
     public float maxMana;
-    
+
     [Header("Flag")]
+    public bool isLive; // 게임이 진행중인지 체크하는 플래그
     public bool isAction; // 대화를 하는중인지 체크하기 위한 플래그값
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
-    public bool isFlicker; // UI가 깜빡거리고 잇는지 플래그
+    public bool isFlicker; // UI가 깜빡거리고 있는지 플래그
     public bool hasQuestItem;
 
     [Header("Etc")]
@@ -50,21 +58,26 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         curHealth = maxHealth; // 게임 처음 시작시 현재 체력(health)을 최대 체력(maxHealth)으로 초기화
-        //curMana = maxMana; // 게임 처음 시작시 현재 체력(health)을 최대 체력(maxHealth)으로 초기화
+        curMoveSpeed = originMoveSpeed; // 게임 처음 시작시 현재 이동속도(curMoveSpeed)를 기본 이동속도(originMoveSpeed)로 초기화
+        //curMana = maxMana; // 게임 처음 시작시 현재 마나(mana)를 최대 마나(maxMana)로 초기화
         currentQuestText.text = questManager.CheckQuest();
     }
 
     private void Update() {
 
-        if(Player.instance.isDead) {
+        if(Player.instance.isDead || !isLive) {
             return;
         }
         
-        ControlGaugeUI();
+        ControlConditionUI();
         curGameTime += Time.deltaTime;
     }
 
     public void Action(GameObject scanObj) {
+        
+        if(Player.instance.isDead || !isLive) {
+            return;
+        }
         
         scanObject = scanObj;
         ObjData objData = scanObject.GetComponent<ObjData>();
@@ -93,6 +106,7 @@ public class GameManager : MonoBehaviour {
 
     private void Talk(int objId, bool isNpc) {
 
+        
         int questTalkIndex = questManager.GetQuestTalkIndex(objId);
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
 
@@ -116,15 +130,17 @@ public class GameManager : MonoBehaviour {
         talkIndex++;
     }
     
-    private void ControlGaugeUI() {
+    private void ControlConditionUI() {
 
         if(isHouse) { // 집에 들어가 있으면
             gaugeUI.SetActive(false); // 플레이어 머리 위의 체력 UI를 꺼주기
-            frozen.SetActive(false); // 추위 디버프 꺼주기
+            frozenEffect.SetActive(false); // 추위 디버프 꺼주기
+            WeatherManager.instance.SnowOff(); // 눈 내리는 것을 꺼주는 메소드 호출
 
         } else { // 얼음 필드로 나와있는 상태이면
             gaugeUI.SetActive(true); // 플레이어 머리 위의 체력 UI를 켜주기
-            frozen.SetActive(true); // 추위 디버프 켜주기
+            frozenEffect.SetActive(true); // 추위 디버프 켜주기
+            WeatherManager.instance.SnowOn(); // 눈 내리는 것을 켜주는 메소드 호출
 
             if(curHealth > 0) {
                 curHealth -= 1 * Time.deltaTime;
@@ -135,4 +151,32 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    public void SpeedEffectOn() {
+        CancelInvoke("SpeedEffectOff"); // 기존에 이동속도 버프 꺼주는 메소드가 실행될 예정이었을 수 있으니 취소해주고 시작
+        
+        speedEffect.SetActive(true); // 이동속도 버프 켜주기
+        Invoke("SpeedEffectOff", 5);
+    }
+
+    public void SpeedEffectOff() {
+        speedEffect.SetActive(false); // 이동속도 버프 꺼주기
+        curMoveSpeed = originMoveSpeed; // 현재 이동속도를 기본 이동속도로 초기화
+    }
+
+    public void GameStart() {
+        isLive = true;
+        
+        ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
+        NPC.instance.Think(); // NPC 생각 메소드 호출
+        
+        buffPanel.SetActive(true);
+        weatherUI.SetActive(true);
+        questPanel.SetActive(true);  // 퀘스트 패널 켜주기
+        startPanel.SetActive(false); // 시작 메뉴 패널 꺼주기
+    }
+
+    public void GameStop() {
+        isLive = false;
+    }
+    
 }

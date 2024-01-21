@@ -8,8 +8,6 @@ public class Player : MonoBehaviour {
     
     public static Player instance;
 
-    public float moveSpeed = 5f; // 이동속도
-    
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
     private GameObject scanObj;
@@ -34,7 +32,7 @@ public class Player : MonoBehaviour {
     
     private void Update() {
         
-        if(isDead) {
+        if(isDead || !GameManager.instance.isLive) {
             return;
         }
         
@@ -93,6 +91,8 @@ public class Player : MonoBehaviour {
     }
     
     private void FixedUpdate() {
+
+        float moveSpeed = GameManager.instance.curMoveSpeed;
         
         if(isDead) {
             return;

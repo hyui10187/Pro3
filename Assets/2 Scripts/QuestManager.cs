@@ -44,6 +44,9 @@ public class QuestManager : MonoBehaviour {
     }
     
     public int GetQuestTalkIndex(int objId) {
+        
+        Debug.Log("QuestManager의 GetQuestTalkIndex 진입..........................");
+        
         return questId + questActionIndex;
     }
 
@@ -89,11 +92,14 @@ public class QuestManager : MonoBehaviour {
                     questItem[0].SetActive(false); // 동전 꺼주기
                 } else if(questActionIndex == 2) {
 
+                    Debug.Log("QuestManager의 else if 진입....................");
+                    
                     int num = Inventory.instance.possessItems.Count;
                     
                     for(int i = 0; i < num; i++) {
                         if(Inventory.instance.possessItems[i].itemType == Item.ItemType.Quest) {
                             Inventory.instance.RemoveItem(i);
+                            break;
                         }
                     }
                 }
