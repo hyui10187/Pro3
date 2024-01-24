@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour {
 
     public void Action(GameObject scanObj) {
         
-        if(Player.instance.isDead || !isLive) {
+        if(Player.instance.isDead) {
             return;
         }
         
@@ -97,6 +97,10 @@ public class GameManager : MonoBehaviour {
             
         } else if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
             timePanel.SetActive(true); // 시계 패널을 켜주기
+            
+        } else if(scanObject.CompareTag("NPC")) {
+            NPC npc = scanObject.GetComponent<NPC>();
+            npc.isCollision = true;
         }
     }
 
@@ -105,7 +109,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Talk(int objId, bool isNpc) {
-
         
         int questTalkIndex = questManager.GetQuestTalkIndex(objId);
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
@@ -116,6 +119,12 @@ public class GameManager : MonoBehaviour {
             timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
+            
+            if(isNpc && objId == 30000) { // 대화를 한게 Npc일 경우에는 이미지도 같이 보여주기
+                NPC npc = scanObject.GetComponent<NPC>();
+                npc.isCollision = false;
+            }
+            
             return;
         }
 
@@ -123,7 +132,7 @@ public class GameManager : MonoBehaviour {
         if(isNpc) { // 대화를 한게 Npc일 경우에는 이미지도 같이 보여주기
             talkText.text = talkData;
         } else {
-            talkText.text = talkData;
+            talkText.text = talkData; // Talk Panel에 가져온 Talk 대사를 뿌려주기 
         }
 
         isAction = true;

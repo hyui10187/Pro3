@@ -32,7 +32,7 @@ public class Player : MonoBehaviour {
     
     private void Update() {
         
-        if(isDead || !GameManager.instance.isLive) {
+        if(isDead) {
             return;
         }
         

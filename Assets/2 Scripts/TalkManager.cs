@@ -24,7 +24,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(700, new string[] { "창문 밖에 눈보라가 휘몰아치고 있다." });
         talkData.Add(800, new string[] { "잘 자라고 있는 식물이다." });
         talkData.Add(900, new string[] { "단단한 울타리이다." });
-        talkData.Add(1000, new string[] { "아늑해 보이는 소파이다." });
+        talkData.Add(1100, new string[] { "아늑해 보이는 소파이다." });
 
         // NPC 대사
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
@@ -33,16 +33,16 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(20000, new string[] { "모닥불이 따뜻해서 너무 좋아", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
         talkData.Add(20000 + 11, new string[] { "어떡하면 좋지?", "동전을 잃어버렸는데 못찾겠어", "혹시 너가 찾아줄 수 있니?" });
         
+        talkData.Add(30000, new string[] { "강인한 용사가 되고 싶나?", "실력으로 증명해봐" });
+        
         talkData.Add(10000 + 20, new string[] { "루나가 동전을 잃어버렸구나", "얼른 찾았으면 좋겠다" });
         talkData.Add(20000 + 20, new string[] { "찾으면 꼭 좀 가져다 줘" });
-        talkData.Add(30000 + 20, new string[] { "근처에서 동전을 찾았다" });
+        talkData.Add(1000 + 20, new string[] { "근처에서 동전을 찾았다" });
         
         talkData.Add(20000 + 21, new string[] { "정말 고마워", "이건 내 작은 보답이야" });
     }
 
     public string GetTalk(int sumId, int talkIndex) {
-
-        Debug.Log("TalkManager의 GetTalk 진입..........................");
         
         if(!talkData.ContainsKey(sumId)) {
             if(!talkData.ContainsKey(sumId - sumId % 10)) {

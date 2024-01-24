@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e416df05794994848aa214f5146a1779, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objId: 30000
+  objId: 1000
   isNpc: 0
 --- !u!114 &9026727571838054403
 MonoBehaviour:
