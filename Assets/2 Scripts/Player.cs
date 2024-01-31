@@ -13,15 +13,18 @@ public class Player : MonoBehaviour {
     private GameObject scanObj;
     private Animator anim;
     private SpriteRenderer sprite;
-    
+
+    public Transform weaponPos;
+    public Vector2 bozSize;
     public float h;
     public float v;
 
+    
     public bool isHorizonMove; // 대각선 이동을 막아주기 위한 플래그 변수
     public bool isDamaged;
     public bool isDead; // 플레이어가 죽었는지 체크하기 위한 변수
     public bool isSlide;
-
+    public bool isAttack;
 
     private void Awake() {
         instance = this;
@@ -32,10 +35,9 @@ public class Player : MonoBehaviour {
     
     private void Update() {
         
-        if(isDead) {
+        if(isDead) // 죽었으면 모든 행동 실행 못하게
             return;
-        }
-        
+
         // Move Value
         h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal"); // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
         v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical");
@@ -54,42 +56,81 @@ public class Player : MonoBehaviour {
         } else if(hUp || vUp) {
             isHorizonMove = h != 0;
         }
-        
-        // Animation
-        if(anim.GetInteger("hAxisRaw") != h) { // 키보드의 방향키를 누를때 1번만 값을 주도록 조건 추가
-            anim.SetBool("isChange", true); // 키를 누르고 나서 Update 메소드가 1번째로 호출될때는 true로 플래그 값을 올려준다
-            anim.SetInteger("hAxisRaw", (int)h);
-            
-        } else if(anim.GetInteger("vAxisRaw") != v) {
-            anim.SetBool("isChange", true);
-            anim.SetInteger("vAxisRaw", (int)v);
-            
-        } else {
-            anim.SetBool("isChange", false); // 키를 누르고 나서 Update 메소드가 2번째로 호출될때부터는 false로 플래그 값을 변경해준다
+
+        if(!isAttack) { // 공격중이면 공격 애니메이션이 끝나기 전에는 이동 애니메이션이 실행되지 않도록
+            // Animation
+            if(anim.GetInteger("hAxisRaw") != h) {
+                // 키보드의 방향키를 누를때 1번만 값을 주도록 조건 추가
+                anim.SetBool("isChange", true); // 키를 누르고 나서 Update 메소드가 1번째로 호출될때는 true로 플래그 값을 올려준다
+                anim.SetInteger("hAxisRaw", (int)h);
+            }
+            else if(anim.GetInteger("vAxisRaw") != v) {
+                anim.SetBool("isChange", true);
+                anim.SetInteger("vAxisRaw", (int)v);
+            }
+            else {
+                anim.SetBool("isChange", false); // 키를 누르고 나서 Update 메소드가 2번째로 호출될때부터는 false로 플래그 값을 변경해준다
+            }
         }
-        
+
         // Direction   // 순서대로 상하좌우 값을 주는 것이다
-        if(vDown && v == 1) // 키보드 위아래 방향키를 눌렀으면서(vDown) 그 값이 1이면 위쪽 방향키를 누른 것이다
+        if(vDown && v == 1) { // 키보드 위아래 방향키를 눌렀으면서(vDown) 그 값이 1이면 위쪽 방향키를 누른 것이다
             dirVec = Vector3.up; // 그러면 방향을 위쪽으로 설정해준다
-        else if(vDown && v == -1)
+            anim.SetBool("upMove", true);
+            anim.SetBool("downMove", false);
+            anim.SetBool("isHorizon", false);
+            anim.SetBool("isVertical", true);
+        }
+        else if(vDown && v == -1) {
             dirVec = Vector3.down;
-        else if(hDown && h == -1)
+            anim.SetBool("upMove", false);
+            anim.SetBool("downMove", true);
+            anim.SetBool("isHorizon", false);
+            anim.SetBool("isVertical", true);
+        }
+        else if(hDown && h == -1) {
             dirVec = Vector3.left;
-        else if(hDown && h == 1)
+            anim.SetBool("leftMove", true);
+            anim.SetBool("isHorizon", true);
+            anim.SetBool("isVertical", false);
+        }
+        else if(hDown && h == 1) {
             dirVec = Vector3.right;
+            anim.SetBool("rightMove", true);
+            anim.SetBool("isHorizon", true);
+            anim.SetBool("isVertical", false);
+        }
 
         // Scan Object
-        if(Input.GetButtonDown("Jump") && scanObj != null) { // 플레이어가 스페이스 바를 눌렀으면서 스캔한 오브젝트가 있는 경우
+        if(Input.GetButtonDown("Jump") && scanObj != null) {
+            // 플레이어가 스페이스 바를 눌렀으면서 스캔한 오브젝트가 있는 경우
             GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
         }
 
         // Inventory Open/Close
-        if(Input.GetButtonDown("Inventory")) { // 플레이어가 I 키를 눌렀으면
+        if(Input.GetButtonDown("Inventory")) {
+            // 플레이어가 I 키를 눌렀으면
             GameManager.instance.ControlInventory();
         }
         
+        if(Input.GetButtonDown("Attack") && !isAttack) { // 플레이어가 A 키를 눌렀으며 공격 중이 아닐경우
+            anim.SetTrigger("attack");
+            anim.SetBool("isAttack", true);
+            isAttack = true;
+
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(weaponPos.position, bozSize, 0);
+
+            foreach(Collider2D collider in collider2Ds) {
+                Debug.Log(collider.tag);
+            }
+        }
     }
-    
+
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(weaponPos.position, bozSize);
+    }
+
     private void FixedUpdate() {
 
         float moveSpeed = GameManager.instance.curMoveSpeed;
@@ -98,7 +139,7 @@ public class Player : MonoBehaviour {
             return;
         }
 
-        if(!isDamaged && !isSlide) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
+        if(!isDamaged && !isSlide && !isAttack) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
             Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
             rigid.velocity = moveVec * moveSpeed;
         }
@@ -200,6 +241,15 @@ public class Player : MonoBehaviour {
         GameManager.instance.gaugeUI.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기
+    }
+
+    public void AttackEnd() {
+        anim.SetBool("isAttack", false);
+        anim.SetBool("rightMove", false);
+        anim.SetBool("leftMove", false);
+        anim.SetBool("upMove", false);
+        anim.SetBool("downMove", false);
+        isAttack = false;
     }
     
 }
