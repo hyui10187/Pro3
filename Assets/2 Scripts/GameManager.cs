@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour {
     public float maxHealth;
     public float curMana;
     public float maxMana;
+    public float exp; // 플레이어의 경험치
+    public int level;
 
     [Header("Flag")]
     public bool isLive; // 게임이 진행중인지 체크하는 플래그

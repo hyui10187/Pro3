@@ -1613,10 +1613,12 @@ GameObject:
   m_Component:
   - component: {fileID: 188472573}
   - component: {fileID: 188472575}
+  - component: {fileID: 188472579}
   - component: {fileID: 188472576}
   - component: {fileID: 188472574}
   - component: {fileID: 188472577}
-  m_Layer: 8
+  - component: {fileID: 188472578}
+  m_Layer: 6
   m_Name: Enemy A
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1776,6 +1778,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objId: 0
   isNpc: 0
+--- !u!114 &188472578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188472572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 846f545b00586964cbbe542ae9665c92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curHealth: 0
+  maxHealth: 100
+  isDead: 0
+--- !u!95 &188472579
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188472572}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d465c2a7b0cdbf14d88165b1e032c2b2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &190031077
 GameObject:
   m_ObjectHideFlags: 0
@@ -4567,8 +4605,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a236dea1144c184fa38b337fc7b6b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponPos: {fileID: 1783336338}
-  bozSize: {x: 2, y: 2}
   h: 0
   v: 0
   isHorizonMove: 0
@@ -4576,6 +4612,9 @@ MonoBehaviour:
   isDead: 0
   isSlide: 0
   isAttack: 0
+  boxSize: {x: 1.3, y: 1.3}
+  curTime: 0
+  coolTime: 1
 --- !u!50 &728825134
 Rigidbody2D:
   serializedVersion: 4
@@ -45345,7 +45384,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1783336337}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.95, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

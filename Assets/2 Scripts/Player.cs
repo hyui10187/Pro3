@@ -7,25 +7,29 @@ using System.Linq;
 public class Player : MonoBehaviour {
     
     public static Player instance;
+    
+    public float h;
+    public float v;
+
+    [Header("Flag")]
+    public bool isHorizonMove; // 대각선 이동을 막아주기 위한 플래그 변수
+    public bool isDamaged;
+    public bool isDead; // 플레이어가 죽었는지 체크하기 위한 변수
+    public bool isSlide;
+    public bool isAttack;
+    public bool hasWeapon; // 무기를 소유하고 있는지 플래그
+
+    [Header("Attack")]
+    public Vector2 boxSize; // 공격이 적중되는 범위
+    public float curTime;
+    public float coolTime; // 공격을 한번 하고 다음 공격을 할때까지의 쿨타임
 
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
     private GameObject scanObj;
     private Animator anim;
     private SpriteRenderer sprite;
-
-    public Transform weaponPos;
-    public Vector2 bozSize;
-    public float h;
-    public float v;
-
     
-    public bool isHorizonMove; // 대각선 이동을 막아주기 위한 플래그 변수
-    public bool isDamaged;
-    public bool isDead; // 플레이어가 죽었는지 체크하기 위한 변수
-    public bool isSlide;
-    public bool isAttack;
-
     private void Awake() {
         instance = this;
         rigid = GetComponent<Rigidbody2D>();
@@ -38,6 +42,10 @@ public class Player : MonoBehaviour {
         if(isDead) // 죽었으면 모든 행동 실행 못하게
             return;
 
+        if(curTime > 0) {
+            curTime -= Time.deltaTime;
+        }
+        
         // Move Value
         h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal"); // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
         v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical");
@@ -76,29 +84,23 @@ public class Player : MonoBehaviour {
         // Direction   // 순서대로 상하좌우 값을 주는 것이다
         if(vDown && v == 1) { // 키보드 위아래 방향키를 눌렀으면서(vDown) 그 값이 1이면 위쪽 방향키를 누른 것이다
             dirVec = Vector3.up; // 그러면 방향을 위쪽으로 설정해준다
-            anim.SetBool("upMove", true);
-            anim.SetBool("downMove", false);
-            anim.SetBool("isHorizon", false);
-            anim.SetBool("isVertical", true);
+            anim.SetFloat("verticalMove", v);
+            anim.SetFloat("horizonMove", 0);
         }
         else if(vDown && v == -1) {
             dirVec = Vector3.down;
-            anim.SetBool("upMove", false);
-            anim.SetBool("downMove", true);
-            anim.SetBool("isHorizon", false);
-            anim.SetBool("isVertical", true);
+            anim.SetFloat("verticalMove", v);
+            anim.SetFloat("horizonMove", 0);
         }
         else if(hDown && h == -1) {
             dirVec = Vector3.left;
-            anim.SetBool("leftMove", true);
-            anim.SetBool("isHorizon", true);
-            anim.SetBool("isVertical", false);
+            anim.SetFloat("horizonMove", h);
+            anim.SetFloat("verticalMove", 0);
         }
         else if(hDown && h == 1) {
             dirVec = Vector3.right;
-            anim.SetBool("rightMove", true);
-            anim.SetBool("isHorizon", true);
-            anim.SetBool("isVertical", false);
+            anim.SetFloat("horizonMove", h);
+            anim.SetFloat("verticalMove", 0);
         }
 
         // Scan Object
@@ -113,22 +115,28 @@ public class Player : MonoBehaviour {
             GameManager.instance.ControlInventory();
         }
         
-        if(Input.GetButtonDown("Attack") && !isAttack) { // 플레이어가 A 키를 눌렀으며 공격 중이 아닐경우
+        if(Input.GetButtonDown("Attack") && !isAttack && curTime <= 0) { // 플레이어가 A 키를 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
             anim.SetTrigger("attack");
             anim.SetBool("isAttack", true);
+            curTime = coolTime; // 쿨타임을 초기화 해줌
             isAttack = true;
 
-            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(weaponPos.position, bozSize, 0);
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
 
-            foreach(Collider2D collider in collider2Ds) {
-                Debug.Log(collider.tag);
+            foreach(Collider2D collision in collider2Ds) {
+
+                if(collision.CompareTag("Enemy")) { // 플레이어의 공격에 맞은게 Enemy 라면 
+                    Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+                    enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
+                    enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
+                }
             }
         }
     }
 
-    private void OnDrawGizmos() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(weaponPos.position, bozSize);
+    private void OnDrawGizmos() { // 피격범위 박스를 에디터에서 표시하기 위한 메소드
+        Gizmos.color = Color.red; // 박스의 색상은 빨간색으로
+        Gizmos.DrawWireCube(transform.position + dirVec, boxSize);
     }
 
     private void FixedUpdate() {
@@ -245,10 +253,6 @@ public class Player : MonoBehaviour {
 
     public void AttackEnd() {
         anim.SetBool("isAttack", false);
-        anim.SetBool("rightMove", false);
-        anim.SetBool("leftMove", false);
-        anim.SetBool("upMove", false);
-        anim.SetBool("downMove", false);
         isAttack = false;
     }
     
