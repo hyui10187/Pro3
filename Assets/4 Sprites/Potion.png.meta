@@ -1,0 +1,528 @@
+fileFormatVersion: 2
+guid: ab6628c8c9284704bbba40475f480fd6
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 9
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: 0
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Potion_0
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 54
+        width: 24
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 555b3688dcf388f4089ec8f476073d7a
+      internalID: -1752509285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_1
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 53
+        width: 25
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ca954f4d764412479abf6fcf22a9886
+      internalID: -2090037931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_2
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 54
+        width: 24
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85aaaf6fb33d7154298395ff4170d24a
+      internalID: -357769627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_3
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 54
+        width: 25
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e6b087310fdec142940e76e1acf86d5
+      internalID: 1092343762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_4
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 54
+        width: 25
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a37b92241017f4749913d27d41322ccc
+      internalID: 1032500194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_5
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 54
+        width: 25
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d555fbb9a0139b4691e1d8adbd298dd
+      internalID: -1776400659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_6
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 5
+        width: 24
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05bb61007639d9c4aa972d668e0093bf
+      internalID: -2006951739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_7
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 6
+        width: 24
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78cbe90f60bc789408989fb90ba08d20
+      internalID: 1745556309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_8
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 6
+        width: 24
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03255d4a535672b459cd8e7bac366c65
+      internalID: -1345418674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_9
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 6
+        width: 24
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff59cb6cfca5c35499b99193d2e46ef9
+      internalID: -1821471556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_10
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 6
+        width: 24
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06aedd5cefe4f6949a889729d2b4177c
+      internalID: 2145269198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Potion_11
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 5
+        width: 24
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe1df2d26758e0141bdf97f87b24eeab
+      internalID: -96068905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape:
+    - - {x: -113, y: -4}
+      - {x: -124, y: -4}
+      - {x: -131, y: -6}
+      - {x: -134, y: -28}
+      - {x: -134, y: -36}
+      - {x: -126, y: -44}
+      - {x: -114, y: -44}
+      - {x: -106, y: -39}
+      - {x: -106, y: -27}
+      - {x: -108, y: -20}
+    - - {x: -67, y: -4}
+      - {x: -80, y: -4}
+      - {x: -82, y: -7}
+      - {x: -86, y: -28}
+      - {x: -86, y: -39}
+      - {x: -78, y: -44}
+      - {x: -66, y: -44}
+      - {x: -58, y: -39}
+      - {x: -58, y: -23}
+      - {x: -61, y: -6}
+    - - {x: -19, y: -4}
+      - {x: -31, y: -4}
+      - {x: -38, y: -17}
+      - {x: -38, y: -36}
+      - {x: -34, y: -44}
+      - {x: -18, y: -44}
+      - {x: -10, y: -39}
+      - {x: -10, y: -23}
+      - {x: -13, y: -6}
+    - - {x: 20, y: -4}
+      - {x: 14, y: -7}
+      - {x: 10, y: -28}
+      - {x: 10, y: -39}
+      - {x: 18, y: -44}
+      - {x: 30, y: -44}
+      - {x: 38, y: -39}
+      - {x: 38, y: -19}
+      - {x: 30, y: -4}
+    - - {x: 68, y: -4}
+      - {x: 62, y: -7}
+      - {x: 58, y: -28}
+      - {x: 58, y: -39}
+      - {x: 66, y: -44}
+      - {x: 78, y: -44}
+      - {x: 86, y: -39}
+      - {x: 86, y: -19}
+      - {x: 78, y: -4}
+    - - {x: 113, y: -14}
+      - {x: 106, y: -21}
+      - {x: 106, y: -37}
+      - {x: 109, y: -44}
+      - {x: 126, y: -44}
+      - {x: 134, y: -39}
+      - {x: 134, y: -17}
+      - {x: 123, y: -14}
+    - - {x: -116, y: 44}
+      - {x: -129, y: 44}
+      - {x: -134, y: 33}
+      - {x: -134, y: 12}
+      - {x: -129, y: 4}
+      - {x: -114, y: 4}
+      - {x: -106, y: 8}
+      - {x: -106, y: 24}
+      - {x: -110, y: 42}
+    - - {x: -76, y: 44}
+      - {x: -83, y: 42}
+      - {x: -86, y: 32}
+      - {x: -86, y: 7}
+      - {x: -78, y: 4}
+      - {x: -60, y: 4}
+      - {x: -58, y: 7}
+      - {x: -58, y: 29}
+      - {x: -65, y: 44}
+    - - {x: -16, y: 40}
+      - {x: -20, y: 44}
+      - {x: -28, y: 44}
+      - {x: -34, y: 41}
+      - {x: -38, y: 20}
+      - {x: -38, y: 9}
+      - {x: -30, y: 4}
+      - {x: -18, y: 4}
+      - {x: -10, y: 9}
+      - {x: -10, y: 21}
+      - {x: -12, y: 28}
+    - - {x: 20, y: 44}
+      - {x: 14, y: 41}
+      - {x: 10, y: 20}
+      - {x: 10, y: 9}
+      - {x: 18, y: 4}
+      - {x: 30, y: 4}
+      - {x: 38, y: 9}
+      - {x: 38, y: 29}
+      - {x: 30, y: 44}
+    - - {x: 68, y: 44}
+      - {x: 62, y: 41}
+      - {x: 58, y: 20}
+      - {x: 58, y: 9}
+      - {x: 66, y: 4}
+      - {x: 78, y: 4}
+      - {x: 86, y: 9}
+      - {x: 86, y: 29}
+      - {x: 78, y: 44}
+    - - {x: 127, y: 44}
+      - {x: 111, y: 44}
+      - {x: 106, y: 30}
+      - {x: 106, y: 6}
+      - {x: 114, y: 4}
+      - {x: 131, y: 4}
+      - {x: 134, y: 7}
+      - {x: 134, y: 27}
+      - {x: 131, y: 42}
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Potion_0: -1752509285
+      Potion_1: -2090037931
+      Potion_10: 2145269198
+      Potion_11: -96068905
+      Potion_2: -357769627
+      Potion_3: 1092343762
+      Potion_4: 1032500194
+      Potion_5: -1776400659
+      Potion_6: -2006951739
+      Potion_7: 1745556309
+      Potion_8: -1345418674
+      Potion_9: -1821471556
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
