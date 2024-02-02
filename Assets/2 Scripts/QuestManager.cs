@@ -32,9 +32,10 @@ public class QuestManager : MonoBehaviour {
     }
 
     private void GenerateData() {
-        questList.Add(10, new QuestData("콜린과 대화하기", new int[] { 10000, 20000 }));
-        questList.Add(20, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000 }));
-        questList.Add(30, new QuestData("퀘스트 올 클리어", new int[] { 0 }));
+        questList.Add(10, new QuestData("콜린과 대화하기", new int[] { 10000, 20000 })); // 콜린, 루나
+        questList.Add(20, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000, 10000 })); // 코인, 루나, 콜린
+        questList.Add(30, new QuestData("마을을 위협하는 몬스터 처치하기", new int[] { 10000 })); // 콜린
+        questList.Add(40, new QuestData("퀘스트 올 클리어", new int[] { 0 }));
     }
 
     private void GenerateQuestItem() {
@@ -98,6 +99,10 @@ public class QuestManager : MonoBehaviour {
                         }
                     }
                 }
+                break;
+                
+            case 30:
+                SpawnManager.instance.GenerateEnemy();
                 break;
         }
     }

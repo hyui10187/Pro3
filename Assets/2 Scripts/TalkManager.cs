@@ -40,6 +40,9 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(1000 + 20, new string[] { "근처에서 동전을 찾았다" });
         
         talkData.Add(20000 + 21, new string[] { "정말 고마워", "이건 내 작은 보답이야" });
+        talkData.Add(10000 + 22, new string[] { "루나의 고민이 해결 되어서 다행이야", "그런데 이 마을에는 커다란 문제가 있어", "얼마전부터 몬스터들이 나타나서 사람들을 위혐하고 있거든", "밖에 있는 몬스터들을 좀 처치해 줄 수 있을까?" });
+        
+        talkData.Add(10000 + 30, new string[] { "마을 사람들이 불안에 떨고 있어", "몬스터들을 꼭 처치해줘" });
     }
 
     public string GetTalk(int sumId, int talkIndex) {

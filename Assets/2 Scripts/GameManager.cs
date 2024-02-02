@@ -40,7 +40,8 @@ public class GameManager : MonoBehaviour {
     public float maxHealth;
     public float curMana;
     public float maxMana;
-    public float exp; // 플레이어의 경험치
+    public float curExp; // 플레이어의 현재 경험치
+    public float maxExp; // 레벨업을 하기 위한 경험치
     public int level;
 
     [Header("Flag")]
@@ -70,7 +71,8 @@ public class GameManager : MonoBehaviour {
         if(Player.instance.isDead || !isLive) {
             return;
         }
-        
+
+        ControlLevel();
         ControlConditionUI();
         curGameTime += Time.deltaTime;
     }
@@ -139,6 +141,14 @@ public class GameManager : MonoBehaviour {
 
         isAction = true;
         talkIndex++;
+    }
+
+    private void ControlLevel() {
+
+        if(curExp >= maxExp) {
+            curExp -= maxExp;
+            level++;
+        }
     }
     
     private void ControlConditionUI() {

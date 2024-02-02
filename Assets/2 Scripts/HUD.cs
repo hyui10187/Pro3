@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class HUD : MonoBehaviour {
     
-    public enum InfoType { Health, Mana, Time, Exp }
+    public enum InfoType { Health, Mana, Time, Level , Exp }
 
     public InfoType type;
 
@@ -41,7 +41,14 @@ public class HUD : MonoBehaviour {
                 uiText.text = string.Format("{0:D2}:{1:D2}", hour, min);
                 break;
             
+            case InfoType.Level:
+                uiText.text = GameManager.instance.level.ToString();
+                break;
+            
             case InfoType.Exp:
+                float curExp = GameManager.instance.curExp;
+                float maxExp = GameManager.instance.maxExp;
+                slider.value = curExp / maxExp;
                 break;
         }
     }

@@ -25,5 +25,11 @@ public class ItemManager : MonoBehaviour {
             fieldItems.SetItem(itemDB[Random.Range(0, 5)]); // 0, 1, 2 중에서 무작위로 설정해줌
         }
     }
+
+    public void DropItem(Vector3 dropPos) {
+        GameObject obj = Instantiate(fieldItemPrefab, dropPos, Quaternion.identity, fieldItemParent.transform);
+        FieldItems fieldItems = obj.GetComponent<FieldItems>();
+        fieldItems.SetItem(itemDB[Random.Range(0, 5)]); // 0, 1, 2 중에서 무작위로 설정해줌
+    }
     
 }
