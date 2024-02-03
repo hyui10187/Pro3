@@ -26,7 +26,7 @@ public class Player : MonoBehaviour {
 
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
-    private GameObject scanObj;
+    public GameObject scanObj;
     private Animator anim;
     private SpriteRenderer sprite;
     
@@ -66,17 +66,17 @@ public class Player : MonoBehaviour {
         }
 
         if(!isAttack) { // 공격중이면 공격 애니메이션이 끝나기 전에는 이동 애니메이션이 실행되지 않도록
-            // Animation
+            
             if(anim.GetInteger("hAxisRaw") != h) {
                 // 키보드의 방향키를 누를때 1번만 값을 주도록 조건 추가
                 anim.SetBool("isChange", true); // 키를 누르고 나서 Update 메소드가 1번째로 호출될때는 true로 플래그 값을 올려준다
                 anim.SetInteger("hAxisRaw", (int)h);
-            }
-            else if(anim.GetInteger("vAxisRaw") != v) {
+                
+            } else if(anim.GetInteger("vAxisRaw") != v) {
                 anim.SetBool("isChange", true);
                 anim.SetInteger("vAxisRaw", (int)v);
-            }
-            else {
+                
+            } else {
                 anim.SetBool("isChange", false); // 키를 누르고 나서 Update 메소드가 2번째로 호출될때부터는 false로 플래그 값을 변경해준다
             }
         }
@@ -86,18 +86,18 @@ public class Player : MonoBehaviour {
             dirVec = Vector3.up; // 그러면 방향을 위쪽으로 설정해준다
             anim.SetFloat("verticalMove", v);
             anim.SetFloat("horizonMove", 0);
-        }
-        else if(vDown && v == -1) {
+            
+        } else if(vDown && v == -1) {
             dirVec = Vector3.down;
             anim.SetFloat("verticalMove", v);
             anim.SetFloat("horizonMove", 0);
-        }
-        else if(hDown && h == -1) {
+            
+        } else if(hDown && h == -1) {
             dirVec = Vector3.left;
             anim.SetFloat("horizonMove", h);
             anim.SetFloat("verticalMove", 0);
-        }
-        else if(hDown && h == 1) {
+            
+        } else if(hDown && h == 1) {
             dirVec = Vector3.right;
             anim.SetFloat("horizonMove", h);
             anim.SetFloat("verticalMove", 0);
@@ -105,6 +105,9 @@ public class Player : MonoBehaviour {
 
         // Scan Object
         if(Input.GetButtonDown("Jump") && scanObj != null) {
+            
+            Debug.Log("Input.GetButtonDown() && scanObj != null");
+            
             // 플레이어가 스페이스 바를 눌렀으면서 스캔한 오브젝트가 있는 경우
             GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
         }
@@ -181,7 +184,12 @@ public class Player : MonoBehaviour {
             
         } else if(other.gameObject.tag == "Ice") {
             Slide();
+            
+        } else if(other.gameObject.tag == "Bullet") {
+            Bullet bullet = other.GetComponent<Bullet>();
+            GameManager.instance.curHealth -= bullet.damage; // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
         }
+
     }
 
     private void Slide() {
@@ -245,7 +253,7 @@ public class Player : MonoBehaviour {
         
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
-        GameManager.instance.ControlInventory();
+        GameManager.instance.CleanInventory();
         GameManager.instance.gaugeUI.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기

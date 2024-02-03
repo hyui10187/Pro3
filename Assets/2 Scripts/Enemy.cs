@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour {
     public float maxHealth; // 적의 최대체력
     public float exp;
     public bool isDead;
+    public Scanner scanner;
 
     private Rigidbody2D rigid;
     private Animator anim;
@@ -22,6 +23,7 @@ public class Enemy : MonoBehaviour {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        scanner = GetComponent<Scanner>();
         wait = new WaitForFixedUpdate();
     }
 
@@ -72,6 +74,7 @@ public class Enemy : MonoBehaviour {
 
     private void Delete() { // 몬스터의 묘지를 꺼주는 메소드
         gameObject.SetActive(false);
+        SpawnManager.instance.enemyCount--; // 몬스터가 죽을때마다 몬스터의 숫자를 하나씩 빼주기
     }
     
 }

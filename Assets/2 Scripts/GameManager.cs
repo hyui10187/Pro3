@@ -20,10 +20,11 @@ public class GameManager : MonoBehaviour {
     [Header("UI")]
     public GameObject startPanel; // 게임 시작 패널
     public GameObject talkPanel; // 대화창
-    public GameObject buffPanel; // 대화창
+    public GameObject buffPanel;
     public Text talkText; // 대화창의 대화 내용
     public GameObject timePanel; // 시계 패널
     public GameObject questPanel;
+    public GameObject monsterPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject gaugeUI;
     public GameObject weatherUI; // 날씨
@@ -50,6 +51,7 @@ public class GameManager : MonoBehaviour {
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
     public bool isFlicker; // UI가 깜빡거리고 있는지 플래그
     public bool hasQuestItem;
+    public bool isMonsterPanelOn;
 
     [Header("Etc")]
     public int talkIndex;
@@ -79,17 +81,25 @@ public class GameManager : MonoBehaviour {
 
     public void Action(GameObject scanObj) {
         
+        Debug.Log("Action 메소드 실행..............");
+        
         if(Player.instance.isDead) {
             return;
         }
         
         scanObject = scanObj;
+        
+        if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
+            timePanel.SetActive(true); // 시계 패널을 켜주기
+            
+        }
+        
         ObjData objData = scanObject.GetComponent<ObjData>();
         Talk(objData.objId, objData.isNpc);
         talkPanel.SetActive(isAction); // 대화창을 끄고 켜는 것은 isAction 플래그 값이랑 동일하다
 
         if(scanObject.CompareTag("Heal")) { // 모닥불에게 말을 걸었을 경우
-            curHealth += 20; // 체력을 20 회복시키기
+            curHealth += 10; // 체력을 20 회복시키기
             
             if(curHealth > maxHealth) { // +20 된 체력이 최대 체력보다 크다면
                 curHealth = maxHealth; // 플레이어의 현재 체력을 최대 체력으로 바꿔주기
@@ -98,9 +108,6 @@ public class GameManager : MonoBehaviour {
             FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
             Inventory.instance.AddItem(fieldItems.GetItem());
             hasQuestItem = true;
-            
-        } else if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
-            timePanel.SetActive(true); // 시계 패널을 켜주기
             
         } else if(scanObject.CompareTag("NPC")) {
             NPC npc = scanObject.GetComponent<NPC>();
@@ -112,19 +119,28 @@ public class GameManager : MonoBehaviour {
         inventoryManager.OnOffInventory();
     }
 
+    public void CleanInventory() {
+        inventoryManager.CleanInventory();
+    }
+
     private void Talk(int objId, bool isNpc) {
         
-        int questTalkIndex = questManager.GetQuestTalkIndex(objId);
+        Debug.Log("Talk 메소드 실행...................");
+        
+        int questTalkIndex = questManager.GetQuestTalkIndex();
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
 
         // End Talk
-        if(talkData == null) { // 더이상 다음 대화가 없다면 isAction을 false로 줘서 대화창 끄기
-            isAction = false;
+        if(talkData == null) { // 더이상 다음 대화가 없다면
+            isAction = false; // isAction을 false로 줘서 대화창 끄기
             timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
-            currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
             
-            if(isNpc && objId == 30000) { // 대화를 한게 Npc일 경우에는 이미지도 같이 보여주기
+            Debug.Log("대화 없음......................");
+            
+            currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
+
+            if(isNpc && objId == 30000) {
                 NPC npc = scanObject.GetComponent<NPC>();
                 npc.isCollision = false;
             }
@@ -156,6 +172,7 @@ public class GameManager : MonoBehaviour {
         if(isHouse) { // 집에 들어가 있으면
             gaugeUI.SetActive(false); // 플레이어 머리 위의 체력 UI를 꺼주기
             frozenEffect.SetActive(false); // 추위 디버프 꺼주기
+            monsterPanel.SetActive(false);
             WeatherManager.instance.SnowOff(); // 눈 내리는 것을 꺼주는 메소드 호출
 
         } else { // 얼음 필드로 나와있는 상태이면
@@ -163,6 +180,10 @@ public class GameManager : MonoBehaviour {
             frozenEffect.SetActive(true); // 추위 디버프 켜주기
             WeatherManager.instance.SnowOn(); // 눈 내리는 것을 켜주는 메소드 호출
 
+            if(isMonsterPanelOn) {
+                monsterPanel.SetActive(true);
+            }
+            
             if(curHealth > 0) {
                 curHealth -= 1 * Time.deltaTime;
                 

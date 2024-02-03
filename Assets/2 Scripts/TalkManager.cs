@@ -28,21 +28,21 @@ public class TalkManager : MonoBehaviour {
 
         // NPC 대사
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
-        talkData.Add(10000 + 10, new string[] { "어서와", "이 마을이 아직 낯설지?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });
-
         talkData.Add(20000, new string[] { "모닥불이 따뜻해서 너무 좋아", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
-        talkData.Add(20000 + 11, new string[] { "어떡하면 좋지?", "동전을 잃어버렸는데 못찾겠어", "혹시 너가 찾아줄 수 있니?" });
-        
         talkData.Add(30000, new string[] { "강인한 용사가 되고 싶나?", "실력으로 증명해봐" });
         
+        talkData.Add(10000 + 10, new string[] { "어서와", "이 마을이 아직 낯설지?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });
+        talkData.Add(20000 + 10 + 1, new string[] { "어떡하면 좋지?", "동전을 잃어버렸는데 못찾겠어", "혹시 너가 찾아줄 수 있니?" });
+
+        talkData.Add(1000 + 20, new string[] { "근처에서 동전을 찾았다" });
         talkData.Add(10000 + 20, new string[] { "루나가 동전을 잃어버렸구나", "얼른 찾았으면 좋겠다" });
         talkData.Add(20000 + 20, new string[] { "찾으면 꼭 좀 가져다 줘" });
-        talkData.Add(1000 + 20, new string[] { "근처에서 동전을 찾았다" });
+        talkData.Add(20000 + 20 + 1, new string[] { "정말 고마워", "이건 내 작은 보답이야" });
         
-        talkData.Add(20000 + 21, new string[] { "정말 고마워", "이건 내 작은 보답이야" });
-        talkData.Add(10000 + 22, new string[] { "루나의 고민이 해결 되어서 다행이야", "그런데 이 마을에는 커다란 문제가 있어", "얼마전부터 몬스터들이 나타나서 사람들을 위혐하고 있거든", "밖에 있는 몬스터들을 좀 처치해 줄 수 있을까?" });
+        talkData.Add(10000 + 30, new string[] { "루나의 고민이 해결 되어서 다행이야", "그런데 이 마을에는 커다란 문제가 있어", "얼마전부터 몬스터들이 나타나서 사람들을 위혐하고 있거든", "밖에 있는 몬스터들을 좀 처치해 줄 수 있을까?" });
+        talkData.Add(20000 + 30 + 1, new string[] { "우리 마을을 구해줘", "너만 믿을께!" });
         
-        talkData.Add(10000 + 30, new string[] { "마을 사람들이 불안에 떨고 있어", "몬스터들을 꼭 처치해줘" });
+        talkData.Add(10000 + 40, new string[] { "마을 사람들이 불안에 떨고 있어", "몬스터들을 꼭 처치해줘" });
     }
 
     public string GetTalk(int sumId, int talkIndex) {

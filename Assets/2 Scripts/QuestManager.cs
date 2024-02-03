@@ -33,9 +33,9 @@ public class QuestManager : MonoBehaviour {
 
     private void GenerateData() {
         questList.Add(10, new QuestData("콜린과 대화하기", new int[] { 10000, 20000 })); // 콜린, 루나
-        questList.Add(20, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000, 10000 })); // 코인, 루나, 콜린
-        questList.Add(30, new QuestData("마을을 위협하는 몬스터 처치하기", new int[] { 10000 })); // 콜린
-        questList.Add(40, new QuestData("퀘스트 올 클리어", new int[] { 0 }));
+        questList.Add(20, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
+        questList.Add(30, new QuestData("마을의 근심거리 듣기", new int[] { 10000, 20000 })); // 콜린
+        questList.Add(40, new QuestData("몬스터 처치하기", new int[] { 0 }));
     }
 
     private void GenerateQuestItem() {
@@ -44,16 +44,22 @@ public class QuestManager : MonoBehaviour {
         questItem.Add(coin);
     }
     
-    public int GetQuestTalkIndex(int objId) {
+    public int GetQuestTalkIndex() {
         return questId + questActionIndex;
     }
 
     public string CheckQuest(int objId) { // CheckQuest 메소드가 호출되었다는 것은 이전 NPC와는 대화가 전부 끝난것
         
-        // Next Talk Target
-        if(objId == questList[questId].npcId[questActionIndex]) // 다음 퀘스트 대화상대로 넘겨줌
-            questActionIndex++;
+        Debug.Log("CheckQuest 메소드 실행................");
         
+        // Next Talk Target
+        if(objId == questList[questId].npcId[questActionIndex]) {
+            // 다음 퀘스트 대화상대로 넘겨줌
+
+            Debug.Log("Next Talk Target..........................");
+            questActionIndex++;
+        }
+
         // Control Quest Object
         ControlObject();
 
@@ -77,6 +83,8 @@ public class QuestManager : MonoBehaviour {
     }
 
     private void ControlObject() {
+        
+        Debug.Log("ControlObject 메소드 실행...............");
 
         switch(questId) {
             case 10:
@@ -102,7 +110,14 @@ public class QuestManager : MonoBehaviour {
                 break;
                 
             case 30:
-                SpawnManager.instance.GenerateEnemy();
+                if(questActionIndex == 1) { // 콜린과 대화가 끝나면
+                    SpawnManager.instance.GenerateEnemy(); // 몬스터를 전부 켜주기
+                    GameManager.instance.isMonsterPanelOn = true; // 몬스터 패널을 켜주기
+                }
+                
+                break;
+            
+            default:
                 break;
         }
     }

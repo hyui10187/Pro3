@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class HUD : MonoBehaviour {
     
-    public enum InfoType { Health, Mana, Time, Level , Exp }
+    public enum InfoType { Health, Mana, Time, Level , Exp, Monster }
 
     public InfoType type;
 
@@ -49,6 +49,10 @@ public class HUD : MonoBehaviour {
                 float curExp = GameManager.instance.curExp;
                 float maxExp = GameManager.instance.maxExp;
                 slider.value = curExp / maxExp;
+                break;
+            
+            case InfoType.Monster:
+                uiText.text = "X " + SpawnManager.instance.enemyCount;
                 break;
         }
     }
