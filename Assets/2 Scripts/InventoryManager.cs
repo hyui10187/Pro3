@@ -11,7 +11,6 @@ public class InventoryManager : MonoBehaviour {
     public GameObject inventoryPanel;
     public Slot[] slots;
     public Transform slotHolder;
-    public bool isActive;
     public int maxSlotNum; // 확장할 수 있는 최대 슬롯갯수
     public GameObject slotPrefab;
 
@@ -64,12 +63,13 @@ public class InventoryManager : MonoBehaviour {
     }
     
     public void OnOffInventory() {
-        isActive = !isActive; // 메소드가 실행될때마다 기존에 가지고 있던 플래그 값을 반전시켜줌
-        inventoryPanel.SetActive(isActive); // 플래그 값에 따라 인벤토리 패널을 켜거나 꺼줌
+
+        if(!inventoryPanel.activeSelf) {
+            inventoryPanel.SetActive(true);
+            
+        } else {
+            inventoryPanel.SetActive(false);
+        }
     }
 
-    public void CleanInventory() { // 죽었을때 실행해주는 메소드
-        inventoryPanel.SetActive(false); // 혹시 인벤토리가 켜져 있는 상태로 죽었으면 꺼주기
-    }
-    
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
@@ -19,22 +20,27 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI")]
     public GameObject startPanel; // 게임 시작 패널
+    public GameObject virtualPanel;
+    public GameObject menuPanel;
     public GameObject talkPanel; // 대화창
     public GameObject buffPanel;
     public Text talkText; // 대화창의 대화 내용
     public GameObject timePanel; // 시계 패널
     public GameObject questPanel;
     public GameObject monsterPanel;
+    public GameObject keyBoardButton;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject gaugeUI;
     public GameObject weatherUI; // 날씨
     public GameObject frozenEffect;
     public GameObject speedEffect;
+    public GameObject expSlider;
 
     [Header("Game Control")]
     public float curGameTime; // 현재 게임시간
 
     [Header("Player Info")]
+    public GameObject player;
     public float curMoveSpeed;
     public float originMoveSpeed;
     public float curHealth;
@@ -52,6 +58,8 @@ public class GameManager : MonoBehaviour {
     public bool isFlicker; // UI가 깜빡거리고 있는지 플래그
     public bool hasQuestItem;
     public bool isMonsterPanelOn;
+    public bool isMenuPanelOn;
+    public bool isNewGame;
 
     [Header("Etc")]
     public int talkIndex;
@@ -62,11 +70,17 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
+
+        if(!isNewGame) {
+            GameLoad();
+        }
+        
         curHealth = maxHealth; // 게임 처음 시작시 현재 체력(health)을 최대 체력(maxHealth)으로 초기화
         curMoveSpeed = originMoveSpeed; // 게임 처음 시작시 현재 이동속도(curMoveSpeed)를 기본 이동속도(originMoveSpeed)로 초기화
         //curMana = maxMana; // 게임 처음 시작시 현재 마나(mana)를 최대 마나(maxMana)로 초기화
         currentQuestText.text = questManager.CheckQuest();
     }
+
 
     private void Update() {
 
@@ -80,8 +94,6 @@ public class GameManager : MonoBehaviour {
     }
 
     public void Action(GameObject scanObj) {
-        
-        Debug.Log("Action 메소드 실행..............");
         
         if(Player.instance.isDead) {
             return;
@@ -119,13 +131,7 @@ public class GameManager : MonoBehaviour {
         inventoryManager.OnOffInventory();
     }
 
-    public void CleanInventory() {
-        inventoryManager.CleanInventory();
-    }
-
     private void Talk(int objId, bool isNpc) {
-        
-        Debug.Log("Talk 메소드 실행...................");
         
         int questTalkIndex = questManager.GetQuestTalkIndex();
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
@@ -135,9 +141,6 @@ public class GameManager : MonoBehaviour {
             isAction = false; // isAction을 false로 줘서 대화창 끄기
             timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
-            
-            Debug.Log("대화 없음......................");
-            
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
 
             if(isNpc && objId == 30000) {
@@ -159,6 +162,11 @@ public class GameManager : MonoBehaviour {
         talkIndex++;
     }
 
+    public void ControlMenuPanel() {
+        isMenuPanelOn = !isMenuPanelOn;
+        menuPanel.SetActive(isMenuPanelOn);
+    }
+
     private void ControlLevel() {
 
         if(curExp >= maxExp) {
@@ -172,12 +180,14 @@ public class GameManager : MonoBehaviour {
         if(isHouse) { // 집에 들어가 있으면
             gaugeUI.SetActive(false); // 플레이어 머리 위의 체력 UI를 꺼주기
             frozenEffect.SetActive(false); // 추위 디버프 꺼주기
+            expSlider.SetActive(false);
             monsterPanel.SetActive(false);
             WeatherManager.instance.SnowOff(); // 눈 내리는 것을 꺼주는 메소드 호출
 
         } else { // 얼음 필드로 나와있는 상태이면
             gaugeUI.SetActive(true); // 플레이어 머리 위의 체력 UI를 켜주기
             frozenEffect.SetActive(true); // 추위 디버프 켜주기
+            expSlider.SetActive(true);
             WeatherManager.instance.SnowOn(); // 눈 내리는 것을 켜주는 메소드 호출
 
             if(isMonsterPanelOn) {
@@ -214,11 +224,72 @@ public class GameManager : MonoBehaviour {
         buffPanel.SetActive(true);
         weatherUI.SetActive(true);
         questPanel.SetActive(true);  // 퀘스트 패널 켜주기
+        keyBoardButton.SetActive(true); // 키보드 버튼 켜주기
         startPanel.SetActive(false); // 시작 메뉴 패널 꺼주기
     }
 
     public void GameStop() {
         isLive = false;
+    }
+
+    public void GameSave() {
+        PlayerPrefs.SetFloat("PlayerX", player.transform.position.x);
+        PlayerPrefs.SetFloat("PlayerY", player.transform.position.y);
+        PlayerPrefs.SetInt("QuestId", questManager.questId);
+        PlayerPrefs.SetInt("QuestActionIndex", questManager.questActionIndex);
+        PlayerPrefs.Save();
+        
+        menuPanel.SetActive(false);
+    }
+
+    public void GameLoad() {
+
+        if(!PlayerPrefs.HasKey("PlayerX")) {
+            return;
+        }
+        
+        float x = PlayerPrefs.GetFloat("PlayerX");
+        float y = PlayerPrefs.GetFloat("PlayerY");
+        int questId = PlayerPrefs.GetInt("QuestId");
+        int questActionIndex = PlayerPrefs.GetInt("QuestActionIndex");
+
+        player.transform.position = new Vector3(x, y, 0);
+        questManager.questId = questId;
+        questManager.questActionIndex = questActionIndex;
+        questManager.ControlObject();
+    }
+    
+    public void GameExit() { // 게임을 종료하는 메소드
+        Application.Quit();
+    }
+
+    public void NewGame() {
+
+        isNewGame = true;
+        isLive = true;
+
+        ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
+        NPC.instance.Think(); // NPC 생각 메소드 호출
+
+        player.transform.position = Vector3.zero;
+        questManager.questId = 10;
+        questManager.questActionIndex = 0;
+        
+        buffPanel.SetActive(true);
+        weatherUI.SetActive(true);
+        questPanel.SetActive(true);  // 퀘스트 패널 켜주기
+        keyBoardButton.SetActive(true); // 키보드 버튼 켜주기
+        startPanel.SetActive(false); // 시작 메뉴 패널 꺼주기
+    }
+
+    public void VirtualPanelOnOff() { // 가상 키보드를 켜거나 끄는 메소드
+
+        if(!virtualPanel.activeSelf) { // 가상 키보드가 꺼져있다면
+            virtualPanel.SetActive(true); // 켜주기
+            
+        } else {
+            virtualPanel.SetActive(false);
+        }
     }
     
 }

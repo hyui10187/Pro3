@@ -50,13 +50,9 @@ public class QuestManager : MonoBehaviour {
 
     public string CheckQuest(int objId) { // CheckQuest 메소드가 호출되었다는 것은 이전 NPC와는 대화가 전부 끝난것
         
-        Debug.Log("CheckQuest 메소드 실행................");
-        
         // Next Talk Target
         if(objId == questList[questId].npcId[questActionIndex]) {
             // 다음 퀘스트 대화상대로 넘겨줌
-
-            Debug.Log("Next Talk Target..........................");
             questActionIndex++;
         }
 
@@ -82,9 +78,7 @@ public class QuestManager : MonoBehaviour {
         questActionIndex = 0;
     }
 
-    private void ControlObject() {
-        
-        Debug.Log("ControlObject 메소드 실행...............");
+    public void ControlObject() {
 
         switch(questId) {
             case 10:
@@ -94,6 +88,9 @@ public class QuestManager : MonoBehaviour {
                 break;
             
             case 20:
+                if(questActionIndex == 0) { // 게임을 저장하고 로드했을 경우를 대비하여
+                    questItem[0].SetActive(true); // 동전 켜주기
+                }
                 if(questActionIndex == 1) { // 동전을 먹었으면
                     questItem[0].SetActive(false); // 동전 꺼주기
                 } else if(questActionIndex == 2) {

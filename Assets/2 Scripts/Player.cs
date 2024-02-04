@@ -24,6 +24,20 @@ public class Player : MonoBehaviour {
     public float curTime;
     public float coolTime; // 공격을 한번 하고 다음 공격을 할때까지의 쿨타임
 
+    [Header("Mobile")]
+    public int upValue;
+    public int downValue;
+    public int leftValue;
+    public int rightValue;
+    public bool upDown;
+    public bool downDown;
+    public bool leftDown;
+    public bool rightDown;
+    public bool upUp;
+    public bool downUp;
+    public bool leftUp;
+    public bool rightUp;
+    
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
     public GameObject scanObj;
@@ -47,14 +61,14 @@ public class Player : MonoBehaviour {
         }
         
         // Move Value
-        h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal"); // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
-        v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical");
+        h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal") + leftValue + rightValue; // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
+        v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical") + upValue + downValue;
 
         // Check Button Down & Up
-        bool hDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Horizontal"); // 버튼을 누른 여부를 저장하는 변수들도 isAction 플래그값을 기준으로 결정한다
-        bool vDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Vertical");
-        bool hUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Horizontal");
-        bool vUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Vertical");
+        bool hDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Horizontal") || leftDown || rightDown; // 버튼을 누른 여부를 저장하는 변수들도 isAction 플래그값을 기준으로 결정한다
+        bool vDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Vertical") || upDown || downDown;
+        bool hUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Horizontal") || leftUp || rightUp;
+        bool vUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Vertical") || upUp || downUp ;
 
         // Check Horizontal Move
         if(hDown) {
@@ -104,18 +118,17 @@ public class Player : MonoBehaviour {
         }
 
         // Scan Object
-        if(Input.GetButtonDown("Jump") && scanObj != null) {
-            
-            Debug.Log("Input.GetButtonDown() && scanObj != null");
-            
-            // 플레이어가 스페이스 바를 눌렀으면서 스캔한 오브젝트가 있는 경우
+        if(Input.GetButtonDown("Jump") && scanObj != null) { // 플레이어가 스페이스 바를 눌렀으면서 스캔한 오브젝트가 있는 경우
             GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
         }
 
         // Inventory Open/Close
-        if(Input.GetButtonDown("Inventory")) {
-            // 플레이어가 I 키를 눌렀으면
+        if(Input.GetButtonDown("Inventory")) { // 플레이어가 I 키를 눌렀으면
             GameManager.instance.ControlInventory();
+        }
+
+        if(Input.GetButtonDown("Cancel")) { // 플레이어가 ESC 키를 눌렀으면
+            GameManager.instance.ControlMenuPanel();
         }
         
         if(Input.GetButtonDown("Attack") && !isAttack && curTime <= 0) { // 플레이어가 A 키를 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
@@ -135,6 +148,16 @@ public class Player : MonoBehaviour {
                 }
             }
         }
+        
+        // Mobile Var Init   // 모바일용 변수들은 매 프레임마다 초기화 해주기
+        upDown = false;
+        downDown = false;
+        leftDown = false;
+        rightDown = false;
+        upUp = false;
+        downUp = false;
+        leftUp = false;
+        rightUp = false;
     }
 
     private void OnDrawGizmos() { // 피격범위 박스를 에디터에서 표시하기 위한 메소드
@@ -253,8 +276,9 @@ public class Player : MonoBehaviour {
         
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
-        GameManager.instance.CleanInventory();
+        GameManager.instance.ControlInventory();
         GameManager.instance.gaugeUI.SetActive(false);
+        GameManager.instance.expSlider.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기
     }
@@ -262,6 +286,91 @@ public class Player : MonoBehaviour {
     public void AttackEnd() {
         anim.SetBool("isAttack", false);
         isAttack = false;
+    }
+
+    public void ButtonDown(string type) {
+
+        switch(type) {
+            case "Up":
+                upValue = 1;
+                upDown = true;
+                break;
+            
+            case "Down":
+                downValue = -1;
+                downDown = true;
+                break;
+            
+            case "Left":
+                leftValue = -1;
+                leftDown = true;
+                break;
+            
+            case "Right":
+                rightValue = 1;
+                rightDown = true;
+                break;
+            
+            case "Space": // 초록색 버튼
+                if(scanObj != null) {
+                    GameManager.instance.Action(scanObj);
+                }
+                break;
+
+            case "Attack": // 파란색 버튼
+                if(!isAttack && curTime <= 0) { // 플레이어가 파란색 버튼을 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
+                    anim.SetTrigger("attack");
+                    anim.SetBool("isAttack", true);
+                    curTime = coolTime; // 쿨타임을 초기화 해줌
+                    isAttack = true;
+
+                    Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
+
+                    foreach(Collider2D collision in collider2Ds) {
+
+                        if(collision.CompareTag("Enemy")) { // 플레이어의 공격에 맞은게 Enemy 라면 
+                            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+                            enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
+                            enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
+                        }
+                    }
+                }
+                break;
+            
+            case "Inventory": // 파란색 버튼
+                GameManager.instance.ControlInventory();
+                break;
+            
+            case "ESC": // 빨간색 버튼
+                GameManager.instance.ControlMenuPanel();
+                break;
+        }
+    }
+
+    public void ButtonUp(string type) {
+
+        switch(type) { // 버튼에서 손을 떼면 자동으로 값을 0으로 초기화
+            case "Up":
+                upValue = 0;
+                upUp = true;
+                break;
+            
+            case "Down":
+                downValue = 0;
+                downUp = true;
+                break;
+            
+            case "Left":
+                leftValue = 0;
+                leftUp = true;
+                break;
+            
+            case "Right":
+                rightValue = 0;
+                rightUp = true;
+                break;
+        }
+        
     }
     
 }
