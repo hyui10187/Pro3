@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
     
     private void Update() {
         
-        if(isDead) // 죽었으면 모든 행동 실행 못하게
+        if(isDead || !GameManager.instance.isLive) // 죽었으면 모든 행동 실행 못하게
             return;
 
         if(curTime > 0) {
@@ -145,6 +145,12 @@ public class Player : MonoBehaviour {
                     Enemy enemy = collision.gameObject.GetComponent<Enemy>();
                     enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
                     enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
+                }
+
+                if(collision.CompareTag("Tree")) {
+                    DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                    desObject.curHealth -= 20;
+                    desObject.Damaged();
                 }
             }
         }

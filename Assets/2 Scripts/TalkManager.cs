@@ -26,12 +26,16 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(900, new string[] { "단단한 울타리이다." });
         talkData.Add(1100, new string[] { "아늑해 보이는 소파이다." });
         talkData.Add(1200, new string[] { "튼튼해 보이는 나무이다.", "도끼가 있어야 제거할 수 있을것 같다." });
+        talkData.Add(1300, new string[] { "럼주가 잘 익어가고 있다." });
+        talkData.Add(1400, new string[] { "원목으로 만든 테이블이다." });
 
         // NPC 대사
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
         talkData.Add(20000, new string[] { "모닥불이 따뜻해서 너무 좋아", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
         talkData.Add(30000, new string[] { "강인한 용사가 되고 싶나?", "실력으로 증명해봐" });
         talkData.Add(40000, new string[] { "이 마을 왼쪽에는 동굴이 있어", "예전에는 그 동굴을 통해 다른 지역으로 갈 수 있었지", "근데 지금은 나무가 동굴 입구를 막고 있어", "누가 나무를 베어주면 정말 좋을텐데" });
+        talkData.Add(50000, new string[] { "지하에는 위험한 몬스터들이 살고 있어", "그래서 함부로 들어갈 수 없도록 막아놓은거야" });
+        talkData.Add(60000, new string[] { "여어", "잘 지내지?", "또 보자구" });
         
         talkData.Add(10000 + 10, new string[] { "어서와", "이 마을이 아직 낯설지?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });
         talkData.Add(20000 + 10 + 1, new string[] { "어떡하면 좋지?", "동전을 잃어버렸는데 못찾겠어", "혹시 너가 찾아줄 수 있니?" });
