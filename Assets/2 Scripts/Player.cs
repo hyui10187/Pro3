@@ -41,7 +41,7 @@ public class Player : MonoBehaviour {
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
     public GameObject scanObj;
-    private Animator anim;
+    public Animator anim;
     private SpriteRenderer sprite;
     
     private void Awake() {
@@ -287,8 +287,14 @@ public class Player : MonoBehaviour {
         GameManager.instance.expSlider.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기
+        
+        Invoke("DeadPanelOn", 2.5f); // 2.5초 뒤에 DeadPanel 켜주기
     }
 
+    private void DeadPanelOn() {
+        GameManager.instance.deadPanel.SetActive(true);
+    }
+    
     public void AttackEnd() {
         anim.SetBool("isAttack", false);
         isAttack = false;

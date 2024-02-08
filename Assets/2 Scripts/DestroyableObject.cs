@@ -27,19 +27,11 @@ public class DestroyableObject : MonoBehaviour {
 
         if(!isDead && curHealth > 0) { // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
             anim.SetTrigger("damaged");
-            //Invoke("DamagedOff", 2f);
         }
     }
 
-    private void DamagedOff() {
-        
-    }
-    
     private void Dead() {
         GameManager.instance.curExp += exp;
-        //rigid.velocity = Vector2.zero;
-        //anim.SetTrigger("dead");
-        //sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 죽었다는 플래그 값 올려주기
         
         Delete();
@@ -50,7 +42,7 @@ public class DestroyableObject : MonoBehaviour {
         gameObject.SetActive(false); // 나무를 꺼주기
     }
 
-    private void SpawnItem() { // 나무가 죽으면 아이템을 드랍해주는 메소드
+    private void SpawnItem() { // 나무가 죽으면 열매 아이템을 드랍해주는 메소드
         ItemManager.instance.DropFruit(transform.position);
     }
     

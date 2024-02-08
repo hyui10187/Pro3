@@ -21,20 +21,24 @@ public class GameManager : MonoBehaviour {
     [Header("UI")]
     public GameObject startPanel; // 게임 시작 패널
     public GameObject virtualPanel;
+    public GameObject helpPanel;
     public GameObject menuPanel;
     public GameObject talkPanel; // 대화창
     public GameObject buffPanel;
+    public GameObject deadPanel;
     public Text talkText; // 대화창의 대화 내용
     public GameObject timePanel; // 시계 패널
     public GameObject questPanel;
     public GameObject monsterPanel;
     public GameObject keyBoardButton;
+    public GameObject helpButton;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject gaugeUI;
     public GameObject weatherUI; // 날씨
     public GameObject frozenEffect;
     public GameObject speedEffect;
     public GameObject expSlider;
+    public GameObject saveMessage;
 
     [Header("Game Control")]
     public float curGameTime; // 현재 게임시간
@@ -55,7 +59,6 @@ public class GameManager : MonoBehaviour {
     public bool isLive; // 게임이 진행중인지 체크하는 플래그
     public bool isAction; // 대화를 하는중인지 체크하기 위한 플래그값
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
-    public bool isFlicker; // UI가 깜빡거리고 있는지 플래그
     public bool hasQuestItem;
     public bool isMonsterPanelOn;
     public bool isMenuPanelOn;
@@ -99,6 +102,7 @@ public class GameManager : MonoBehaviour {
             return;
         }
         
+        expSlider.SetActive(false);
         scanObject = scanObj;
         
         if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
@@ -163,8 +167,16 @@ public class GameManager : MonoBehaviour {
     }
 
     public void ControlMenuPanel() {
-        isMenuPanelOn = !isMenuPanelOn;
-        menuPanel.SetActive(isMenuPanelOn);
+
+        if(!menuPanel.activeSelf) {
+            isMenuPanelOn = true;
+            menuPanel.SetActive(true);
+            gaugeUI.SetActive(false);
+
+        } else {
+            isMenuPanelOn = false;
+            menuPanel.SetActive(false);
+        }
     }
 
     private void ControlLevel() {
@@ -185,9 +197,15 @@ public class GameManager : MonoBehaviour {
             WeatherManager.instance.SnowOff(); // 눈 내리는 것을 꺼주는 메소드 호출
 
         } else { // 얼음 필드로 나와있는 상태이면
-            gaugeUI.SetActive(true); // 플레이어 머리 위의 체력 UI를 켜주기
+            if(!isMenuPanelOn) {
+                gaugeUI.SetActive(true); // 플레이어 머리 위의 체력 UI를 켜주기   
+            }
+
+            if(!isAction) {
+                expSlider.SetActive(true);
+            }
+            
             frozenEffect.SetActive(true); // 추위 디버프 켜주기
-            expSlider.SetActive(true);
             WeatherManager.instance.SnowOn(); // 눈 내리는 것을 켜주는 메소드 호출
 
             if(isMonsterPanelOn) {
@@ -221,10 +239,15 @@ public class GameManager : MonoBehaviour {
         ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
         NPC.instance.Think(); // NPC 생각 메소드 호출
         
+        curHealth = maxHealth;
+        Player.instance.anim.SetTrigger("start");
+        
+        deadPanel.SetActive(false);
         buffPanel.SetActive(true);
         weatherUI.SetActive(true);
         questPanel.SetActive(true);  // 퀘스트 패널 켜주기
         keyBoardButton.SetActive(true); // 키보드 버튼 켜주기
+        helpButton.SetActive(true);
         startPanel.SetActive(false); // 시작 메뉴 패널 꺼주기
     }
 
@@ -238,8 +261,14 @@ public class GameManager : MonoBehaviour {
         PlayerPrefs.SetInt("QuestId", questManager.questId);
         PlayerPrefs.SetInt("QuestActionIndex", questManager.questActionIndex);
         PlayerPrefs.Save();
-        
+
         menuPanel.SetActive(false);
+        saveMessage.SetActive(true);
+        Invoke("OffSaveMessage", 2f);
+    }
+    
+    private void OffSaveMessage() {
+        saveMessage.SetActive(false);
     }
 
     public void GameLoad() {
@@ -263,23 +292,42 @@ public class GameManager : MonoBehaviour {
         Application.Quit();
     }
 
-    public void NewGame() {
+    public void NewGame() { // New Game 버튼을 클릭했을때 실행하는 메소드
 
         isNewGame = true;
         isLive = true;
+        Player.instance.isDead = false;
+        isHouse = false; // 기본적으로 밖에서 시작하니까
 
-        ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
+        if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
+            for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {
+                Transform targetObject = ItemManager.instance.fieldItemParent.transform.GetChild(i);
+                Destroy(targetObject.gameObject);
+            }
+            ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
+            
+        } else { // 기존에 만들어진 필드 아이템이 없다면
+            ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
+        }
+        
+        NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
         NPC.instance.Think(); // NPC 생각 메소드 호출
 
         player.transform.position = Vector3.zero;
         questManager.questId = 10;
         questManager.questActionIndex = 0;
-        
+
+        curHealth = maxHealth; // 체력 초기화
+        Player.instance.anim.SetTrigger("start"); // 기본적으로 아래를 바라보는 애니메이션으로 변경
+
+        deadPanel.SetActive(false);
         buffPanel.SetActive(true);
         weatherUI.SetActive(true);
         questPanel.SetActive(true);  // 퀘스트 패널 켜주기
         keyBoardButton.SetActive(true); // 키보드 버튼 켜주기
+        helpButton.SetActive(true);
         startPanel.SetActive(false); // 시작 메뉴 패널 꺼주기
+        gaugeUI.SetActive(true);
     }
 
     public void VirtualPanelOnOff() { // 가상 키보드를 켜거나 끄는 메소드
@@ -291,5 +339,15 @@ public class GameManager : MonoBehaviour {
             virtualPanel.SetActive(false);
         }
     }
-    
+
+    public void HelpOnOff() {
+
+        if(!helpPanel.activeSelf) { // Help 창이 꺼져 있다면
+            helpPanel.SetActive(true); // 켜주기
+            
+        } else {
+            helpPanel.SetActive(false);
+        }
+    }
+
 }

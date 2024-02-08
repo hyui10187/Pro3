@@ -38,7 +38,7 @@ public class ItemManager : MonoBehaviour {
         //obj.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
         obj.transform.localScale *= 3f;
         FieldItems fieldItems = obj.GetComponent<FieldItems>();
-        fieldItems.SetItem(fruitDB[Random.Range(0, 2)]); // 0, 1 중에서 무작위로 설정해줌
+        fieldItems.SetItem(fruitDB[Random.Range(0, 3)]); // 0, 1, 2 열매 중에서 무작위로 드랍하도록
     }
     
 }

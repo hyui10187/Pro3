@@ -14,7 +14,7 @@ public class TalkManager : MonoBehaviour {
 
     private void GenerateData() {
         
-        // 사물 대사
+        // 사물 대사   // 사물 대사는 100 단위   // 퀘스트 아이템은 1000 단위
         talkData.Add(100, new string[] { "영롱한 촛불이다." });
         talkData.Add(200, new string[] { "따뜻한 모닥불 앞에 있었더니 체력이 회복되었다." });
         talkData.Add(300, new string[] { "고풍스러운 괘종시계이다. 현재 시간은..." });
@@ -29,7 +29,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(1300, new string[] { "럼주가 잘 익어가고 있다." });
         talkData.Add(1400, new string[] { "원목으로 만든 테이블이다." });
 
-        // NPC 대사
+        // NPC 대사   // NPC 대사는 10000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
         talkData.Add(20000, new string[] { "모닥불이 따뜻해서 너무 좋아", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
         talkData.Add(30000, new string[] { "강인한 용사가 되고 싶나?", "실력으로 증명해봐" });
