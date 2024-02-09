@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class QuestManager : MonoBehaviour {
 
+    public static QuestManager instance;
+    
     [Header("Quest Info")]
     public int questId;
     public int questActionIndex;
@@ -21,6 +23,8 @@ public class QuestManager : MonoBehaviour {
     public GameObject coinPrefab;
     public Transform[] questItemSpawnPos;
     public GameObject questItemParent;
+    public GameObject ring;
+    public GameObject sword;
     
     private Dictionary<int, QuestData> questList;
 
@@ -29,6 +33,7 @@ public class QuestManager : MonoBehaviour {
         questList = new Dictionary<int, QuestData>();
         GenerateData();
         GenerateQuestItem();
+        instance = this;
     }
 
     private void GenerateData() {
@@ -50,10 +55,8 @@ public class QuestManager : MonoBehaviour {
 
     public string CheckQuest(int objId) { // CheckQuest 메소드가 호출되었다는 것은 이전 NPC와는 대화가 전부 끝난것
         
-        // Next Talk Target
-        if(objId == questList[questId].npcId[questActionIndex]) {
-            // 다음 퀘스트 대화상대로 넘겨줌
-            questActionIndex++;
+        if(objId == questList[questId].npcId[questActionIndex] && GameManager.instance.canEatQuestItem) { // 퀘스트 아이템을 먹을 수 없는 상태이면 questActionIndex를 증가시키지 않도록
+            questActionIndex++; // 다음 퀘스트 대화상대로 넘겨줌
         }
 
         // Control Quest Object
@@ -62,8 +65,7 @@ public class QuestManager : MonoBehaviour {
         // Talk Complete & Next Quest
         if(questActionIndex == questList[questId].npcId.Length) // 퀘스트 대화 상대와 전부 대화를 나눴으면 다음 퀘스트로 넘어감
             NextQuest();
-
-        // Return Quest Name
+        
         return questList[questId].questName; // 현재 진행중인 퀘스트명 반환
     }
     
@@ -91,18 +93,18 @@ public class QuestManager : MonoBehaviour {
                 if(questActionIndex == 0) { // 게임을 저장하고 로드했을 경우를 대비하여
                     questItem[0].SetActive(true); // 동전 켜주기
                 }
-                if(questActionIndex == 1) { // 동전을 먹었으면
-                    questItem[0].SetActive(false); // 동전 꺼주기
-                } else if(questActionIndex == 2) {
+                if(questActionIndex == 2) {
 
                     int num = Inventory.instance.possessItems.Count;
                     
-                    for(int i = 0; i < num; i++) {
+                    for(int i = 0; i < num; i++) { // 퀘스트 아이템 coin 인벤토리에서 제거하기
                         if(Inventory.instance.possessItems[i].itemType == Item.ItemType.Quest) {
                             Inventory.instance.RemoveItem(i);
                             break;
                         }
                     }
+                    
+                    ring.SetActive(true); // 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
                 
@@ -110,6 +112,7 @@ public class QuestManager : MonoBehaviour {
                 if(questActionIndex == 1) { // 콜린과 대화가 끝나면
                     SpawnManager.instance.GenerateEnemy(); // 몬스터를 전부 켜주기
                     GameManager.instance.isMonsterPanelOn = true; // 몬스터 패널을 켜주기
+                    sword.SetActive(true); // 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 
                 break;

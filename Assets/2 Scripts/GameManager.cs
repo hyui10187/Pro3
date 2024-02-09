@@ -14,9 +14,11 @@ public class GameManager : MonoBehaviour {
     public QuestManager questManager;
     public InventoryManager inventoryManager;
 
-    [Header("Spawn Position")]
+    [Header("Move Position")]
     public Transform housePos;
     public Transform winterFieldPos;
+    public Transform[] upPos;
+    public Transform[] downPos;
 
     [Header("UI")]
     public GameObject startPanel; // 게임 시작 패널
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour {
     public GameObject speedEffect;
     public GameObject expSlider;
     public GameObject saveMessage;
+    public GameObject itemMessage;
 
     [Header("Game Control")]
     public float curGameTime; // 현재 게임시간
@@ -63,6 +66,7 @@ public class GameManager : MonoBehaviour {
     public bool isMonsterPanelOn;
     public bool isMenuPanelOn;
     public bool isNewGame;
+    public bool canEatQuestItem = true; // 퀘스트 아이템을 먹을 수 있는지 플래그값
 
     [Header("Etc")]
     public int talkIndex;
@@ -111,8 +115,6 @@ public class GameManager : MonoBehaviour {
         }
         
         ObjData objData = scanObject.GetComponent<ObjData>();
-        Talk(objData.objId, objData.isNpc);
-        talkPanel.SetActive(isAction); // 대화창을 끄고 켜는 것은 isAction 플래그 값이랑 동일하다
 
         if(scanObject.CompareTag("Heal")) { // 모닥불에게 말을 걸었을 경우
             curHealth += 10; // 체력을 20 회복시키기
@@ -120,15 +122,26 @@ public class GameManager : MonoBehaviour {
             if(curHealth > maxHealth) { // +20 된 체력이 최대 체력보다 크다면
                 curHealth = maxHealth; // 플레이어의 현재 체력을 최대 체력으로 바꿔주기
             }
-        } else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) {
-            FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
-            Inventory.instance.AddItem(fieldItems.GetItem());
-            hasQuestItem = true;
-            
+        } else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) { // 퀘스트 coin 아이템을 먹었을 경우
+
+            if(Inventory.instance.possessItems.Count < Inventory.instance.CurSlotCnt) { // 인벤토리에 슬롯 여분이 있을 경우
+                FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
+                Inventory.instance.AddItem(fieldItems.GetItem());
+                hasQuestItem = true;
+                canEatQuestItem = true;
+
+            } else { // 인벤토리가 꽉 차 있을 경우
+                Inventory.instance.ItemMessageOn();
+                canEatQuestItem = false;
+            }
+
         } else if(scanObject.CompareTag("NPC")) {
             NPC npc = scanObject.GetComponent<NPC>();
             npc.isCollision = true;
         }
+        
+        Talk(objData.objId, objData.isNpc);
+        talkPanel.SetActive(isAction); // 대화창을 끄고 켜는 것은 isAction 플래그 값이랑 동일하다
     }
 
     public void ControlInventory() {
@@ -146,6 +159,10 @@ public class GameManager : MonoBehaviour {
             timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
+
+            if(hasQuestItem) {
+                QuestManager.instance.questItem[0].SetActive(false); // coin 꺼주기
+            }
 
             if(isNpc && objId == 30000) {
                 NPC npc = scanObject.GetComponent<NPC>();
@@ -320,6 +337,11 @@ public class GameManager : MonoBehaviour {
         curHealth = maxHealth; // 체력 초기화
         Player.instance.anim.SetTrigger("start"); // 기본적으로 아래를 바라보는 애니메이션으로 변경
 
+        if(Inventory.instance.possessItems.Count > 0) { // 현재 인벤토리에 보유중인 아이템이 있다면
+            Inventory.instance.possessItems.Clear(); // 보유한 아이템 전부 삭제하기
+            Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
+        }
+
         deadPanel.SetActive(false);
         buffPanel.SetActive(true);
         weatherUI.SetActive(true);
@@ -340,7 +362,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void HelpOnOff() {
+    public void HelpOnOff() { // 우측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
 
         if(!helpPanel.activeSelf) { // Help 창이 꺼져 있다면
             helpPanel.SetActive(true); // 켜주기

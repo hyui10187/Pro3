@@ -219,6 +219,16 @@ public class Player : MonoBehaviour {
             GameManager.instance.curHealth -= bullet.damage; // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
         }
 
+        if(other.gameObject.name == "DownStair 1") {
+            transform.position = GameManager.instance.downPos[0].position;
+        } else if(other.gameObject.name == "DownStair 2") {
+            transform.position = GameManager.instance.downPos[1].position;
+        } else if(other.gameObject.name == "UpStair 1") {
+            transform.position = GameManager.instance.upPos[0].position;
+        } else if(other.gameObject.name == "UpStair 2") {
+            transform.position = GameManager.instance.upPos[1].position;
+        }
+
     }
 
     private void Slide() {
@@ -302,6 +312,10 @@ public class Player : MonoBehaviour {
 
     public void ButtonDown(string type) {
 
+        if(isDead) {
+            return;
+        }
+
         switch(type) {
             case "Up":
                 upValue = 1;
@@ -360,6 +374,10 @@ public class Player : MonoBehaviour {
     }
 
     public void ButtonUp(string type) {
+
+        if(isDead) {
+            return;
+        }
 
         switch(type) { // 버튼에서 손을 떼면 자동으로 값을 0으로 초기화
             case "Up":

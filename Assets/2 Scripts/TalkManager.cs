@@ -28,6 +28,8 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(1200, new string[] { "튼튼해 보이는 나무이다.", "도끼가 있어야 제거할 수 있을것 같다." });
         talkData.Add(1300, new string[] { "럼주가 잘 익어가고 있다." });
         talkData.Add(1400, new string[] { "원목으로 만든 테이블이다." });
+        talkData.Add(1500, new string[] { "금화가 가득 담긴 꾸러미다." });
+        talkData.Add(1600, new string[] { "세월의 흔적이 느껴지는 탁자다." });
 
         // NPC 대사   // NPC 대사는 10000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
