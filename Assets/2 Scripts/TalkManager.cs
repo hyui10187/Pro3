@@ -30,14 +30,23 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(1400, new string[] { "원목으로 만든 테이블이다." });
         talkData.Add(1500, new string[] { "금화가 가득 담긴 꾸러미다." });
         talkData.Add(1600, new string[] { "세월의 흔적이 느껴지는 탁자다." });
+        talkData.Add(1700, new string[] { "세계지도가 걸려있다." });
+        talkData.Add(1800, new string[] { "딱딱한 나무 의자다." });
+        talkData.Add(1900, new string[] { "여러명이 앉을 수 있는 의자다." });
+        talkData.Add(2100, new string[] { "모험에 관한 흥미로운 책들이 꽂혀있다." });
+        talkData.Add(2200, new string[] { "여권에 투숙하는 사람들의 명단이 적혀있다." });
+        talkData.Add(2300, new string[] { "항아리에 귀한 향신료가 담겨있다." });
 
         // NPC 대사   // NPC 대사는 10000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
         talkData.Add(20000, new string[] { "모닥불이 따뜻해서 너무 좋아", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
         talkData.Add(30000, new string[] { "강인한 용사가 되고 싶나?", "실력으로 증명해봐" });
         talkData.Add(40000, new string[] { "이 마을 왼쪽에는 동굴이 있어", "예전에는 그 동굴을 통해 다른 지역으로 갈 수 있었지", "근데 지금은 나무가 동굴 입구를 막고 있어", "누가 나무를 베어주면 정말 좋을텐데" });
-        talkData.Add(50000, new string[] { "지하에는 위험한 몬스터들이 살고 있어", "그래서 함부로 들어갈 수 없도록 막아놓은거야" });
+        talkData.Add(50000, new string[] { "저 아래에는 위험한 몬스터들이 살고 있어", "그래서 아무나 들어갈 수 없도록 막아놓은거야" });
         talkData.Add(60000, new string[] { "여어", "잘 지내지?", "또 보자구" });
+        talkData.Add(70000, new string[] { "저 넓은 세상이 보여?", "나는 언젠가 모든 곳을 여행할꺼야", "그 날을 위해 지금은 준비중이야" });
+        talkData.Add(80000, new string[] { "어서와", "피곤하지?", "여관에서 하루밤 묵고 갈래?" });
+        talkData.Add(90000, new string[] { "너무 배고파", "다 먹어버릴거야" });
         
         talkData.Add(10000 + 10, new string[] { "어서와", "이 마을이 아직 낯설지?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });
         talkData.Add(20000 + 10 + 1, new string[] { "어떡하면 좋지?", "동전을 잃어버렸는데 못찾겠어", "혹시 너가 찾아줄 수 있니?" });

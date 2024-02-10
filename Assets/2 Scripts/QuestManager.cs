@@ -37,9 +37,9 @@ public class QuestManager : MonoBehaviour {
     }
 
     private void GenerateData() {
-        questList.Add(10, new QuestData("콜린과 대화하기", new int[] { 10000, 20000 })); // 콜린, 루나
+        questList.Add(10, new QuestData("카밀과 대화하기", new int[] { 10000, 20000 })); // 카밀, 루나
         questList.Add(20, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
-        questList.Add(30, new QuestData("마을의 근심거리 듣기", new int[] { 10000, 20000 })); // 콜린
+        questList.Add(30, new QuestData("마을의 근심거리 듣기", new int[] { 10000, 20000 })); // 카밀
         questList.Add(40, new QuestData("몬스터 처치하기", new int[] { 0 }));
     }
 
