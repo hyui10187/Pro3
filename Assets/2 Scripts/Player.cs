@@ -220,13 +220,27 @@ public class Player : MonoBehaviour {
         }
 
         if(other.gameObject.name == "DownStair 1") {
-            transform.position = GameManager.instance.downPos[0].position;
+            transform.position = GameManager.instance.downStairPos[0].position;
         } else if(other.gameObject.name == "DownStair 2") {
-            transform.position = GameManager.instance.downPos[1].position;
+            transform.position = GameManager.instance.downStairPos[1].position;
+        } else if(other.gameObject.name == "DownStair 3") {
+            transform.position = GameManager.instance.downStairPos[2].position;
+        } else if(other.gameObject.name == "DownStair 4") {
+            transform.position = GameManager.instance.downStairPos[3].position;
         } else if(other.gameObject.name == "UpStair 1") {
-            transform.position = GameManager.instance.upPos[0].position;
+            transform.position = GameManager.instance.upStairPos[0].position;
         } else if(other.gameObject.name == "UpStair 2") {
-            transform.position = GameManager.instance.upPos[1].position;
+            transform.position = GameManager.instance.upStairPos[1].position;
+        } else if(other.gameObject.name == "UpStair 3") {
+            transform.position = GameManager.instance.upStairPos[2].position;
+        } else if(other.gameObject.name == "UpStair 4") {
+            transform.position = GameManager.instance.upStairPos[3].position;
+        }
+
+        if(other.gameObject.name == "UpLadder 1") {
+            transform.position = GameManager.instance.upLadderPos[0].position;
+        } else if(other.gameObject.name == "DownLadder 1") {
+            transform.position = GameManager.instance.downLadderPos[0].position;
         }
 
     }
@@ -292,7 +306,7 @@ public class Player : MonoBehaviour {
         
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
-        GameManager.instance.ControlInventory();
+        GameManager.instance.OffInventory();
         GameManager.instance.gaugeUI.SetActive(false);
         GameManager.instance.expSlider.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);

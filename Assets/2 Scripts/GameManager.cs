@@ -17,8 +17,10 @@ public class GameManager : MonoBehaviour {
     [Header("Move Position")]
     public Transform housePos;
     public Transform winterFieldPos;
-    public Transform[] upPos;
-    public Transform[] downPos;
+    public Transform[] upStairPos;
+    public Transform[] upLadderPos;
+    public Transform[] downStairPos;
+    public Transform[] downLadderPos;
 
     [Header("UI")]
     public GameObject startPanel; // 게임 시작 패널
@@ -146,6 +148,10 @@ public class GameManager : MonoBehaviour {
 
     public void ControlInventory() {
         inventoryManager.OnOffInventory();
+    }
+
+    public void OffInventory() {
+        inventoryManager.OffInventory();
     }
 
     private void Talk(int objId, bool isNpc) {

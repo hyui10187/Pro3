@@ -11,10 +11,12 @@ public class NPC : MonoBehaviour {
     public int nextMove;
     public int isHorizon;
     public bool isCollision ; // 플레이어랑 충돌했는지 플래그
+    public Vector2 boxSize; // 탐색하는 범위
     
     private Rigidbody2D rigid;
     private Animator anim;
-
+    private Vector3 dirVec;
+    
     private void Awake() {
         instance = this;
         rigid = GetComponent<Rigidbody2D>();
@@ -38,13 +40,19 @@ public class NPC : MonoBehaviour {
         // Move
         if(isHorizon == 1) { // 가로 이동이면
             rigid.velocity = new Vector2(nextMove, 0);
-            Debug.DrawRay(rigid.position, Vector3.right * nextMove, new Color(0, 1, 0));
-            rayHit = Physics2D.Raycast(rigid.position, Vector3.right * nextMove, 1f, LayerMask.GetMask("Wall"));
+            dirVec = Vector3.right * nextMove;
+            
+            //Debug.DrawRay(rigid.position, Vector3.right * nextMove, new Color(0, 1, 0));
+            //rayHit = Physics2D.Raycast(rigid.position, Vector3.right * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
+            rayHit = Physics2D.BoxCast(rigid.position, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object"));
             
         } else { // 세로 이동이면
             rigid.velocity = new Vector2(0, nextMove);
-            Debug.DrawRay(rigid.position, Vector3.up * nextMove, new Color(0, 1, 0));
-            rayHit = Physics2D.Raycast(rigid.position, Vector3.up * nextMove, 1f, LayerMask.GetMask("Wall"));
+            dirVec = Vector3.up * nextMove;
+            
+            //Debug.DrawRay(rigid.position, Vector3.up * nextMove, new Color(0, 1, 0));
+            //rayHit = Physics2D.Raycast(rigid.position, Vector3.up * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
+            rayHit = Physics2D.BoxCast(rigid.position, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object"));
         }
 
         anim.SetBool("isChange", false); // 기본적으로 isChange 플래그 값을 false로 업데이트

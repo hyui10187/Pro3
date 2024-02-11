@@ -72,4 +72,10 @@ public class InventoryManager : MonoBehaviour {
         }
     }
 
+    public void OffInventory() {
+        if(inventoryPanel.activeSelf) {
+            inventoryPanel.SetActive(false); // 죽었을때 인벤토리가 켜져있다면 무조건 꺼주도록
+        }
+    }
+
 }

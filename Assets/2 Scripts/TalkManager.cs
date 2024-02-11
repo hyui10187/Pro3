@@ -23,7 +23,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(600, new string[] { "어려운 책들이 꽂혀있다." });
         talkData.Add(700, new string[] { "창문 밖에 눈보라가 휘몰아치고 있다." });
         talkData.Add(800, new string[] { "잘 자라고 있는 식물이다." });
-        talkData.Add(900, new string[] { "단단한 울타리이다." });
+        talkData.Add(900, new string[] { "단단한 울타리다." });
         talkData.Add(1100, new string[] { "아늑해 보이는 소파이다." });
         talkData.Add(1200, new string[] { "튼튼해 보이는 나무이다.", "도끼가 있어야 제거할 수 있을것 같다." });
         talkData.Add(1300, new string[] { "럼주가 잘 익어가고 있다." });
@@ -36,6 +36,15 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(2100, new string[] { "모험에 관한 흥미로운 책들이 꽂혀있다." });
         talkData.Add(2200, new string[] { "여권에 투숙하는 사람들의 명단이 적혀있다." });
         talkData.Add(2300, new string[] { "항아리에 귀한 향신료가 담겨있다." });
+        talkData.Add(2400, new string[] { "문이 굳게 잠겨있다." });
+        talkData.Add(2500, new string[] { "물이 상당히 깊어 보인다.", "배가 있어야 건널 수 있을것 같다." });
+        talkData.Add(2600, new string[] { "작은 돌멩이다." });
+        talkData.Add(2700, new string[] { "나무의 밑동이다." });
+        talkData.Add(2800, new string[] { "경고!!", "관계자 외에는 절대 아래층으로 내려가지 마시오!" });
+        talkData.Add(2900, new string[] { "견고한 울타리가 막고 있다." });
+        talkData.Add(3100, new string[] { "울타리가 부서져있다." });
+        talkData.Add(3200, new string[] { "약간 무서워 보이는 석상이다." });
+        talkData.Add(3300, new string[] { "오래된 해골이 있다.", "누구의 해골일까?" });
 
         // NPC 대사   // NPC 대사는 10000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
@@ -47,6 +56,9 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(70000, new string[] { "저 넓은 세상이 보여?", "나는 언젠가 모든 곳을 여행할꺼야", "그 날을 위해 지금은 준비중이야" });
         talkData.Add(80000, new string[] { "어서와", "피곤하지?", "여관에서 하루밤 묵고 갈래?" });
         talkData.Add(90000, new string[] { "너무 배고파", "다 먹어버릴거야" });
+        talkData.Add(100000, new string[] { "저 방안에서 이상한 소리가 들려", "무슨 소리일까?" });
+        talkData.Add(110000, new string[] { "모험자여 반갑네", "밖의 추위에 노출되면 금방 얼어죽을걸세", "어서 따뜻한 지하로 가서 몸을 녹이시게" });
+        talkData.Add(120000, new string[] { "사탕먹고 싶다", "언니 혹시 사탕있어?", "칫" });
         
         talkData.Add(10000 + 10, new string[] { "어서와", "이 마을이 아직 낯설지?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });
         talkData.Add(20000 + 10 + 1, new string[] { "어떡하면 좋지?", "동전을 잃어버렸는데 못찾겠어", "혹시 너가 찾아줄 수 있니?" });

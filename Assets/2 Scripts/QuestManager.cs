@@ -109,7 +109,7 @@ public class QuestManager : MonoBehaviour {
                 break;
                 
             case 30:
-                if(questActionIndex == 1) { // 콜린과 대화가 끝나면
+                if(questActionIndex == 1) { // 카밀과 대화가 끝나면
                     SpawnManager.instance.GenerateEnemy(); // 몬스터를 전부 켜주기
                     GameManager.instance.isMonsterPanelOn = true; // 몬스터 패널을 켜주기
                     sword.SetActive(true); // 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
