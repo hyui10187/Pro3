@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Item {
     
-    public enum ItemType { Equipment, Consumables, Quest, Etc }
+    public enum ItemType { Equipment, Consumables, Quest, Material, Etc }
 
     public ItemType itemType;
     public string itemName;

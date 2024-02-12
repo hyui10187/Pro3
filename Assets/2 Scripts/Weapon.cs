@@ -25,7 +25,7 @@ public class Weapon : MonoBehaviour {
     }
 
     private void Fire() {
-        if(!enemy.scanner.target) { // 플레이어가 사정거리의 밖에 있으면 로직 실행안함
+        if(!enemy.scanner.target || enemy.isDead) { // 플레이어가 사정거리의 밖에 있으면 로직 실행안함
             return;
         }
 

@@ -14,6 +14,7 @@ public class Inventory : MonoBehaviour {
 
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
+    public bool hasSword;
 
     public int CurSlotCnt {
         get => curSlotCnt;
@@ -93,27 +94,34 @@ public class Inventory : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
         
-        if(other.CompareTag("FieldItem")) {
+        if(other.CompareTag("Item")) {
+            
             FieldItems fieldItems = other.GetComponent<FieldItems>();
             bool canEat = AddItem(fieldItems.GetItem()); // 아이템을 먹을 수 있는지 판단하는 플래그값
-
+            
             if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
-                fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
+
+                if(fieldItems.item.itemName == "Sword") {
+                    hasSword = true;
+                }
+                
+                Destroy(fieldItems.gameObject);
+                //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
             } else { // 인벤토리가 꽉 차있다면
-                ItemMessageOn();
+                FullMessageOn();
             }
         }
     }
 
-    public void ItemMessageOn() {
-        GameManager.instance.itemMessage.SetActive(true);
+    public void FullMessageOn() {
+        GameManager.instance.fullMessage.SetActive(true);
         CancelInvoke(); // 우선 현재 호출중인 모든 Invoke 메소드 취소
-        Invoke("ItemMessageOff", 2f); // 2초 뒤에 아이템을 먹을 수 없다는 알림 꺼주기
+        Invoke("FullMessageOff", 2f); // 2초 뒤에 아이템을 먹을 수 없다는 알림 꺼주기
     }
     
-    private void ItemMessageOff() {
-        GameManager.instance.itemMessage.SetActive(false);
+    private void FullMessageOff() {
+        GameManager.instance.fullMessage.SetActive(false);
     }
     
 }

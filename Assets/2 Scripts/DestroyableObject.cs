@@ -42,8 +42,14 @@ public class DestroyableObject : MonoBehaviour {
         gameObject.SetActive(false); // 나무를 꺼주기
     }
 
-    private void SpawnItem() { // 나무가 죽으면 열매 아이템을 드랍해주는 메소드
-        ItemManager.instance.DropFruit(transform.position);
+    private void SpawnItem() { // 게임 오브젝트를 부쉈을때 아이템을 생성해주는 메소드
+
+        if(gameObject.CompareTag("Tree")) { // 나무를 부쉈으면
+            ItemManager.instance.DropFruit(transform.position); // 나무 열매를 드랍
+            
+        } else if(gameObject.CompareTag("Stump")) { // 그루터기를 부쉈으면
+            ItemManager.instance.DropWood(transform.position); // 나무를 드랍
+        }
     }
     
 }

@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour {
     public GameObject talkPanel; // 대화창
     public GameObject buffPanel;
     public GameObject deadPanel;
+    public Text talkNpc; // 대화창의 NPC 이름
     public Text talkText; // 대화창의 대화 내용
     public GameObject timePanel; // 시계 패널
     public GameObject questPanel;
@@ -43,7 +44,7 @@ public class GameManager : MonoBehaviour {
     public GameObject speedEffect;
     public GameObject expSlider;
     public GameObject saveMessage;
-    public GameObject itemMessage;
+    public GameObject fullMessage;
 
     [Header("Game Control")]
     public float curGameTime; // 현재 게임시간
@@ -133,16 +134,17 @@ public class GameManager : MonoBehaviour {
                 canEatQuestItem = true;
 
             } else { // 인벤토리가 꽉 차 있을 경우
-                Inventory.instance.ItemMessageOn();
+                Inventory.instance.FullMessageOn();
                 canEatQuestItem = false;
             }
 
-        } else if(scanObject.CompareTag("NPC")) {
+        } else if(scanObject.layer == 10) { // layer 10번은 NPC == 이동형 NPC
             NPC npc = scanObject.GetComponent<NPC>();
             npc.isCollision = true;
+            npc.CancelInvoke();
         }
         
-        Talk(objData.objId, objData.isNpc);
+        Talk(objData.objId, objData.isNpc, scanObject.name);
         talkPanel.SetActive(isAction); // 대화창을 끄고 켜는 것은 isAction 플래그 값이랑 동일하다
     }
 
@@ -154,7 +156,7 @@ public class GameManager : MonoBehaviour {
         inventoryManager.OffInventory();
     }
 
-    private void Talk(int objId, bool isNpc) {
+    private void Talk(int objId, bool isNpc, string npcName) {
         
         int questTalkIndex = questManager.GetQuestTalkIndex();
         string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
@@ -173,16 +175,19 @@ public class GameManager : MonoBehaviour {
             if(isNpc && objId == 30000) {
                 NPC npc = scanObject.GetComponent<NPC>();
                 npc.isCollision = false;
+                npc.Think();
             }
             
             return;
         }
-
-        // Continue Talk
-        if(isNpc) { // 대화를 한게 Npc일 경우에는 이미지도 같이 보여주기
+        
+        if(isNpc) { // 대화를 한게 NPC일 경우에는 NPC의 이름도 같이 보여주기
+            talkNpc.text = npcName;
+            talkNpc.gameObject.SetActive(true); // NPC 표시창도 켜주기
             talkText.text = talkData;
         } else {
-            talkText.text = talkData; // Talk Panel에 가져온 Talk 대사를 뿌려주기 
+            talkNpc.gameObject.SetActive(false);
+            talkText.text = talkData; // Talk Panel에 가져온 Talk 대사를 뿌려주기
         }
 
         isAction = true;
@@ -313,6 +318,23 @@ public class GameManager : MonoBehaviour {
     
     public void GameExit() { // 게임을 종료하는 메소드
         Application.Quit();
+    }
+
+    public void GoToMainMenu() { // 메인메뉴로 나가는 메소드
+
+        isLive = false;
+        
+        helpButton.SetActive(false);
+        keyBoardButton.SetActive(false);
+        gaugeUI.SetActive(false);
+        expSlider.SetActive(false);
+        buffPanel.SetActive(false);
+        helpPanel.SetActive(false);
+        menuPanel.SetActive(false);
+        monsterPanel.SetActive(false);
+        questPanel.SetActive(false);
+        virtualPanel.SetActive(false);
+        startPanel.SetActive(true);
     }
 
     public void NewGame() { // New Game 버튼을 클릭했을때 실행하는 메소드

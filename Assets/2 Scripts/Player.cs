@@ -131,7 +131,7 @@ public class Player : MonoBehaviour {
             GameManager.instance.ControlMenuPanel();
         }
         
-        if(Input.GetButtonDown("Attack") && !isAttack && curTime <= 0) { // 플레이어가 A 키를 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
+        if(Input.GetButtonDown("Attack") && !isAttack && curTime <= 0 && Inventory.instance.hasSword) { // 플레이어가 A 키를 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았으며, 무기를 보유중일 경우
             anim.SetTrigger("attack");
             anim.SetBool("isAttack", true);
             curTime = coolTime; // 쿨타임을 초기화 해줌
@@ -147,7 +147,13 @@ public class Player : MonoBehaviour {
                     enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
                 }
 
-                if(collision.CompareTag("Tree")) {
+                if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 라면
+                    DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                    desObject.curHealth -= 20;
+                    desObject.Damaged();
+                }
+                
+                if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
                     DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
                     desObject.curHealth -= 20;
                     desObject.Damaged();
@@ -185,7 +191,7 @@ public class Player : MonoBehaviour {
         }
 
         Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 1f, LayerMask.GetMask("Object"));
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 1f, LayerMask.GetMask("Object", "NPC"));
                                                                                                                // 네번째 파라미터는 스캔할 Layer
         if(rayHit.collider != null) { // 찾아낸 게임 오브젝트가 뭐라도 있으면
             scanObj = rayHit.collider.gameObject;
@@ -200,21 +206,30 @@ public class Player : MonoBehaviour {
             return;
         }
         
-        if(other.gameObject.tag == "HouseEnter") { // 플레이어가 집으로 들어가면
+        if(other.gameObject.CompareTag("HouseEnter")) { // 플레이어가 집으로 들어가면
             transform.position = GameManager.instance.housePos.position; // 건물 안의 위치로 이동시킴
             GameManager.instance.isHouse = true; // 집으로 들어갔다는 플래그 값을 올려줌
 
-        } else if(other.gameObject.tag == "WinterFieldEnter") { // 플레이어가 밖으로 나가면
+        } else if(other.gameObject.CompareTag("FieldEnter")) { // 플레이어가 필드로 나가면
             transform.position = GameManager.instance.winterFieldPos.position; // 건물 밖의 위치로 이동시킴
             GameManager.instance.isHouse = false; // 집으로 들어갔다는 플래그 값을 내려줌
             
-        } else if(other.gameObject.tag == "Enemy") { // 플레이어가 적한테 맞으면
+        } else if(other.gameObject.CompareTag("Enemy")) { // 플레이어가 적한테 닿으면
+
+            Enemy enemy = other.gameObject.GetComponent<Enemy>();
+            
+            if(enemy.isDead) {
+                return;
+            }
             OnDamaged(other.transform.position);
             
-        } else if(other.gameObject.tag == "Ice") {
+        } else if(other.gameObject.CompareTag("Obstacle")) {
+            OnDamaged(other.transform.position);
+            
+        } else if(other.gameObject.CompareTag("Ice")) { // 얼음
             Slide();
             
-        } else if(other.gameObject.tag == "Bullet") {
+        } else if(other.gameObject.CompareTag("Bullet")) { // 플레이어가 몬스터의 총알에 맞으면
             Bullet bullet = other.GetComponent<Bullet>();
             GameManager.instance.curHealth -= bullet.damage; // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
         }
@@ -358,6 +373,11 @@ public class Player : MonoBehaviour {
                 break;
 
             case "Attack": // 파란색 버튼
+
+                if(!Inventory.instance.hasSword) { // 무기를 보유하고 있지 않으면 공격이 안되도록
+                    break;
+                }
+                
                 if(!isAttack && curTime <= 0) { // 플레이어가 파란색 버튼을 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
                     anim.SetTrigger("attack");
                     anim.SetBool("isAttack", true);
@@ -372,6 +392,18 @@ public class Player : MonoBehaviour {
                             Enemy enemy = collision.gameObject.GetComponent<Enemy>();
                             enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
                             enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
+                        }
+                        
+                        if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 이면
+                            DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                            desObject.curHealth -= 20;
+                            desObject.Damaged();
+                        }
+
+                        if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
+                            DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                            desObject.curHealth -= 20;
+                            desObject.Damaged();
                         }
                     }
                 }

@@ -37,10 +37,11 @@ public class QuestManager : MonoBehaviour {
     }
 
     private void GenerateData() {
-        questList.Add(10, new QuestData("카밀과 대화하기", new int[] { 10000, 20000 })); // 카밀, 루나
-        questList.Add(20, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
-        questList.Add(30, new QuestData("마을의 근심거리 듣기", new int[] { 10000, 20000 })); // 카밀
-        questList.Add(40, new QuestData("몬스터 처치하기", new int[] { 0 }));
+        questList.Add(10, new QuestData("카밀과 대화하기", new int[] { 10000 })); // 카밀
+        questList.Add(20, new QuestData("루나와 대화하기", new int[] { 20000 })); // 루나
+        questList.Add(30, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
+        questList.Add(40, new QuestData("촌장의 근심거리 듣기", new int[] { 110000 })); // 촌장
+        questList.Add(50, new QuestData("몬스터 처치하기", new int[] { 0 }));
     }
 
     private void GenerateQuestItem() {
@@ -83,38 +84,65 @@ public class QuestManager : MonoBehaviour {
     public void ControlObject() {
 
         switch(questId) {
-            case 10:
-                if(questActionIndex == 2) { // 대화를 2번 모두 마쳤을때
-                    questItem[0].SetActive(true); // 동전 켜주기
-                }
+
+            case 10: // 카밀과 대화하기
+                //if(questActionIndex == 2) { // 대화를 2번 모두 마쳤을때
+                //    questItem[0].SetActive(true); // 동전 켜주기
+                //}
                 break;
             
-            case 20:
+            case 20: // 루나와 대화하기
+                if(questActionIndex == 1) { // 루나와 대화가 끝나고 나면
+                    questItem[0].SetActive(true); // 동전 켜주기
+                }
+                
+                
+                // if(questActionIndex == 0) { // 게임을 저장하고 로드했을 경우를 대비하여
+                //     questItem[0].SetActive(true); // 동전 켜주기
+                // }
+                // if(questActionIndex == 2) {
+                //
+                //     int num = Inventory.instance.possessItems.Count;
+                //     
+                //     for(int i = 0; i < num; i++) { // 퀘스트 아이템 coin 인벤토리에서 제거하기
+                //         if(Inventory.instance.possessItems[i].itemType == Item.ItemType.Quest) {
+                //             Inventory.instance.RemoveItem(i);
+                //             break;
+                //         }
+                //     }
+                //     
+                //     ring.SetActive(true); // 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                // }
+                break;
+                
+            case 30: // 루나의 동전 찾아주기
                 if(questActionIndex == 0) { // 게임을 저장하고 로드했을 경우를 대비하여
                     questItem[0].SetActive(true); // 동전 켜주기
                 }
-                if(questActionIndex == 2) {
-
+                if(questActionIndex == 2) { // 코인, 루나와 대화를 마치고 나면
+                
                     int num = Inventory.instance.possessItems.Count;
                     
-                    for(int i = 0; i < num; i++) { // 퀘스트 아이템 coin 인벤토리에서 제거하기
+                    for(int i = 0; i < num; i++) { // 퀘스트 아이템인 coin을 인벤토리에서 제거하기
                         if(Inventory.instance.possessItems[i].itemType == Item.ItemType.Quest) {
                             Inventory.instance.RemoveItem(i);
                             break;
                         }
                     }
                     
-                    ring.SetActive(true); // 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                    ring.SetActive(true); // 루나 앞에 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
-                
-            case 30:
-                if(questActionIndex == 1) { // 카밀과 대화가 끝나면
+            
+            case 40: // 촌장의 근심거리 듣기
+                if(questActionIndex == 1) { // 촌장과 대화가 끝나면
                     SpawnManager.instance.GenerateEnemy(); // 몬스터를 전부 켜주기
                     GameManager.instance.isMonsterPanelOn = true; // 몬스터 패널을 켜주기
-                    sword.SetActive(true); // 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                    sword.SetActive(true); // 촌장 앞에 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
-                
+                break;
+            
+            case 50: // 몬스터 처치하기
                 break;
             
             default:

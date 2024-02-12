@@ -12,6 +12,7 @@ public class FieldItems : MonoBehaviour {
     }
     
     public void SetItem(Item paramItem) {
+        
         item.itemType = paramItem.itemType;
         item.itemName = paramItem.itemName;
         item.itemImage = paramItem.itemImage;

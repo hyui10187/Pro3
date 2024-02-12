@@ -16,7 +16,7 @@ public class NPC : MonoBehaviour {
     private Rigidbody2D rigid;
     private Animator anim;
     private Vector3 dirVec;
-    
+
     private void Awake() {
         instance = this;
         rigid = GetComponent<Rigidbody2D>();
@@ -25,41 +25,67 @@ public class NPC : MonoBehaviour {
 
     private void FixedUpdate() {
 
-        if(!GameManager.instance.isLive) { // 게임이 실행중이 아니라면 이동시키지 않기
-            return;
-        }
+        anim.enabled = true; // 기본적으로 애니메이션은 켜주기
 
-        if(isCollision) {
-            anim.enabled = false; // 애니메이션 꺼주기
-            rigid.mass = 10000;
-            return;
-        }
-
-        RaycastHit2D rayHit;
+        RaycastHit2D[] rayHit = new RaycastHit2D[3];
+        Vector2 rayPos = Vector2.zero;
+        Vector2[] verticalVec = { new Vector2(-0.5f, 0), Vector2.zero, new Vector2(0.5f, 0) }; // 세로 광선의 간격
+        Vector2[] horizontalVec = { new Vector2(0, -0.5f), Vector2.zero, new Vector2(0, 0.5f) }; // 가로 광선의 간격
         
-        // Move
+        // Vector2[] verticalVec = { new Vector2(-0.4f, 1f), new Vector2(0, 1f), new Vector2(0.4f, 1f) }; // 세로 광선의 간격
+        // Vector2[] horizontalVec = { new Vector2(1f, -0.5f), new Vector2(1f, 0), new Vector2(1f, 0.5f) }; // 가로 광선의 간격
+        
+        if(!GameManager.instance.isLive) { // 게임이 실행중이 아니라면 NPC가 스스로 움직이지 않도록
+            return;
+        }
+
+        if(isCollision) { // 플레이어가 이동형 NPC한테 말을 걸었으면
+            anim.enabled = false; // 이동 애니메이션 꺼주기
+            rigid.velocity = Vector2.zero; // 이동 멈추기
+            return;
+        }
+
         if(isHorizon == 1) { // 가로 이동이면
             rigid.velocity = new Vector2(nextMove, 0);
             dirVec = Vector3.right * nextMove;
+
+            for(int i = 0; i < 3; i++) {
+                rayPos = rigid.position + (horizontalVec[i] * nextMove);
+                Debug.DrawRay(rayPos, dirVec * 1f, Color.green);
+                rayHit[i] = Physics2D.Raycast(rayPos, dirVec, 1f, LayerMask.GetMask("Wall", "Object", "Player"));
+            }
             
-            //Debug.DrawRay(rigid.position, Vector3.right * nextMove, new Color(0, 1, 0));
-            //rayHit = Physics2D.Raycast(rigid.position, Vector3.right * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
-            rayHit = Physics2D.BoxCast(rigid.position, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object"));
-            
+            // Debug.DrawRay(rigid.position, Vector3.right * nextMove * 1.2f, Color.green);
+            // rayHit = Physics2D.Raycast(rigid.position, Vector3.right * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
+            // rayHit = Physics2D.BoxCast(rigid.position * 1.5f, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object", "Player"));
+
         } else { // 세로 이동이면
             rigid.velocity = new Vector2(0, nextMove);
             dirVec = Vector3.up * nextMove;
             
-            //Debug.DrawRay(rigid.position, Vector3.up * nextMove, new Color(0, 1, 0));
-            //rayHit = Physics2D.Raycast(rigid.position, Vector3.up * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
-            rayHit = Physics2D.BoxCast(rigid.position, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object"));
+            for(int i = 0; i < 3; i++) {
+                rayPos = rigid.position + (verticalVec[i] * nextMove);
+                Debug.DrawRay(rayPos, dirVec * 1f, Color.green);
+                rayHit[i] = Physics2D.Raycast(rayPos, dirVec, 1f, LayerMask.GetMask("Wall", "Object", "Player"));
+            }
+
+            // Debug.DrawRay(rigid.position, Vector3.up * nextMove * 1.2f, Color.green);
+            // rayHit = Physics2D.Raycast(rigid.position, Vector3.up * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
+            // rayHit = Physics2D.BoxCast(rigid.position * 1.5f, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object", "Player"));
         }
 
         anim.SetBool("isChange", false); // 기본적으로 isChange 플래그 값을 false로 업데이트
-        
-        if(rayHit.collider != null) {
-            Turn();
+
+        for(int i = 0; i < rayHit.Length; i++) {
+            if(rayHit[i].collider != null) {
+                Turn();
+                break;
+            }
         }
+        
+        // if(rayHit.collider != null) {
+        //     Turn();
+        // }
     }
 
     public void Think() { // NPC가 어디로 이동할지 생각하는 메소드
