@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour {
     public GameObject talkPanel; // 대화창
     public GameObject buffPanel;
     public GameObject deadPanel;
-    public Text talkNpc; // 대화창의 NPC 이름
+    public GameObject goldPanel;
     public Text talkText; // 대화창의 대화 내용
     public GameObject timePanel; // 시계 패널
     public GameObject questPanel;
@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour {
     public GameObject expSlider;
     public GameObject saveMessage;
     public GameObject fullMessage;
+    public GameObject acquisitionMessage;
+    public GameObject cantAttackMessage;
 
     [Header("Game Control")]
     public float curGameTime; // 현재 게임시간
@@ -59,6 +61,8 @@ public class GameManager : MonoBehaviour {
     public float maxMana;
     public float curExp; // 플레이어의 현재 경험치
     public float maxExp; // 레벨업을 하기 위한 경험치
+    public int curGold;
+    public int startGold;
     public int level;
 
     [Header("Flag")]
@@ -86,6 +90,7 @@ public class GameManager : MonoBehaviour {
         }
         
         curHealth = maxHealth; // 게임 처음 시작시 현재 체력(health)을 최대 체력(maxHealth)으로 초기화
+        curGold = startGold;
         curMoveSpeed = originMoveSpeed; // 게임 처음 시작시 현재 이동속도(curMoveSpeed)를 기본 이동속도(originMoveSpeed)로 초기화
         //curMana = maxMana; // 게임 처음 시작시 현재 마나(mana)를 최대 마나(maxMana)로 초기화
         currentQuestText.text = questManager.CheckQuest();
@@ -125,14 +130,20 @@ public class GameManager : MonoBehaviour {
             if(curHealth > maxHealth) { // +20 된 체력이 최대 체력보다 크다면
                 curHealth = maxHealth; // 플레이어의 현재 체력을 최대 체력으로 바꿔주기
             }
-        } else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) { // 퀘스트 coin 아이템을 먹었을 경우
+        } else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) { // 퀘스트 아이템인 Coin한테 말을 걸었을 경우
+            
+            //scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 Coin을 Trigger로 만들어줘서 먹을 수 있게 해주기
 
+            //else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) { // 퀘스트 아이템인 Coin을 먹었을 경우
             if(Inventory.instance.possessItems.Count < Inventory.instance.CurSlotCnt) { // 인벤토리에 슬롯 여분이 있을 경우
-                FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
-                Inventory.instance.AddItem(fieldItems.GetItem());
+                //FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
+                //Inventory.instance.AddItem(fieldItems.GetItem());
+                // scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 Coin을 
+                // scanObject.transform.position = player.transform.position; // 반지 아이템을 플레이어의 위치로 옮겨줌
+            
                 hasQuestItem = true;
                 canEatQuestItem = true;
-
+            
             } else { // 인벤토리가 꽉 차 있을 경우
                 Inventory.instance.FullMessageOn();
                 canEatQuestItem = false;
@@ -168,8 +179,11 @@ public class GameManager : MonoBehaviour {
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
 
-            if(hasQuestItem) {
-                QuestManager.instance.questItem[0].SetActive(false); // coin 꺼주기
+            if(hasQuestItem && QuestManager.instance.questItem[0] != null) {
+                scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 Coin을 Trigger로 만들어주기
+                scanObject.SetActive(false); // 퀘스트 아이템인 Coin을 꺼주기
+                scanObject.transform.position = player.transform.position; // 퀘스트 아이템인 Coin을 플레이어의 위치로 옮겨줌
+                scanObject.SetActive(true); // 퀘스트 아이템인 Coin을 다시 켜줘서 바로 먹어지도록 하기
             }
 
             if(isNpc && objId == 30000) {
@@ -182,11 +196,8 @@ public class GameManager : MonoBehaviour {
         }
         
         if(isNpc) { // 대화를 한게 NPC일 경우에는 NPC의 이름도 같이 보여주기
-            talkNpc.text = npcName;
-            talkNpc.gameObject.SetActive(true); // NPC 표시창도 켜주기
-            talkText.text = talkData;
+            talkText.text = npcName + " : " + talkData;
         } else {
-            talkNpc.gameObject.SetActive(false);
             talkText.text = talkData; // Talk Panel에 가져온 Talk 대사를 뿌려주기
         }
 
@@ -276,6 +287,7 @@ public class GameManager : MonoBehaviour {
         questPanel.SetActive(true);  // 퀘스트 패널 켜주기
         keyBoardButton.SetActive(true); // 키보드 버튼 켜주기
         helpButton.SetActive(true);
+        goldPanel.SetActive(true);
         startPanel.SetActive(false); // 시작 메뉴 패널 꺼주기
     }
 
@@ -334,6 +346,7 @@ public class GameManager : MonoBehaviour {
         monsterPanel.SetActive(false);
         questPanel.SetActive(false);
         virtualPanel.SetActive(false);
+        goldPanel.SetActive(false);
         startPanel.SetActive(true);
     }
 
@@ -343,7 +356,8 @@ public class GameManager : MonoBehaviour {
         isLive = true;
         Player.instance.isDead = false;
         isHouse = false; // 기본적으로 밖에서 시작하니까
-
+        curGold = startGold;
+        
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {
                 Transform targetObject = ItemManager.instance.fieldItemParent.transform.GetChild(i);
@@ -374,6 +388,7 @@ public class GameManager : MonoBehaviour {
         buffPanel.SetActive(true);
         weatherUI.SetActive(true);
         questPanel.SetActive(true);  // 퀘스트 패널 켜주기
+        goldPanel.SetActive(true);
         keyBoardButton.SetActive(true); // 키보드 버튼 켜주기
         helpButton.SetActive(true);
         startPanel.SetActive(false); // 시작 메뉴 패널 꺼주기
@@ -398,6 +413,14 @@ public class GameManager : MonoBehaviour {
         } else {
             helpPanel.SetActive(false);
         }
+    }
+
+    private void PanelOn() {
+        
+    }
+    
+    private void PanelOff() {
+        
     }
 
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour {
 
@@ -94,17 +95,18 @@ public class Inventory : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
         
-        if(other.CompareTag("Item")) {
+        if(other.CompareTag("Item") || other.CompareTag("QuestItem")) { // 닿은 물체의 태그가 Item이거나 QuestItem 이라면
             
             FieldItems fieldItems = other.GetComponent<FieldItems>();
             bool canEat = AddItem(fieldItems.GetItem()); // 아이템을 먹을 수 있는지 판단하는 플래그값
             
             if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
-
+                
                 if(fieldItems.item.itemName == "Sword") {
                     hasSword = true;
                 }
-                
+
+                AcquisitionMessageOn(fieldItems.item.itemName);
                 Destroy(fieldItems.gameObject);
                 //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
@@ -114,6 +116,18 @@ public class Inventory : MonoBehaviour {
         }
     }
 
+    private void AcquisitionMessageOn(String itemName) {
+        Text acquisitionText = GameManager.instance.acquisitionMessage.GetComponentInChildren<Text>();
+        acquisitionText.text = itemName + "\n아이템을 획득하였습니다.";
+        GameManager.instance.acquisitionMessage.SetActive(true);
+        CancelInvoke(); // 우선 현재 호출중인 모든 Invoke 메소드 취소
+        Invoke("AcquisitionMessageOff", 2f); // 2초 뒤에 아이템을 먹을 수 없다는 알림 꺼주기
+    }    
+
+    private void AcquisitionMessageOff() {
+        GameManager.instance.acquisitionMessage.SetActive(false);
+    }
+    
     public void FullMessageOn() {
         GameManager.instance.fullMessage.SetActive(true);
         CancelInvoke(); // 우선 현재 호출중인 모든 Invoke 메소드 취소
@@ -123,5 +137,5 @@ public class Inventory : MonoBehaviour {
     private void FullMessageOff() {
         GameManager.instance.fullMessage.SetActive(false);
     }
-    
+
 }

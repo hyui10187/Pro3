@@ -131,7 +131,13 @@ public class Player : MonoBehaviour {
             GameManager.instance.ControlMenuPanel();
         }
         
-        if(Input.GetButtonDown("Attack") && !isAttack && curTime <= 0 && Inventory.instance.hasSword) { // 플레이어가 A 키를 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았으며, 무기를 보유중일 경우
+        if(Input.GetButtonDown("Attack") && !isAttack && curTime <= 0) { // 플레이어가 A 키를 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
+
+            if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
+                cantAttackMessageOn(); // 공격불가 알림메시지 띄워주기
+                return;
+            }
+            
             anim.SetTrigger("attack");
             anim.SetBool("isAttack", true);
             curTime = coolTime; // 쿨타임을 초기화 해줌
@@ -257,9 +263,18 @@ public class Player : MonoBehaviour {
         } else if(other.gameObject.name == "DownLadder 1") {
             transform.position = GameManager.instance.downLadderPos[0].position;
         }
-
     }
 
+    private void cantAttackMessageOn() {
+        GameManager.instance.cantAttackMessage.SetActive(true); // 공격불가 알림메시지 켜주기
+        CancelInvoke("cantAttackMessageOff");
+        Invoke("cantAttackMessageOff", 2f);
+    }
+
+    private void cantAttackMessageOff() {
+        GameManager.instance.cantAttackMessage.SetActive(false);
+    }
+    
     private void Slide() {
 
         if(h != 0) {
@@ -373,8 +388,9 @@ public class Player : MonoBehaviour {
                 break;
 
             case "Attack": // 파란색 버튼
-
-                if(!Inventory.instance.hasSword) { // 무기를 보유하고 있지 않으면 공격이 안되도록
+                
+                if(!Inventory.instance.hasSword) { // 무기를 보유하고 있지 않으면
+                    cantAttackMessageOn(); // 공격불가 알림메시지 켜주기
                     break;
                 }
                 

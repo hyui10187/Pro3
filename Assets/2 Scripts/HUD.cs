@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class HUD : MonoBehaviour {
     
-    public enum InfoType { Health, Mana, Time, Level , Exp, Monster }
+    public enum InfoType { Health, Mana, Time, Level , Exp, Monster, Gold }
 
     public InfoType type;
 
@@ -53,6 +53,10 @@ public class HUD : MonoBehaviour {
             
             case InfoType.Monster:
                 uiText.text = "X " + SpawnManager.instance.enemyCount;
+                break;
+            
+            case InfoType.Gold:
+                uiText.text = GameManager.instance.curGold.ToString();
                 break;
         }
     }

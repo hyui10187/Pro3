@@ -92,7 +92,7 @@ public class QuestManager : MonoBehaviour {
                 break;
             
             case 20: // 루나와 대화하기
-                if(questActionIndex == 1) { // 루나와 대화가 끝나고 나면
+                if(questActionIndex == 1 && questItem[0] != null) { // 루나와 대화가 끝나고 나면
                     questItem[0].SetActive(true); // 동전 켜주기
                 }
                 
@@ -116,7 +116,7 @@ public class QuestManager : MonoBehaviour {
                 break;
                 
             case 30: // 루나의 동전 찾아주기
-                if(questActionIndex == 0) { // 게임을 저장하고 로드했을 경우를 대비하여
+                if(questActionIndex == 0 && questItem[0] != null) { // 게임을 저장하고 로드했을 경우를 대비하여
                     questItem[0].SetActive(true); // 동전 켜주기
                 }
                 if(questActionIndex == 2) { // 코인, 루나와 대화를 마치고 나면
