@@ -68,8 +68,8 @@ public class Enemy : MonoBehaviour {
         Invoke("SpawnItem", 2.1f);
     }
 
-    private void SpawnItem() { // 몬스터가 죽으면 아이템을 드랍해주는 메소드
-        ItemManager.instance.DropItem(transform.position);
+    private void SpawnItem() { // 몬스터가 죽으면 Gold를 드랍해주는 메소드
+        ItemManager.instance.DropGold(transform.position);
     }
 
     private void Delete() { // 몬스터의 묘지를 꺼주는 메소드

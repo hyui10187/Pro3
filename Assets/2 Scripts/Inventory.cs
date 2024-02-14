@@ -98,6 +98,23 @@ public class Inventory : MonoBehaviour {
         if(other.CompareTag("Item") || other.CompareTag("QuestItem")) { // 닿은 물체의 태그가 Item이거나 QuestItem 이라면
             
             FieldItems fieldItems = other.GetComponent<FieldItems>();
+
+            if(fieldItems.item.itemName == "SmallGold") {
+                GameManager.instance.curGold += 5;
+                Destroy(fieldItems.gameObject);
+                return;
+                
+            } else if(fieldItems.item.itemName == "MiddleGold") {
+                GameManager.instance.curGold += 10;
+                Destroy(fieldItems.gameObject);
+                return;
+                
+            } else if(fieldItems.item.itemName == "LargeGold") {
+                GameManager.instance.curGold += 15;
+                Destroy(fieldItems.gameObject);
+                return;
+            }
+            
             bool canEat = AddItem(fieldItems.GetItem()); // 아이템을 먹을 수 있는지 판단하는 플래그값
             
             if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
@@ -114,6 +131,7 @@ public class Inventory : MonoBehaviour {
                 FullMessageOn();
             }
         }
+        
     }
 
     private void AcquisitionMessageOn(String itemName) {

@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour {
     public float maxExp; // 레벨업을 하기 위한 경험치
     public int curGold;
     public int startGold;
-    public int level;
+    public int curLevel;
 
     [Header("Flag")]
     public bool isLive; // 게임이 진행중인지 체크하는 플래그
@@ -185,10 +185,16 @@ public class GameManager : MonoBehaviour {
                 scanObject.transform.position = player.transform.position; // 퀘스트 아이템인 Coin을 플레이어의 위치로 옮겨줌
                 scanObject.SetActive(true); // 퀘스트 아이템인 Coin을 다시 켜줘서 바로 먹어지도록 하기
             }
+            
+            if(scanObject.CompareTag("Stone")) {
+                ItemManager.instance.DropMaterial(player.transform.position, 1); // 돌맹이 재료 아이템과 대화가 끝나면 해당 아이템을 플레이어의 위치에 생성
+                scanObject.SetActive(false); // 그리고 기존에 대화한 돌맹이 오브젝트는 꺼주기
+            }
 
             if(isNpc && objId == 30000) {
                 NPC npc = scanObject.GetComponent<NPC>();
                 npc.isCollision = false;
+                npc.CancelInvoke();
                 npc.Think();
             }
             
@@ -222,7 +228,7 @@ public class GameManager : MonoBehaviour {
 
         if(curExp >= maxExp) {
             curExp -= maxExp;
-            level++;
+            curLevel++;
         }
     }
     
@@ -296,10 +302,18 @@ public class GameManager : MonoBehaviour {
     }
 
     public void GameSave() {
+        
+        int tempIsHouse = isHouse ? 1 : 0;
+        
         PlayerPrefs.SetFloat("PlayerX", player.transform.position.x);
         PlayerPrefs.SetFloat("PlayerY", player.transform.position.y);
         PlayerPrefs.SetInt("QuestId", questManager.questId);
         PlayerPrefs.SetInt("QuestActionIndex", questManager.questActionIndex);
+        PlayerPrefs.SetInt("isHouse", tempIsHouse);
+        PlayerPrefs.SetInt("Level", curLevel);
+        PlayerPrefs.SetInt("Gold", curGold);
+        PlayerPrefs.SetFloat("Health", curHealth);
+        PlayerPrefs.SetFloat("Mana", curMana);
         PlayerPrefs.Save();
 
         menuPanel.SetActive(false);
@@ -313,7 +327,8 @@ public class GameManager : MonoBehaviour {
 
     public void GameLoad() {
 
-        if(!PlayerPrefs.HasKey("PlayerX")) {
+        if(!PlayerPrefs.HasKey("PlayerX")) { // 한번도 저장한 적이 없으면
+            NewGame(); // 새로운 게임을 시작
             return;
         }
         

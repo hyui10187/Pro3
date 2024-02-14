@@ -39,7 +39,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(2400, new string[] { "문이 굳게 잠겨있다.", "열쇠가 있어야 열 수 있을것 같다." });
         talkData.Add(2500, new string[] { "물이 상당히 깊어 보인다.", "배가 있어야 건널 수 있을것 같다." });
         talkData.Add(2600, new string[] { "작은 돌멩이다." });
-        talkData.Add(2700, new string[] { "큰 나무의 밑동이다." });
+        talkData.Add(2700, new string[] { "큰 나무의 밑동이다.", "부수면 목재를 많이 얻을 수 있을것 같다." });
         talkData.Add(2800, new string[] { "경고!!", "관계자 외에는 절대 아래층으로 내려가지 마시오!" });
         talkData.Add(2900, new string[] { "견고한 울타리가 막고 있다." });
         talkData.Add(3100, new string[] { "울타리가 부서져있다." });

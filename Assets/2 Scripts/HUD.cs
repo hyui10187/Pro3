@@ -42,7 +42,7 @@ public class HUD : MonoBehaviour {
                 break;
             
             case InfoType.Level:
-                uiText.text = GameManager.instance.level.ToString();
+                uiText.text = GameManager.instance.curLevel.ToString();
                 break;
             
             case InfoType.Exp:

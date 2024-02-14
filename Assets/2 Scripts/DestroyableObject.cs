@@ -48,8 +48,16 @@ public class DestroyableObject : MonoBehaviour {
             ItemManager.instance.DropFruit(transform.position); // 나무 열매를 드랍
             
         } else if(gameObject.CompareTag("Stump")) { // 그루터기를 부쉈으면
-            ItemManager.instance.DropWood(transform.position); // 나무를 드랍
+
+            if(gameObject.name.Contains("BigStump")) { // 큰나무 밑동일 경우
+                ItemManager.instance.DropMaterial(transform.position, 0); // 목재를 2개 드랍해주기
+                ItemManager.instance.DropMaterial(transform.position, 0);
+                return;
+            }
+            
+            ItemManager.instance.DropMaterial(transform.position, 0); // 나무를 드랍
         }
+        
     }
     
 }
