@@ -8,8 +8,11 @@ public class Player : MonoBehaviour {
     
     public static Player instance;
     
+    [Header("Move")]
     public float h;
     public float v;
+    public float x;
+    public float y;
 
     [Header("Flag")]
     public bool isHorizonMove; // 대각선 이동을 막아주기 위한 플래그 변수
@@ -37,6 +40,7 @@ public class Player : MonoBehaviour {
     public bool downUp;
     public bool leftUp;
     public bool rightUp;
+    public VirtualJoystick virtualJoystick;
     
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
@@ -59,10 +63,13 @@ public class Player : MonoBehaviour {
         if(curTime > 0) {
             curTime -= Time.deltaTime;
         }
+
+        x = virtualJoystick.Horizontal();
+        y = virtualJoystick.Vertical();
         
         // Move Value
-        h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal") + leftValue + rightValue; // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
-        v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical") + upValue + downValue;
+        h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal") + leftValue + rightValue + x; // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
+        v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical") + upValue + downValue + y;
 
         // Check Button Down & Up
         bool hDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Horizontal") || leftDown || rightDown; // 버튼을 누른 여부를 저장하는 변수들도 isAction 플래그값을 기준으로 결정한다
@@ -192,8 +199,9 @@ public class Player : MonoBehaviour {
         }
 
         if(!isDamaged && !isSlide && !isAttack) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
-            Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
-            rigid.velocity = moveVec * moveSpeed;
+            //Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
+            //rigid.velocity = moveVec * moveSpeed;
+            rigid.velocity = new Vector2(h, v) * moveSpeed;
         }
 
         Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
