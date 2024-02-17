@@ -11,8 +11,8 @@ public class Player : MonoBehaviour {
     [Header("Move")]
     public float h;
     public float v;
-    public float x;
-    public float y;
+    public float touchX; // 조이스틱에서 받아온 x 값
+    public float touchY; // 조이스틱에서 받아온 y 값
 
     [Header("Flag")]
     public bool isHorizonMove; // 대각선 이동을 막아주기 위한 플래그 변수
@@ -20,7 +20,6 @@ public class Player : MonoBehaviour {
     public bool isDead; // 플레이어가 죽었는지 체크하기 위한 변수
     public bool isSlide;
     public bool isAttack;
-    public bool hasWeapon; // 무기를 소유하고 있는지 플래그
 
     [Header("Attack")]
     public Vector2 boxSize; // 공격이 적중되는 범위
@@ -64,12 +63,11 @@ public class Player : MonoBehaviour {
             curTime -= Time.deltaTime;
         }
 
-        x = virtualJoystick.Horizontal();
-        y = virtualJoystick.Vertical();
-        
+        JoystickTouch();
+
         // Move Value
-        h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal") + leftValue + rightValue + x; // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
-        v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical") + upValue + downValue + y;
+        h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal") + leftValue + rightValue; // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
+        v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical") + upValue + downValue;
 
         // Check Button Down & Up
         bool hDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Horizontal") || leftDown || rightDown; // 버튼을 누른 여부를 저장하는 변수들도 isAction 플래그값을 기준으로 결정한다
@@ -82,7 +80,8 @@ public class Player : MonoBehaviour {
             isHorizonMove = true;
         } else if(vDown) {
             isHorizonMove = false;
-        } else if(hUp || vUp) {
+        }
+        else if(hUp || vUp) {
             isHorizonMove = h != 0;
         }
 
@@ -125,8 +124,8 @@ public class Player : MonoBehaviour {
         }
 
         // Scan Object
-        if(Input.GetButtonDown("Jump") && scanObj != null) { // 플레이어가 스페이스 바를 눌렀으면서 스캔한 오브젝트가 있는 경우
-            GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
+        if(Input.GetButtonDown("Jump")) { // 플레이어가 스페이스 바를 눌렀으면
+            PlayerAction();
         }
 
         // Inventory Open/Close
@@ -138,40 +137,8 @@ public class Player : MonoBehaviour {
             GameManager.instance.ControlMenuPanel();
         }
         
-        if(Input.GetButtonDown("Attack") && !isAttack && curTime <= 0) { // 플레이어가 A 키를 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
-
-            if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
-                cantAttackMessageOn(); // 공격불가 알림메시지 띄워주기
-                return;
-            }
-            
-            anim.SetTrigger("attack");
-            anim.SetBool("isAttack", true);
-            curTime = coolTime; // 쿨타임을 초기화 해줌
-            isAttack = true;
-
-            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
-
-            foreach(Collider2D collision in collider2Ds) {
-
-                if(collision.CompareTag("Enemy")) { // 플레이어의 공격에 맞은게 Enemy 라면 
-                    Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-                    enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
-                    enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
-                }
-
-                if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 라면
-                    DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                    desObject.curHealth -= 20;
-                    desObject.Damaged();
-                }
-                
-                if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
-                    DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                    desObject.curHealth -= 20;
-                    desObject.Damaged();
-                }
-            }
+        if(Input.GetButtonDown("Attack")) { // 플레이어가 A 키를 눌렀으면
+            PlayerAttack();
         }
         
         // Mobile Var Init   // 모바일용 변수들은 매 프레임마다 초기화 해주기
@@ -179,13 +146,106 @@ public class Player : MonoBehaviour {
         downDown = false;
         leftDown = false;
         rightDown = false;
-        upUp = false;
-        downUp = false;
-        leftUp = false;
-        rightUp = false;
     }
 
-    private void OnDrawGizmos() { // 피격범위 박스를 에디터에서 표시하기 위한 메소드
+    public void PlayerAction() {
+        if(scanObj != null) {
+            GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
+        }
+    }
+
+    public void PlayerAttack() {
+
+        if(isAttack && curTime > 0) { // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있으면 돌려보내기
+            return;
+        }
+        
+        if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
+            cantAttackMessageOn(); // 공격불가 알림메시지 띄워주기
+            return;
+        }
+            
+        anim.SetTrigger("attack");
+        anim.SetBool("isAttack", true);
+        curTime = coolTime; // 쿨타임을 초기화 해줌
+        isAttack = true;
+
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
+
+        foreach(Collider2D collision in collider2Ds) {
+
+            if(collision.CompareTag("Enemy")) { // 플레이어의 공격에 맞은게 Enemy 라면 
+                Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+                enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
+                enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
+            }
+
+            if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 라면
+                DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                desObject.curHealth -= 20;
+                desObject.Damaged();
+            }
+                
+            if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
+                DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                desObject.curHealth -= 20;
+                desObject.Damaged();
+            }
+        }
+    }
+    
+    private void JoystickTouch() { // 가상 조이스틱 터치
+        touchX = virtualJoystick.TouchHorizontal();
+        touchY = virtualJoystick.TouchVertical();
+        
+        if(Mathf.Abs(touchY) < Mathf.Abs(touchX)) { // x 값이 y 값보다 경우
+
+            touchY = 0;
+
+            if(0 < touchX) {
+                rightDown = true;
+                upValue = 0;
+                downValue = 0;
+                leftValue = 0;
+                rightValue = 1;
+            } else {
+                leftDown = true;
+                upValue = 0;
+                downValue = 0;
+                rightValue = 0;
+                leftValue = -1;
+            }
+
+        } else if(Mathf.Abs(touchY) > Mathf.Abs(touchX)) { // y값이 더 클 경우
+         
+            touchX = 0;
+
+            if(0 < touchY) {
+                upDown = true;
+                rightValue = 0;
+                leftValue = 0;
+                downValue = 0;
+                upValue = 1;
+            } else {
+                downDown = true;
+                rightValue = 0;
+                leftValue = 0;
+                upValue = 0;
+                downValue = -1;
+            }
+            
+        } else { // x와 y의 값이 동일할 경우
+            touchX = 0;
+            touchY = 0;
+            rightValue = 0;
+            leftValue = 0;
+            upValue = 0;
+            downValue = 0;
+        }
+        
+    }
+    
+    private void OnDrawGizmos() { // 피격범위 박스를 유니티 에디터에서 표시하기 위한 메소드
         Gizmos.color = Color.red; // 박스의 색상은 빨간색으로
         Gizmos.DrawWireCube(transform.position + dirVec, boxSize);
     }
@@ -199,9 +259,9 @@ public class Player : MonoBehaviour {
         }
 
         if(!isDamaged && !isSlide && !isAttack) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
-            //Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
-            //rigid.velocity = moveVec * moveSpeed;
-            rigid.velocity = new Vector2(h, v) * moveSpeed;
+            Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
+            rigid.velocity = moveVec * moveSpeed;
+            //rigid.velocity = new Vector2(h, v) * moveSpeed;
         }
 
         Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
@@ -308,7 +368,7 @@ public class Player : MonoBehaviour {
         if(isDead) {
             return;
         }
-            
+
         gameObject.layer = 10; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해준다
         sprite.color = new Color(1, 1, 1, 0.4f);
 
@@ -344,7 +404,6 @@ public class Player : MonoBehaviour {
         
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
-        GameManager.instance.OffInventory();
         GameManager.instance.gaugeUI.SetActive(false);
         GameManager.instance.expSlider.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
@@ -362,115 +421,4 @@ public class Player : MonoBehaviour {
         isAttack = false;
     }
 
-    public void ButtonDown(string type) {
-
-        if(isDead) {
-            return;
-        }
-
-        switch(type) {
-            case "Up":
-                upValue = 1;
-                upDown = true;
-                break;
-            
-            case "Down":
-                downValue = -1;
-                downDown = true;
-                break;
-            
-            case "Left":
-                leftValue = -1;
-                leftDown = true;
-                break;
-            
-            case "Right":
-                rightValue = 1;
-                rightDown = true;
-                break;
-            
-            case "Space": // 초록색 버튼
-                if(scanObj != null) {
-                    GameManager.instance.Action(scanObj);
-                }
-                break;
-
-            case "Attack": // 파란색 버튼
-                
-                if(!Inventory.instance.hasSword) { // 무기를 보유하고 있지 않으면
-                    cantAttackMessageOn(); // 공격불가 알림메시지 켜주기
-                    break;
-                }
-                
-                if(!isAttack && curTime <= 0) { // 플레이어가 파란색 버튼을 눌렀으며, 공격 중이 아니며, 쿨타임이 안남았을 경우
-                    anim.SetTrigger("attack");
-                    anim.SetBool("isAttack", true);
-                    curTime = coolTime; // 쿨타임을 초기화 해줌
-                    isAttack = true;
-
-                    Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
-
-                    foreach(Collider2D collision in collider2Ds) {
-
-                        if(collision.CompareTag("Enemy")) { // 플레이어의 공격에 맞은게 Enemy 라면 
-                            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-                            enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
-                            enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
-                        }
-                        
-                        if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 이면
-                            DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                            desObject.curHealth -= 20;
-                            desObject.Damaged();
-                        }
-
-                        if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
-                            DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                            desObject.curHealth -= 20;
-                            desObject.Damaged();
-                        }
-                    }
-                }
-                break;
-            
-            case "Inventory": // 파란색 버튼
-                GameManager.instance.ControlInventory();
-                break;
-            
-            case "ESC": // 빨간색 버튼
-                GameManager.instance.ControlMenuPanel();
-                break;
-        }
-    }
-
-    public void ButtonUp(string type) {
-
-        if(isDead) {
-            return;
-        }
-
-        switch(type) { // 버튼에서 손을 떼면 자동으로 값을 0으로 초기화
-            case "Up":
-                upValue = 0;
-                upUp = true;
-                break;
-            
-            case "Down":
-                downValue = 0;
-                downUp = true;
-                break;
-            
-            case "Left":
-                leftValue = 0;
-                leftUp = true;
-                break;
-            
-            case "Right":
-                rightValue = 0;
-                rightUp = true;
-                break;
-        }
-        
-    }
-    
 }

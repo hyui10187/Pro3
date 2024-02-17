@@ -8,7 +8,6 @@ public class InventoryManager : MonoBehaviour {
 
     public static InventoryManager instance;
     
-    public GameObject inventoryPanel;
     public Slot[] slots;
     public Transform slotHolder;
     public int maxSlotNum; // 확장할 수 있는 최대 슬롯갯수
@@ -64,17 +63,11 @@ public class InventoryManager : MonoBehaviour {
     
     public void OnOffInventory() {
 
-        if(!inventoryPanel.activeSelf) {
-            inventoryPanel.SetActive(true);
+        if(!GameManager.instance.inventoryPanel.activeSelf) {
+            GameManager.instance.inventoryPanel.SetActive(true);
             
         } else {
-            inventoryPanel.SetActive(false);
-        }
-    }
-
-    public void OffInventory() {
-        if(inventoryPanel.activeSelf) {
-            inventoryPanel.SetActive(false); // 죽었을때 인벤토리가 켜져있다면 무조건 꺼주도록
+            GameManager.instance.inventoryPanel.SetActive(false);
         }
     }
 

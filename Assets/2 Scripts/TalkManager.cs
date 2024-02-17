@@ -55,6 +55,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(4200, new string[] { "거대한 동굴이 있다.", "입구가 나무로 막혀있어서 들어갈 수 없다." });
         talkData.Add(4300, new string[] { "울창한 숲이 펼쳐져있다.", "나무가 빽빽해서 더이상 나아갈 수 없다." });
         talkData.Add(4400, new string[] { "탐스러운 버섯이다." });
+        talkData.Add(4500, new string[] { "반짝이는 식물이다." });
 
         // NPC 대사   // NPC 대사는 10000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
