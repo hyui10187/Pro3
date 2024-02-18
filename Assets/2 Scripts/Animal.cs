@@ -1,17 +1,16 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class NPC : MonoBehaviour {
+public class Animal : MonoBehaviour {
 
-    public static NPC instance;
+    public static Animal instance;
     
     public int nextMove;
     public int isHorizon;
     public bool isCollision ; // 플레이어랑 충돌했는지 플래그
-
+    public Vector2 boxSize; // 탐색하는 범위
+    
     private Rigidbody2D rigid;
     private Animator anim;
     private Vector3 dirVec;
@@ -28,12 +27,9 @@ public class NPC : MonoBehaviour {
 
         RaycastHit2D[] rayHit = new RaycastHit2D[3];
         Vector2 rayPos = Vector2.zero;
-        Vector2[] verticalVec = { new Vector2(-0.5f, 0), Vector2.zero, new Vector2(0.5f, 0) }; // 세로 광선의 간격
-        Vector2[] horizontalVec = { new Vector2(0, -0.5f), Vector2.zero, new Vector2(0, 0.5f) }; // 가로 광선의 간격
-        
-        // Vector2[] verticalVec = { new Vector2(-0.4f, 1f), new Vector2(0, 1f), new Vector2(0.4f, 1f) }; // 세로 광선의 간격
-        // Vector2[] horizontalVec = { new Vector2(1f, -0.5f), new Vector2(1f, 0), new Vector2(1f, 0.5f) }; // 가로 광선의 간격
-        
+        Vector2[] verticalVec = { new Vector2(-0.3f, 0), Vector2.zero, new Vector2(0.3f, 0) }; // 세로 광선의 간격
+        Vector2[] horizontalVec = { new Vector2(0, -0.6f), new Vector2(0, -0.1f) }; // 가로 광선의 간격
+
         if(!GameManager.instance.isLive) { // 게임이 실행중이 아니라면 NPC가 스스로 움직이지 않도록
             return;
         }
@@ -48,16 +44,12 @@ public class NPC : MonoBehaviour {
             rigid.velocity = new Vector2(nextMove, 0);
             dirVec = Vector3.right * nextMove;
 
-            for(int i = 0; i < 3; i++) {
-                rayPos = rigid.position + (horizontalVec[i] * nextMove);
+            for(int i = 0; i < 2; i++) {
+                rayPos = rigid.position + (horizontalVec[i] * Mathf.Abs(nextMove));
                 Debug.DrawRay(rayPos, dirVec * 1f, Color.green);
                 rayHit[i] = Physics2D.Raycast(rayPos, dirVec, 1f, LayerMask.GetMask("Wall", "Object", "Player"));
             }
             
-            // Debug.DrawRay(rigid.position, Vector3.right * nextMove * 1.2f, Color.green);
-            // rayHit = Physics2D.Raycast(rigid.position, Vector3.right * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
-            // rayHit = Physics2D.BoxCast(rigid.position * 1.5f, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object", "Player"));
-
         } else { // 세로 이동이면
             rigid.velocity = new Vector2(0, nextMove);
             dirVec = Vector3.up * nextMove;
@@ -67,10 +59,6 @@ public class NPC : MonoBehaviour {
                 Debug.DrawRay(rayPos, dirVec * 1f, Color.green);
                 rayHit[i] = Physics2D.Raycast(rayPos, dirVec, 1f, LayerMask.GetMask("Wall", "Object", "Player"));
             }
-
-            // Debug.DrawRay(rigid.position, Vector3.up * nextMove * 1.2f, Color.green);
-            // rayHit = Physics2D.Raycast(rigid.position, Vector3.up * nextMove, 1f, LayerMask.GetMask("Wall", "Object"));
-            // rayHit = Physics2D.BoxCast(rigid.position * 1.5f, boxSize, 0, dirVec, 0.5f, LayerMask.GetMask("Wall", "Object", "Player"));
         }
 
         anim.SetBool("isChange", false); // 기본적으로 isChange 플래그 값을 false로 업데이트
@@ -82,9 +70,6 @@ public class NPC : MonoBehaviour {
             }
         }
         
-        // if(rayHit.collider != null) {
-        //     Turn();
-        // }
     }
 
     public void Think() { // NPC가 어디로 이동할지 생각하는 메소드
@@ -126,5 +111,5 @@ public class NPC : MonoBehaviour {
         float nextThinkTime = Random.Range(2f, 5f); // 2~4초를 생각하도록
         Invoke("Think", nextThinkTime); // 방향을 바꿔준 시점부터 다시 시간초를 세어서 Think 메소드를 호출하기
     }
-
+    
 }

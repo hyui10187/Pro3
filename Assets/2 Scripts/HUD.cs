@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class HUD : MonoBehaviour {
     
-    public enum InfoType { Health, Mana, Time, Level , Exp, Monster, Gold }
+    public enum InfoType { Health, HealthText, Mana, ManaText, Time, Level , Exp, Monster, Gold }
 
     public InfoType type;
 
@@ -26,6 +26,14 @@ public class HUD : MonoBehaviour {
                 float curHealth = GameManager.instance.curHealth;
                 float maxHealth = GameManager.instance.maxHealth;
                 slider.value = curHealth / maxHealth;
+                break;
+            
+            case InfoType.HealthText:
+                uiText.text = GameManager.instance.curHealth + " / " + GameManager.instance.maxHealth;
+                break;
+            
+            case InfoType.ManaText:
+                uiText.text = GameManager.instance.curMana + " / " + GameManager.instance.maxMana;
                 break;
             
             case InfoType.Mana:

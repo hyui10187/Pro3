@@ -56,13 +56,13 @@ public class Player : MonoBehaviour {
     
     private void Update() {
         
-        if(isDead || !GameManager.instance.isLive) // 죽었으면 모든 행동 실행 못하게
+        if(isDead || !GameManager.instance.isLive) // 플레이어가 죽었거나, 게임이 라이브 상태가 아니면
             return;
 
         if(curTime > 0) {
             curTime -= Time.deltaTime;
         }
-
+        
         JoystickTouch();
 
         // Move Value
@@ -85,7 +85,7 @@ public class Player : MonoBehaviour {
             isHorizonMove = h != 0;
         }
 
-        if(!isAttack) { // 공격중이면 공격 애니메이션이 끝나기 전에는 이동 애니메이션이 실행되지 않도록
+        if(!isAttack && !GameManager.instance.storagePanel.activeSelf) { // 공격중이면 공격 애니메이션이 끝나기 전에는 이동 애니메이션이 실행되지 않도록
             
             if(anim.GetInteger("hAxisRaw") != h) {
                 // 키보드의 방향키를 누를때 1번만 값을 주도록 조건 추가
@@ -134,7 +134,13 @@ public class Player : MonoBehaviour {
         }
 
         if(Input.GetButtonDown("Cancel")) { // 플레이어가 ESC 키를 눌렀으면
-            GameManager.instance.ControlMenuPanel();
+
+            if(GameManager.instance.inventoryPanel.activeSelf || GameManager.instance.storagePanel.activeSelf) {
+                GameManager.instance.inventoryPanel.SetActive(false);
+                GameManager.instance.storagePanel.SetActive(false);
+            } else {
+                GameManager.instance.ControlMenuPanel();
+            }
         }
         
         if(Input.GetButtonDown("Attack")) { // 플레이어가 A 키를 눌렀으면
@@ -149,14 +155,14 @@ public class Player : MonoBehaviour {
     }
 
     public void PlayerAction() {
-        if(scanObj != null) {
+        if(scanObj != null && !GameManager.instance.storagePanel.activeSelf) {
             GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
         }
     }
 
     public void PlayerAttack() {
 
-        if(isAttack && curTime > 0) { // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있으면 돌려보내기
+        if(isAttack || curTime > 0 || GameManager.instance.storagePanel.activeSelf) { // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있으면 돌려보내기
             return;
         }
         
@@ -195,6 +201,11 @@ public class Player : MonoBehaviour {
     }
     
     private void JoystickTouch() { // 가상 조이스틱 터치
+
+        if(GameManager.instance.storagePanel.activeSelf) {
+            return;
+        }
+        
         touchX = virtualJoystick.TouchHorizontal();
         touchY = virtualJoystick.TouchVertical();
         
@@ -258,14 +269,14 @@ public class Player : MonoBehaviour {
             return;
         }
 
-        if(!isDamaged && !isSlide && !isAttack) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
+        if(!isDamaged && !isSlide && !isAttack && !GameManager.instance.storagePanel.activeSelf) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
             Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
             rigid.velocity = moveVec * moveSpeed;
             //rigid.velocity = new Vector2(h, v) * moveSpeed;
         }
 
         Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 1f, LayerMask.GetMask("Object", "NPC"));
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 1f, LayerMask.GetMask("Object", "NPC", "Animal"));
                                                                                                                // 네번째 파라미터는 스캔할 Layer
         if(rayHit.collider != null) { // 찾아낸 게임 오브젝트가 뭐라도 있으면
             scanObj = rayHit.collider.gameObject;
@@ -308,29 +319,22 @@ public class Player : MonoBehaviour {
             GameManager.instance.curHealth -= bullet.damage; // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
         }
 
-        if(other.gameObject.name == "DownStair 1") {
-            transform.position = GameManager.instance.downStairPos[0].position;
-        } else if(other.gameObject.name == "DownStair 2") {
-            transform.position = GameManager.instance.downStairPos[1].position;
-        } else if(other.gameObject.name == "DownStair 3") {
-            transform.position = GameManager.instance.downStairPos[2].position;
-        } else if(other.gameObject.name == "DownStair 4") {
-            transform.position = GameManager.instance.downStairPos[3].position;
-        } else if(other.gameObject.name == "UpStair 1") {
-            transform.position = GameManager.instance.upStairPos[0].position;
-        } else if(other.gameObject.name == "UpStair 2") {
-            transform.position = GameManager.instance.upStairPos[1].position;
-        } else if(other.gameObject.name == "UpStair 3") {
-            transform.position = GameManager.instance.upStairPos[2].position;
-        } else if(other.gameObject.name == "UpStair 4") {
-            transform.position = GameManager.instance.upStairPos[3].position;
+        for(int i = 0; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
+            if(other.gameObject.name == "DownStair " + i) {
+                transform.position = GameManager.instance.downStairPos[i].position;
+            } else if(other.gameObject.name == "UpStair " + i) {
+                transform.position = GameManager.instance.upStairPos[i].position;
+            }
         }
 
-        if(other.gameObject.name == "UpLadder 1") {
-            transform.position = GameManager.instance.upLadderPos[0].position;
-        } else if(other.gameObject.name == "DownLadder 1") {
-            transform.position = GameManager.instance.downLadderPos[0].position;
+        for(int i = 0; i < GameManager.instance.downLadderPos.Length; i++) { // 사다리를 이용했을때 이동로직
+            if(other.gameObject.name == "DownLadder " + i) {
+                transform.position = GameManager.instance.downLadderPos[i].position;
+            } else if(other.gameObject.name == "UpLadder " + i) {
+                transform.position = GameManager.instance.upLadderPos[i].position;
+            }
         }
+        
     }
 
     private void cantAttackMessageOn() {
@@ -404,7 +408,6 @@ public class Player : MonoBehaviour {
         
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
-        GameManager.instance.gaugeUI.SetActive(false);
         GameManager.instance.expSlider.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기

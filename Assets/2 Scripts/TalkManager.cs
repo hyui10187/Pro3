@@ -56,8 +56,19 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(4300, new string[] { "울창한 숲이 펼쳐져있다.", "나무가 빽빽해서 더이상 나아갈 수 없다." });
         talkData.Add(4400, new string[] { "탐스러운 버섯이다." });
         talkData.Add(4500, new string[] { "반짝이는 식물이다." });
+        talkData.Add(4600, new string[] { "육중한 문이 있다.", "잠겨있어서 열리지 않는다.", "이 문은 어디로 통하는 것일까?" });
+        talkData.Add(4700, new string[] { "비석이 있다.", "고대 문자가 적혀 있어서 읽을 수 없다." });
+        talkData.Add(4800, new string[] { "튼튼한 철창문이다.", "안이 어두워서 잘 보이지 않는다." });
+        talkData.Add(4900, new string[] { "창고에 맡긴 물품에 대한 기록이 꼼꼼하게 되어있다." });
+        talkData.Add(5100, new string[] { "고풍스러운 턴테이블이다.", "어떤 음악을 틀어볼까?" });
+        talkData.Add(5200, new string[] { "잘 닦여진 거울이다.", "역시 내가 세상에서 제일 예쁘군" });
+        talkData.Add(5300, new string[] { "은은한 무드등의 조명 덕분에 마음이 평온해진다." });
+        talkData.Add(5400, new string[] { "푹신한 소파이다.", "가끔은 침대보다 이 소파에서 자고 싶다." });
+        talkData.Add(5500, new string[] { "오늘은 이만 잠자리에 들까?" });
+        talkData.Add(5600, new string[] { "열대 지역에서 자라는 귀한 식물이다." });
+        talkData.Add(5700, new string[] { "원목으로 만든 의자다.", "앉아서 명상을 하기에 좋을것 같다." });
 
-        // NPC 대사   // NPC 대사는 10000 단위
+        // NPC 대사   // NPC 대사는 10000 단위   // 이동형 NPC는 30000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
         talkData.Add(20000, new string[] { "모닥불이 따뜻해서 너무 좋아", "밖은 너무 추워", "눈보라가 점점 심해지는것 같아" });
         talkData.Add(30000, new string[] { "강인한 용사가 되고 싶나?", "실력으로 증명해봐" });
@@ -69,9 +80,11 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(90000, new string[] { "너무 배고파", "다 먹어버릴거야" });
         talkData.Add(100000, new string[] { "저 방안에서 이상한 소리가 들려", "무슨 소리일까?" });
         talkData.Add(110000, new string[] { "모험자여 반갑네", "밖의 추위에 노출되면 금방 얼어죽을걸세", "어서 따뜻한 지하로 가서 몸을 녹이시게" });
-        talkData.Add(120000, new string[] { "사탕먹고 싶다", "언니 혹시 사탕있어?", "칫" });
-        talkData.Add(130000, new string[] { "어디보자 캐비어와 송로 버섯은 적당히 남았고...", "저기 미안한데 방해하지 말아줄래?" });
-        
+        talkData.Add(120000, new string[] { "사탕먹고 싶다", "언니 혹시 사탕있어?", "없다고? 칫..." });
+        talkData.Add(130000, new string[] { "작은 생쥐다.", "가까이 가면 병균이 옮을것 같다." });
+        talkData.Add(140000, new string[] { "어디보자 캐비어와 송로 버섯은 적당히 남았고...", "저기 미안한데 방해하지 말아줄래?" });
+        talkData.Add(150000, new string[] { "어렸을때는 저 아래 광산에서 친구들이랑 같이 놀았었는데", "이제는 출입하지 못하도록 막아버렸어", "어린 시절이 그립네..." });
+        talkData.Add(160000, new string[] { "좋은 하루야!", "가방이 무거우면 짐을 좀 맡아줄까?" });
         
         // 퀘스트 10: 카밀과 대화하기
         talkData.Add(10000 + 10, new string[] { "반가워!", "이 마을이 아직 낯설지?", "모두 좋은 사람들이라 금방 친해질거야", "벽난로 옆에 있는 루나랑 인사했어?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });

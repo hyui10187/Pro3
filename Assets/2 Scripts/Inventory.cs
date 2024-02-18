@@ -31,8 +31,13 @@ public class Inventory : MonoBehaviour {
 
     public bool AddItem(Item eatItem) {
 
+        if(eatItem == null) {
+            return false;
+        }
+        
         bool isAdded = false;
         int index = -1;
+        int itemCount = 0;
         
         if(possessItems.Count < CurSlotCnt) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
             if(possessItems.Count > 0) {
@@ -40,12 +45,13 @@ public class Inventory : MonoBehaviour {
                     if(possessItems[i].itemName == eatItem.itemName) {
                         isAdded = true;
                         index = i;
+                        itemCount = eatItem.itemCount;
                         break;
                     }
                 }
 
-                if(isAdded) { // 기존에 가지고 있눈 아이템일 경우
-                    possessItems[index].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
+                if(isAdded) { // 이미 보유중인 아이템일 경우
+                    possessItems[index].itemCount += itemCount; // 기존 아이템의 갯수를 먹은 아이템의 갯수만큼 늘려주기
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
                     possessItems.Add(eatItem);
@@ -83,13 +89,18 @@ public class Inventory : MonoBehaviour {
     }
 
     public void RemoveItem(int index) {
-
         if(possessItems[index].itemCount > 1) {
             possessItems[index].itemCount--;
+            
         } else {
             possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
         }
         
+        onChangeItem.Invoke();
+    }
+    
+    public void EntrustItem(int index) {
+        possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
         onChangeItem.Invoke();
     }
 
@@ -123,7 +134,7 @@ public class Inventory : MonoBehaviour {
                     hasSword = true;
                 }
 
-                AcquisitionMessageOn(fieldItems.item.itemName);
+                AcquisitionMessageOn(fieldItems.item.itemName); // 아이템을 획득하였다는 메시지를 띄워주기
                 Destroy(fieldItems.gameObject);
                 //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 

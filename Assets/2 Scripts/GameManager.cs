@@ -18,8 +18,8 @@ public class GameManager : MonoBehaviour {
     public Transform housePos;
     public Transform winterFieldPos;
     public Transform[] upStairPos;
-    public Transform[] upLadderPos;
     public Transform[] downStairPos;
+    public Transform[] upLadderPos;
     public Transform[] downLadderPos;
 
     [Header("UI - Panel")]
@@ -29,15 +29,16 @@ public class GameManager : MonoBehaviour {
     public GameObject weatherPanel; // 날씨
     
     [Header("UI - UpLeft")]
-    public GameObject buffPanel;
-    public GameObject frozenEffect;
-    public GameObject speedEffect;
+    public GameObject gaugePanel;
     public GameObject questPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject keyBoardButton;
 
     [Header("UI - UpMiddle")]
     public GameObject timePanel; // 시계 패널
+    public GameObject buffPanel;
+    public GameObject frozenEffect;
+    public GameObject speedEffect;
 
     [Header("UI - UpRight")]
     public GameObject goldPanel;
@@ -45,8 +46,10 @@ public class GameManager : MonoBehaviour {
     public GameObject menuButton;
     public GameObject inventoryButton;
     
+    [Header("UI - MiddleLeft")]
+    public GameObject storagePanel;
+    
     [Header("UI - MiddleMiddle")]
-    public GameObject gaugeUI;
     public GameObject helpPanel;
     public GameObject saveMessage;
     public GameObject fullMessage;
@@ -98,6 +101,8 @@ public class GameManager : MonoBehaviour {
 
     [Header("Etc")]
     public int talkIndex;
+    public float frozenTime;
+    public float frozenCoolTime;
     public GameObject scanObject; // 스캔한 게임 오브젝트
     
     private void Awake() {
@@ -174,8 +179,12 @@ public class GameManager : MonoBehaviour {
             NPC npc = scanObject.GetComponent<NPC>();
             npc.isCollision = true;
             npc.CancelInvoke();
+        } else if(scanObject.layer == 11) {
+            Animal animal = scanObject.GetComponent<Animal>();
+            animal.isCollision = true;
+            animal.CancelInvoke();
         }
-        
+
         Talk(objData.objId, objData.isNpc, scanObject.name);
         talkPanel.SetActive(isAction); // 대화창을 끄고 켜는 것은 isAction 플래그 값이랑 동일하다
     }
@@ -213,8 +222,15 @@ public class GameManager : MonoBehaviour {
                 npc.isCollision = false;
                 npc.CancelInvoke();
                 npc.Think();
+            } else if(isNpc && objId == 130000) {
+                Animal animal = scanObject.GetComponent<Animal>();
+                animal.isCollision = false;
+                animal.CancelInvoke();
+                animal.Think();
+            } else if(isNpc && objId == 160000) {
+                StorageManager.instance.OnOffStoragePanel();
             }
-            
+
             return;
         }
         
@@ -233,7 +249,6 @@ public class GameManager : MonoBehaviour {
         if(!menuPanel.activeSelf) {
             isMenuPanelOn = true;
             menuPanel.SetActive(true);
-            gaugeUI.SetActive(false);
 
         } else {
             isMenuPanelOn = false;
@@ -251,22 +266,15 @@ public class GameManager : MonoBehaviour {
     
     private void ControlConditionUI() {
 
+        if(!isAction) {
+            expSlider.SetActive(true);
+        }
+        
         if(isHouse) { // 집에 들어가 있으면
-            gaugeUI.SetActive(false); // 플레이어 머리 위의 체력 UI를 꺼주기
             frozenEffect.SetActive(false); // 추위 디버프 꺼주기
-            expSlider.SetActive(false);
-            monsterPanel.SetActive(false);
             WeatherManager.instance.SnowOff(); // 눈 내리는 것을 꺼주는 메소드 호출
 
         } else { // 얼음 필드로 나와있는 상태이면
-            if(!isMenuPanelOn) {
-                gaugeUI.SetActive(true); // 플레이어 머리 위의 체력 UI를 켜주기   
-            }
-
-            if(!isAction) {
-                expSlider.SetActive(true);
-            }
-            
             frozenEffect.SetActive(true); // 추위 디버프 켜주기
             WeatherManager.instance.SnowOn(); // 눈 내리는 것을 켜주는 메소드 호출
 
@@ -274,12 +282,19 @@ public class GameManager : MonoBehaviour {
                 monsterPanel.SetActive(true);
             }
             
-            if(curHealth > 0) {
-                curHealth -= 1 * Time.deltaTime;
-                
-            } else {
+            frozenCoolTime += Time.deltaTime;
+
+            if(curHealth > 0 && frozenCoolTime > frozenTime) {
+                frozenCoolTime = 0;
+                curHealth -= 10;
+            }
+            
+            if(curHealth <= 0) {
+                curHealth = 0;
                 Player.instance.PlayerDead();
             }
+            
+            
         }
     }
 
@@ -387,6 +402,8 @@ public class GameManager : MonoBehaviour {
         
         NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
         NPC.instance.Think(); // NPC 생각 메소드 호출
+        Animal.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
+        Animal.instance.Think(); // NPC 생각 메소드 호출
 
         player.transform.position = Vector3.zero;
         questManager.questId = 10;
@@ -429,11 +446,12 @@ public class GameManager : MonoBehaviour {
     private void PanelOn() {
 
         // UI - UpLeft
-        buffPanel.SetActive(true);
+        gaugePanel.SetActive(true);
         questPanel.SetActive(true);
         keyBoardButton.SetActive(true);
         
         // UI - UpMiddle
+        buffPanel.SetActive(true);
 
         // UI - UpRight
         goldPanel.SetActive(true);
@@ -442,7 +460,6 @@ public class GameManager : MonoBehaviour {
         inventoryButton.SetActive(true);
         
         // UI - MiddleMiddle
-        gaugeUI.SetActive(true);
 
         // UI - MiddleRight
 
@@ -464,7 +481,7 @@ public class GameManager : MonoBehaviour {
         weatherPanel.SetActive(false);
         
         // UI - UpLeft
-        buffPanel.SetActive(false);
+        gaugePanel.SetActive(false);
         frozenEffect.SetActive(false);
         speedEffect.SetActive(false);
         questPanel.SetActive(false);
@@ -472,6 +489,7 @@ public class GameManager : MonoBehaviour {
         
         // UI - UpMiddle
         timePanel.SetActive(false);
+        buffPanel.SetActive(false);
         
         // UI - UpRight
         goldPanel.SetActive(false);
@@ -480,7 +498,6 @@ public class GameManager : MonoBehaviour {
         inventoryButton.SetActive(false);
         
         // UI - MiddleMiddle
-        gaugeUI.SetActive(false);
         helpPanel.SetActive(false);
         saveMessage.SetActive(false);
         fullMessage.SetActive(false);
