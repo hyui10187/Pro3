@@ -18,6 +18,7 @@ public class InventoryManager : MonoBehaviour {
     private void Awake() {
         MakeSlots();
         inventory = Inventory.instance;
+        RedrawSlotUI();
         SlotChange();
         inventory.onChangeItem += RedrawSlotUI; // onChangeItem 대리자에 RedrawSlotUI 메소드 연결
 //        inventory.onSlotCountChange += SlotChange;

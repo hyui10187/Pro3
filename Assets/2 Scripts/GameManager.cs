@@ -32,7 +32,6 @@ public class GameManager : MonoBehaviour {
     public GameObject gaugePanel;
     public GameObject questPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
-    public GameObject keyBoardButton;
 
     [Header("UI - UpMiddle")]
     public GameObject timePanel; // 시계 패널
@@ -45,6 +44,7 @@ public class GameManager : MonoBehaviour {
     public GameObject helpButton;
     public GameObject menuButton;
     public GameObject inventoryButton;
+    public GameObject virtualButton;
     
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;
@@ -95,7 +95,6 @@ public class GameManager : MonoBehaviour {
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
     public bool hasQuestItem;
     public bool isMonsterPanelOn;
-    public bool isMenuPanelOn;
     public bool isNewGame;
     public bool canEatQuestItem = true; // 퀘스트 아이템을 먹을 수 있는지 플래그값
 
@@ -231,6 +230,7 @@ public class GameManager : MonoBehaviour {
                 StorageManager.instance.OnOffStoragePanel();
             }
 
+            expSlider.SetActive(true);
             return;
         }
         
@@ -246,12 +246,14 @@ public class GameManager : MonoBehaviour {
 
     public void ControlMenuPanel() {
 
+        if(storagePanel.activeSelf) {
+            return;
+        }
+        
         if(!menuPanel.activeSelf) {
-            isMenuPanelOn = true;
             menuPanel.SetActive(true);
-
+            
         } else {
-            isMenuPanelOn = false;
             menuPanel.SetActive(false);
         }
     }
@@ -261,14 +263,14 @@ public class GameManager : MonoBehaviour {
         if(curExp >= maxExp) {
             curExp -= maxExp;
             curLevel++;
+            maxHealth += 10;
+            maxMana += 5;
+            curHealth = maxHealth;
+            curMana = maxMana;
         }
     }
     
     private void ControlConditionUI() {
-
-        if(!isAction) {
-            expSlider.SetActive(true);
-        }
         
         if(isHouse) { // 집에 들어가 있으면
             frozenEffect.SetActive(false); // 추위 디버프 꺼주기
@@ -288,13 +290,11 @@ public class GameManager : MonoBehaviour {
                 frozenCoolTime = 0;
                 curHealth -= 10;
             }
-            
-            if(curHealth <= 0) {
-                curHealth = 0;
-                Player.instance.PlayerDead();
-            }
-            
-            
+        }
+        
+        if(curHealth <= 0) {
+            curHealth = 0;
+            Player.instance.PlayerDead();
         }
     }
 
@@ -436,10 +436,16 @@ public class GameManager : MonoBehaviour {
 
     public void HelpOnOff() { // 우측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
 
+        if(storagePanel.activeSelf) {
+           return; 
+        }
+        
         if(!helpPanel.activeSelf) { // Help 창이 꺼져 있다면
             helpPanel.SetActive(true); // 켜주기
+            expSlider.SetActive(false);
         } else {
             helpPanel.SetActive(false);
+            expSlider.SetActive(true);
         }
     }
 
@@ -448,7 +454,7 @@ public class GameManager : MonoBehaviour {
         // UI - UpLeft
         gaugePanel.SetActive(true);
         questPanel.SetActive(true);
-        keyBoardButton.SetActive(true);
+        virtualButton.SetActive(true);
         
         // UI - UpMiddle
         buffPanel.SetActive(true);
@@ -470,6 +476,7 @@ public class GameManager : MonoBehaviour {
         
         // UI - BottomRight
 
+        VirtualPanelOnOff();
     }
     
     private void PanelOff() {
@@ -485,7 +492,7 @@ public class GameManager : MonoBehaviour {
         frozenEffect.SetActive(false);
         speedEffect.SetActive(false);
         questPanel.SetActive(false);
-        keyBoardButton.SetActive(false);
+        virtualButton.SetActive(false);
         
         // UI - UpMiddle
         timePanel.SetActive(false);

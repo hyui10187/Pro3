@@ -25,11 +25,7 @@ public class Slot : MonoBehaviour, IPointerUpHandler {
     }
 
     public void OnPointerUp(PointerEventData eventData) { // 마우스로 클릭했다가 뗄때 호출되는 메소드
-        
-        if(item.itemCount == 0) {
-            return;
-        }
-        
+
         if(GameManager.instance.storagePanel.activeSelf) { // 창고 패널이 켜져있는 상태면
 
             bool canEntrust = StorageManager.instance.AddItem(item); // 창고에 아이템을 넣어주기

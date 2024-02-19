@@ -23,6 +23,7 @@ public class StorageManager : MonoBehaviour {
         instance = this;
         MakeSlots();
         onChangeItem += RedrawSlotUI; // onChangeItem 대리자에 RedrawSlotUI 메소드 연결
+        RedrawSlotUI();
 //        inventory.onSlotCountChange += SlotChange;
     }
 

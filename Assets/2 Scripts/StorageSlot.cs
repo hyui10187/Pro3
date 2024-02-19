@@ -20,7 +20,7 @@ public class StorageSlot : MonoBehaviour, IPointerUpHandler {
 
     public void RemoveSlot() {
         item = null;
-
+        
         if(itemImage != null) {
             itemImage.gameObject.SetActive(false);
             itemCount.gameObject.SetActive(false);
@@ -29,10 +29,6 @@ public class StorageSlot : MonoBehaviour, IPointerUpHandler {
 
     public void OnPointerUp(PointerEventData eventData) { // 마우스로 클릭했다가 뗄때 호출되는 메소드
 
-        if(item.itemCount == 0) {
-            return;
-        }
-        
         bool canWithdraw = Inventory.instance.AddItem(item); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
         
         if(canWithdraw) {
