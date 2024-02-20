@@ -80,8 +80,7 @@ public class Player : MonoBehaviour {
             isHorizonMove = true;
         } else if(vDown) {
             isHorizonMove = false;
-        }
-        else if(hUp || vUp) {
+        } else if(hUp || vUp) {
             isHorizonMove = h != 0;
         }
 

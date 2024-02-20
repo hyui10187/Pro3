@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CopyPosition : MonoBehaviour {
+public class MinimapCamera : MonoBehaviour {
 
     public bool x; // 각각의 값이 true이면 target의 좌표, false이면 현재 좌표를 그대로 사용
     public bool y;
