@@ -78,49 +78,58 @@ public class Player : MonoBehaviour {
         // Check Horizontal Move
         if(hDown) {
             isHorizonMove = true;
+            dirVec = new Vector3(h, 0, 0);
+            anim.SetFloat("horizonMove", h);
+            anim.SetFloat("verticalMove", 0);
+            
         } else if(vDown) {
             isHorizonMove = false;
+            dirVec = new Vector3(0, v, 0);
+            anim.SetFloat("verticalMove", v);
+            anim.SetFloat("horizonMove", 0);
+            
         } else if(hUp || vUp) {
             isHorizonMove = h != 0;
+
+            if(isHorizonMove) {
+                dirVec = new Vector3(h, 0, 0);
+                anim.SetFloat("horizonMove", h);
+                anim.SetFloat("verticalMove", 0);
+            }
+
+            if(!isHorizonMove && v != 0) {
+                dirVec = new Vector3(0, v, 0);
+                anim.SetFloat("verticalMove", v);
+                anim.SetFloat("horizonMove", 0);
+            }
         }
+
+        bool isHorizonChanged = false;
+        bool isVerticalChanged = false;
 
         if(!isAttack && !GameManager.instance.storagePanel.activeSelf) { // 공격중이면 공격 애니메이션이 끝나기 전에는 이동 애니메이션이 실행되지 않도록
             
             if(anim.GetInteger("hAxisRaw") != h) {
-                // 키보드의 방향키를 누를때 1번만 값을 주도록 조건 추가
-                anim.SetBool("isChange", true); // 키를 누르고 나서 Update 메소드가 1번째로 호출될때는 true로 플래그 값을 올려준다
                 anim.SetInteger("hAxisRaw", (int)h);
-                
-            } else if(anim.GetInteger("vAxisRaw") != v) {
-                anim.SetBool("isChange", true);
+                isHorizonChanged = true;
+
+                if(v != 0 && h == 0) {
+                    isVerticalChanged = true;
+                }
+            }
+
+            if(anim.GetInteger("vAxisRaw") != v) {
                 anim.SetInteger("vAxisRaw", (int)v);
+                isVerticalChanged = true;
                 
-            } else {
-                anim.SetBool("isChange", false); // 키를 누르고 나서 Update 메소드가 2번째로 호출될때부터는 false로 플래그 값을 변경해준다
+                if(h != 0 && v == 0) {
+                    isHorizonChanged = true;
+                }
             }
         }
-
-        // Direction   // 순서대로 상하좌우 값을 주는 것이다
-        if(vDown && v == 1) { // 키보드 위아래 방향키를 눌렀으면서(vDown) 그 값이 1이면 위쪽 방향키를 누른 것이다
-            dirVec = Vector3.up; // 그러면 방향을 위쪽으로 설정해준다
-            anim.SetFloat("verticalMove", v);
-            anim.SetFloat("horizonMove", 0);
-            
-        } else if(vDown && v == -1) {
-            dirVec = Vector3.down;
-            anim.SetFloat("verticalMove", v);
-            anim.SetFloat("horizonMove", 0);
-            
-        } else if(hDown && h == -1) {
-            dirVec = Vector3.left;
-            anim.SetFloat("horizonMove", h);
-            anim.SetFloat("verticalMove", 0);
-            
-        } else if(hDown && h == 1) {
-            dirVec = Vector3.right;
-            anim.SetFloat("horizonMove", h);
-            anim.SetFloat("verticalMove", 0);
-        }
+        
+        anim.SetBool("isHorizonChanged", isHorizonChanged);
+        anim.SetBool("isVerticalChanged", isVerticalChanged);
 
         // Scan Object
         if(Input.GetButtonDown("Jump")) { // 플레이어가 스페이스 바를 눌렀으면
@@ -161,15 +170,15 @@ public class Player : MonoBehaviour {
 
     public void PlayerAttack() {
 
-        if(isAttack || curTime > 0 || GameManager.instance.storagePanel.activeSelf) { // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있으면 돌려보내기
-            return;
+        if(isAttack || curTime > 0 || GameManager.instance.storagePanel.activeSelf) {
+            return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있으면 돌려보내기
         }
         
         if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
             cantAttackMessageOn(); // 공격불가 알림메시지 띄워주기
             return;
         }
-            
+
         anim.SetTrigger("attack");
         anim.SetBool("isAttack", true);
         curTime = coolTime; // 쿨타임을 초기화 해줌
@@ -421,6 +430,16 @@ public class Player : MonoBehaviour {
     public void AttackEnd() {
         anim.SetBool("isAttack", false);
         isAttack = false;
+        
+        if(h != 0 || v != 0) { // 계속 이동하는 상태이면서 공격 애니메이션이 끝났을 경우
+            CancelInvoke("KeepWalk");
+            Invoke("KeepWalk", 0.1f);
+        }
+    }
+
+    private void KeepWalk() { // 걸으면서 공격할 경우에 공격이 끝나고 다시 걷는 애니메이션을 실행시켜주기 위한 메소드
+        anim.SetBool("isHorizonChanged", true);
+        anim.SetBool("isVerticalChanged", true);
     }
 
 }
