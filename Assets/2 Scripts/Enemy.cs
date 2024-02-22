@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour {
     public float curHealth; // 적의 현재체력
     public float maxHealth; // 적의 최대체력
     public float exp;
+    public int collisionDamage;
     public bool isDead;
     public Scanner scanner;
 

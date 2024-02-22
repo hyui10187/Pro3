@@ -314,17 +314,17 @@ public class Player : MonoBehaviour {
             if(enemy.isDead) {
                 return;
             }
-            OnDamaged(other.transform.position);
+            OnDamaged(other.transform.position, enemy.collisionDamage);
             
         } else if(other.gameObject.CompareTag("Obstacle")) {
-            OnDamaged(other.transform.position);
+            OnDamaged(other.transform.position, GameManager.instance.obstacleDamage);
             
         } else if(other.gameObject.CompareTag("Ice")) { // 얼음
             Slide();
             
         } else if(other.gameObject.CompareTag("Bullet")) { // 플레이어가 몬스터의 총알에 맞으면
             Bullet bullet = other.GetComponent<Bullet>();
-            GameManager.instance.curHealth -= bullet.damage; // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
+            OnDamaged(Vector2.zero, bullet.damage); // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
         }
 
         for(int i = 0; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
@@ -375,20 +375,24 @@ public class Player : MonoBehaviour {
         isSlide = false; // 플래그 내려주기
     }
 
-    private void OnDamaged(Vector2 targetPos) {
+    public void OnDamaged(Vector2 targetPos, int damage) {
 
         if(isDead) {
             return;
         }
 
-        gameObject.layer = 10; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해준다
-        sprite.color = new Color(1, 1, 1, 0.4f);
+        if(targetPos != Vector2.zero) {
+            gameObject.layer = 10; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해주기
+            sprite.color = new Color(1, 1, 1, 0.4f);
 
-        int dir = transform.position.x - targetPos.x > 0 ? 1 : -1;
+            int dir = transform.position.x - targetPos.x > 0 ? 1 : -1;
+            rigid.AddForce(new Vector2(dir, 1) * 0.7f, ForceMode2D.Impulse); // 맞은 반대 방향으로 튕겨나가도록
+            isDamaged = true;
+        }
 
-        rigid.AddForce(new Vector2(dir, 1) * 1, ForceMode2D.Impulse); // 맞은 반대 방향으로 튕겨나가도록
-        GameManager.instance.curHealth -= 10; // 플레이어의 체력을 깎아주기
-        isDamaged = true;
+        GameManager.instance.damagedMessageText.text = "-" + damage;
+        GameManager.instance.damagedMessage.SetActive(true);
+        GameManager.instance.curHealth -= damage; // 플레이어의 체력을 깎아주기
 
         if(GameManager.instance.curHealth <= 0) { // 플레이어의 체력이 0 이하가 되면
             PlayerDead();
@@ -406,6 +410,7 @@ public class Player : MonoBehaviour {
         gameObject.layer = 9; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해준다
         sprite.color = new Color(1, 1, 1, 1);
         isDamaged = false;
+        GameManager.instance.damagedMessage.SetActive(false);
     }
 
     public void PlayerDead() {
@@ -417,6 +422,7 @@ public class Player : MonoBehaviour {
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
         GameManager.instance.expSlider.SetActive(false);
+        GameManager.instance.damagedMessage.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기
         

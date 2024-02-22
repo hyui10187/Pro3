@@ -30,22 +30,23 @@ public class GameManager : MonoBehaviour {
     
     [Header("UI - UpLeft")]
     public GameObject gaugePanel;
+    public GameObject buffPanel;
+    public GameObject frozenEffect;
+    public GameObject speedEffect;
     public GameObject questPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
 
     [Header("UI - UpMiddle")]
+    public GameObject goldPanel;
     public GameObject timePanel; // 시계 패널
-    public GameObject buffPanel;
-    public GameObject frozenEffect;
-    public GameObject speedEffect;
 
     [Header("UI - UpRight")]
-    public GameObject goldPanel;
+    public GameObject minimapPanel;
     public GameObject helpButton;
     public GameObject menuButton;
     public GameObject inventoryButton;
     public GameObject virtualButton;
-    
+
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;
     
@@ -55,6 +56,8 @@ public class GameManager : MonoBehaviour {
     public GameObject fullMessage;
     public GameObject acquisitionMessage;
     public GameObject cantAttackMessage;
+    public GameObject damagedMessage;
+    public Text damagedMessageText;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -102,6 +105,8 @@ public class GameManager : MonoBehaviour {
     public int talkIndex;
     public float frozenTime;
     public float frozenCoolTime;
+    public int frozenDamage;
+    public int obstacleDamage;
     public GameObject scanObject; // 스캔한 게임 오브젝트
     
     private void Awake() {
@@ -288,12 +293,11 @@ public class GameManager : MonoBehaviour {
 
             if(curHealth > 0 && frozenCoolTime > frozenTime) {
                 frozenCoolTime = 0;
-                curHealth -= 10;
+                Player.instance.OnDamaged(Vector2.zero, frozenDamage);
             }
         }
-        
+
         if(curHealth <= 0) {
-            curHealth = 0;
             Player.instance.PlayerDead();
         }
     }
@@ -453,18 +457,19 @@ public class GameManager : MonoBehaviour {
 
         // UI - UpLeft
         gaugePanel.SetActive(true);
-        questPanel.SetActive(true);
-        virtualButton.SetActive(true);
-        
-        // UI - UpMiddle
         buffPanel.SetActive(true);
+        questPanel.SetActive(true);
+
+        // UI - UpMiddle
+        goldPanel.SetActive(true);
 
         // UI - UpRight
-        goldPanel.SetActive(true);
+        minimapPanel.SetActive(true);
         helpButton.SetActive(true);
         menuButton.SetActive(true);
         inventoryButton.SetActive(true);
-        
+        virtualButton.SetActive(true);
+
         // UI - MiddleMiddle
 
         // UI - MiddleRight
@@ -489,27 +494,29 @@ public class GameManager : MonoBehaviour {
         
         // UI - UpLeft
         gaugePanel.SetActive(false);
+        buffPanel.SetActive(false);
         frozenEffect.SetActive(false);
         speedEffect.SetActive(false);
         questPanel.SetActive(false);
-        virtualButton.SetActive(false);
-        
+
         // UI - UpMiddle
-        timePanel.SetActive(false);
-        buffPanel.SetActive(false);
-        
-        // UI - UpRight
         goldPanel.SetActive(false);
+        timePanel.SetActive(false);
+
+        // UI - UpRight
+        minimapPanel.SetActive(false);
         helpButton.SetActive(false);
         menuButton.SetActive(false);
         inventoryButton.SetActive(false);
-        
+        virtualButton.SetActive(false);
+
         // UI - MiddleMiddle
         helpPanel.SetActive(false);
         saveMessage.SetActive(false);
         fullMessage.SetActive(false);
         acquisitionMessage.SetActive(false);
         cantAttackMessage.SetActive(false);
+        damagedMessage.SetActive(false);
         
         // UI - MiddleRight
         inventoryPanel.SetActive(false);

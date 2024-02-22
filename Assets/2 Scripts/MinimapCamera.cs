@@ -20,10 +20,9 @@ public class MinimapCamera : MonoBehaviour {
         float b = y ? target.position.y : transform.position.y;
         float c = z ? target.position.z : transform.position.z;
         
-        Vector3 aaa = new Vector3(a, b, c);
+        Vector3 targetPos = new Vector3(a, b, c);
 
-        transform.position = aaa;
-
+        transform.position = targetPos; // Minimap Camera의 위치를 플레이어의 위치를 따라서 움직여주기
     }
     
 }

@@ -298,6 +298,7 @@ MonoBehaviour:
   curHealth: 0
   maxHealth: 100
   exp: 20
+  collisionDamage: 10
   isDead: 0
   scanner: {fileID: 0}
 --- !u!114 &6044074040595981479

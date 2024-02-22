@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 
-    public float damage; // 총알의 공격력
+    public int damage; // 총알의 공격력
     public float speed; // 총알의 속도
 
     private Rigidbody2D rigid;
