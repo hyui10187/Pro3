@@ -67,6 +67,9 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(5500, new string[] { "오늘은 이만 잠자리에 들까?" });
         talkData.Add(5600, new string[] { "열대 지역에서 자라는 귀한 식물이다." });
         talkData.Add(5700, new string[] { "원목으로 만든 의자다.", "앉아서 명상을 하기에 좋을것 같다." });
+        talkData.Add(5800, new string[] { "다양한 상품이 진열되어 있다." });
+        talkData.Add(5900, new string[] { "싱싱한 당근이 가득 담겨있다." });
+        talkData.Add(6100, new string[] { "튼실한 무가 가득 담겨있다." });
 
         // NPC 대사   // NPC 대사는 10000 단위   // 이동형 NPC는 30000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
@@ -85,7 +88,8 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(140000, new string[] { "어디보자 캐비어와 송로 버섯은 적당히 남았고...", "저기 미안한데 방해하지 말아줄래?" });
         talkData.Add(150000, new string[] { "어렸을때는 저 아래 광산에서 친구들이랑 같이 놀았었는데", "이제는 출입하지 못하도록 막아버렸어", "어린 시절이 그립네..." });
         talkData.Add(160000, new string[] { "좋은 하루야!", "가방이 무거우면 짐을 좀 맡아줄까?" });
-        talkData.Add(170000, new string[] { "안녕!", "물건을 구매할래?" });
+        talkData.Add(170000, new string[] { "어서와!", "물건을 구매할래?" });
+        talkData.Add(180000, new string[] { "너무 피곤해", "얼른 퇴근하고 싶다..." });
         
         // 퀘스트 10: 카밀과 대화하기
         talkData.Add(10000 + 10, new string[] { "반가워!", "이 마을이 아직 낯설지?", "모두 좋은 사람들이라 금방 친해질거야", "벽난로 옆에 있는 루나랑 인사했어?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour {
 
@@ -54,11 +53,13 @@ public class Inventory : MonoBehaviour {
                     possessItems[index].itemCount += itemCount; // 기존 아이템의 갯수를 먹은 아이템의 갯수만큼 늘려주기
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
-                    possessItems.Add(eatItem);
+                    Item copyItem = new Item(eatItem);
+                    possessItems.Add(copyItem);
                 }
 
             } else {
-                possessItems.Add(eatItem); // 새롭게 아이템을 추가해줌
+                Item copyItem = new Item(eatItem);
+                possessItems.Add(copyItem); // 새롭게 아이템을 추가해줌
             }
 
             if(onChangeItem != null) {
@@ -134,37 +135,15 @@ public class Inventory : MonoBehaviour {
                     hasSword = true;
                 }
 
-                AcquisitionMessageOn(fieldItems.item.itemName); // 아이템을 획득하였다는 메시지를 띄워주기
+                AlertManager.instance.AcquisitionMessageOn(fieldItems.item.itemName); // 아이템을 획득하였다는 메시지를 띄워주기
                 Destroy(fieldItems.gameObject);
                 //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
             } else { // 인벤토리가 꽉 차있다면
-                FullMessageOn();
+                AlertManager.instance.FullMessageOn();
             }
         }
         
     }
-
-    private void AcquisitionMessageOn(String itemName) {
-        Text acquisitionText = GameManager.instance.acquisitionMessage.GetComponentInChildren<Text>();
-        acquisitionText.text = itemName + "\n아이템을 획득하였습니다.";
-        GameManager.instance.acquisitionMessage.SetActive(true);
-        CancelInvoke(); // 우선 현재 호출중인 모든 Invoke 메소드 취소
-        Invoke("AcquisitionMessageOff", 2f); // 2초 뒤에 아이템을 먹을 수 없다는 알림 꺼주기
-    }    
-
-    private void AcquisitionMessageOff() {
-        GameManager.instance.acquisitionMessage.SetActive(false);
-    }
     
-    public void FullMessageOn() {
-        GameManager.instance.fullMessage.SetActive(true);
-        CancelInvoke(); // 우선 현재 호출중인 모든 Invoke 메소드 취소
-        Invoke("FullMessageOff", 2f); // 2초 뒤에 아이템을 먹을 수 없다는 알림 꺼주기
-    }
-    
-    private void FullMessageOff() {
-        GameManager.instance.fullMessage.SetActive(false);
-    }
-
 }

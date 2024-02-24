@@ -143,9 +143,10 @@ public class Player : MonoBehaviour {
 
         if(Input.GetButtonDown("Cancel")) { // 플레이어가 ESC 키를 눌렀으면
 
-            if(GameManager.instance.inventoryPanel.activeSelf || GameManager.instance.storagePanel.activeSelf) {
+            if(GameManager.instance.inventoryPanel.activeSelf || GameManager.instance.storagePanel.activeSelf || GameManager.instance.storePanel.activeSelf) {
                 GameManager.instance.inventoryPanel.SetActive(false);
                 GameManager.instance.storagePanel.SetActive(false);
+                GameManager.instance.storePanel.SetActive(false);
             } else {
                 GameManager.instance.ControlMenuPanel();
             }
@@ -175,7 +176,7 @@ public class Player : MonoBehaviour {
         }
         
         if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
-            cantAttackMessageOn(); // 공격불가 알림메시지 띄워주기
+            AlertManager.instance.CantAttackMessageOn(); // 공격불가 알림메시지 띄워주기
             return;
         }
 
@@ -327,7 +328,7 @@ public class Player : MonoBehaviour {
             OnDamaged(Vector2.zero, bullet.damage); // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
         }
 
-        for(int i = 0; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
+        for(int i = 1; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
             if(other.gameObject.name == "DownStair " + i) {
                 transform.position = GameManager.instance.downStairPos[i].position;
             } else if(other.gameObject.name == "UpStair " + i) {
@@ -335,7 +336,7 @@ public class Player : MonoBehaviour {
             }
         }
 
-        for(int i = 0; i < GameManager.instance.downLadderPos.Length; i++) { // 사다리를 이용했을때 이동로직
+        for(int i = 1; i < GameManager.instance.downLadderPos.Length; i++) { // 사다리를 이용했을때 이동로직
             if(other.gameObject.name == "DownLadder " + i) {
                 transform.position = GameManager.instance.downLadderPos[i].position;
             } else if(other.gameObject.name == "UpLadder " + i) {
@@ -345,16 +346,6 @@ public class Player : MonoBehaviour {
         
     }
 
-    private void cantAttackMessageOn() {
-        GameManager.instance.cantAttackMessage.SetActive(true); // 공격불가 알림메시지 켜주기
-        CancelInvoke("cantAttackMessageOff");
-        Invoke("cantAttackMessageOff", 2f);
-    }
-
-    private void cantAttackMessageOff() {
-        GameManager.instance.cantAttackMessage.SetActive(false);
-    }
-    
     private void Slide() {
 
         if(h != 0) {
@@ -391,7 +382,7 @@ public class Player : MonoBehaviour {
         }
 
         GameManager.instance.damagedMessageText.text = "-" + damage;
-        GameManager.instance.damagedMessage.SetActive(true);
+        AlertManager.instance.DamagedMessageOn();
         GameManager.instance.curHealth -= damage; // 플레이어의 체력을 깎아주기
 
         if(GameManager.instance.curHealth <= 0) { // 플레이어의 체력이 0 이하가 되면

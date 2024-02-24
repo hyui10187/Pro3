@@ -11,6 +11,7 @@ public class Item {
     public string itemName;
     public Sprite itemImage;
     public int itemCount;
+    public int itemPrice;
     public List<ItemEffect> itemEffects;
 
     public bool Use() {
@@ -21,6 +22,14 @@ public class Item {
         }
         
         return isUsed;
+    }
+
+    public Item(Item eatItem) {
+        itemType = eatItem.itemType;
+        itemName = eatItem.itemName;
+        itemImage = eatItem.itemImage;
+        itemCount = eatItem.itemCount;
+        itemEffects = eatItem.itemEffects;
     }
     
 }

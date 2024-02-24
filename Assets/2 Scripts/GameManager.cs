@@ -17,6 +17,10 @@ public class GameManager : MonoBehaviour {
     [Header("Move Position")]
     public Transform housePos;
     public Transform winterFieldPos;
+    public GameObject upStairPosParent;
+    public GameObject downStairPosParent;
+    public GameObject upLadderPosParent;
+    public GameObject downLadderPosParent;
     public Transform[] upStairPos;
     public Transform[] downStairPos;
     public Transform[] upLadderPos;
@@ -49,12 +53,15 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;
+    public GameObject storePanel;
     
     [Header("UI - MiddleMiddle")]
     public GameObject helpPanel;
     public GameObject saveMessage;
     public GameObject fullMessage;
     public GameObject acquisitionMessage;
+    public GameObject purchaseMessage;
+    public GameObject cantPurchaseMessage;
     public GameObject cantAttackMessage;
     public GameObject damagedMessage;
     public Text damagedMessageText;
@@ -110,14 +117,24 @@ public class GameManager : MonoBehaviour {
     public GameObject scanObject; // 스캔한 게임 오브젝트
     
     private void Awake() {
+        Application.targetFrameRate = 120; // 120 프레임으로 고정시키기
         instance = this;
+
+        InitPos();
     }
 
+    private void InitPos() {
+        upStairPos = upStairPosParent.GetComponentsInChildren<Transform>();
+        downStairPos = downStairPosParent.GetComponentsInChildren<Transform>();
+        upLadderPos = upLadderPosParent.GetComponentsInChildren<Transform>();
+        downLadderPos = downLadderPosParent.GetComponentsInChildren<Transform>();
+    }
+    
     private void Start() {
-
-        if(!isNewGame) {
-            GameLoad();
-        }
+        //
+        // if(!isNewGame) {
+        //     GameLoad();
+        // }
         
         curHealth = maxHealth; // 게임 처음 시작시 현재 체력(health)을 최대 체력(maxHealth)으로 초기화
         curGold = startGold;
@@ -175,7 +192,7 @@ public class GameManager : MonoBehaviour {
                 canEatQuestItem = true;
             
             } else { // 인벤토리가 꽉 차 있을 경우
-                Inventory.instance.FullMessageOn();
+                AlertManager.instance.FullMessageOn();
                 canEatQuestItem = false;
             }
 
@@ -231,8 +248,10 @@ public class GameManager : MonoBehaviour {
                 animal.isCollision = false;
                 animal.CancelInvoke();
                 animal.Think();
-            } else if(isNpc && objId == 160000) {
-                StorageManager.instance.OnOffStoragePanel();
+            } else if(isNpc && objId == 160000) { // 카리나이면
+                StorageManager.instance.OnOffStoragePanel(); // 창고 패널 켜주기
+            } else if(isNpc && objId == 170000) { // 린샹이면
+                StoreManager.instance.OnOffStorePanel(); // 상점 패널 켜주기
             }
 
             expSlider.SetActive(true);
@@ -334,8 +353,7 @@ public class GameManager : MonoBehaviour {
     public void GameSave() {
         SaveData();
         menuPanel.SetActive(false);
-        saveMessage.SetActive(true);
-        Invoke("OffSaveMessage", 2f);
+        AlertManager.instance.SaveMessageOn();
     }
 
     private void SaveData() {
@@ -351,10 +369,6 @@ public class GameManager : MonoBehaviour {
         PlayerPrefs.SetFloat("Health", curHealth);
         PlayerPrefs.SetFloat("Mana", curMana);
         PlayerPrefs.Save();
-    }
-    
-    private void OffSaveMessage() {
-        saveMessage.SetActive(false);
     }
 
     public void GameLoad() {
@@ -515,6 +529,8 @@ public class GameManager : MonoBehaviour {
         saveMessage.SetActive(false);
         fullMessage.SetActive(false);
         acquisitionMessage.SetActive(false);
+        purchaseMessage.SetActive(false);
+        cantPurchaseMessage.SetActive(false);
         cantAttackMessage.SetActive(false);
         damagedMessage.SetActive(false);
         
