@@ -74,6 +74,30 @@ public class AlertManager : MonoBehaviour {
     private void CantPurchaseMessageOff() {
         GameManager.instance.cantPurchaseMessage.SetActive(false);
     }
+    
+    public void SellMessageOn(String itemName) {
+        Text sellText = GameManager.instance.sellMessage.GetComponentInChildren<Text>();
+        sellText.text = itemName + "\n아이템을 판매하였습니다.";
+        GameManager.instance.sellMessage.SetActive(true);
+        CancelInvoke("SellMessageOff"); // 우선 현재 호출중인 모든 Invoke 메소드 취소
+        Invoke("SellMessageOff", 2f); // 2초 뒤에 아이템을 구매했다는 알림 꺼주기
+    }
+    
+    private void SellMessageOff() {
+        GameManager.instance.sellMessage.SetActive(false);
+    }
+    
+    public void ConsumptionMessageOn(String itemName) {
+        Text consumptionText = GameManager.instance.consumptionMessage.GetComponentInChildren<Text>();
+        consumptionText.text = itemName + "\n아이템을 사용하였습니다.";
+        GameManager.instance.consumptionMessage.SetActive(true);
+        CancelInvoke("ConsumptionMessageOff"); // 우선 현재 호출중인 모든 Invoke 메소드 취소
+        Invoke("ConsumptionMessageOff", 2f); // 2초 뒤에 아이템을 구매했다는 알림 꺼주기
+    }
+    
+    private void ConsumptionMessageOff() {
+        GameManager.instance.consumptionMessage.SetActive(false);
+    }
 
     public void CantAttackMessageOn() {
         GameManager.instance.cantAttackMessage.SetActive(true); // 공격불가 알림메시지 켜주기
@@ -85,14 +109,29 @@ public class AlertManager : MonoBehaviour {
         GameManager.instance.cantAttackMessage.SetActive(false);
     }
     
-    public void DamagedMessageOn() {
-        GameManager.instance.damagedMessage.SetActive(true); // 공격불가 알림메시지 켜주기
-        CancelInvoke("DamagedMessageOff");
-        Invoke("DamagedMessageOff", 2f);
+    public void HealthMessageOn() {
+        Animator anim = GameManager.instance.healthManaMessageText.GetComponent<Animator>();
+        GameManager.instance.healthManaMessage.SetActive(true); // 닳은 체력을 띄워주는 메시지 켜주기
+        anim.SetTrigger("health");
+        
+        CancelInvoke("HealthMessageOff");
+        Invoke("HealthMessageOff", 2f);
     }
 
-    private void DamagedMessageOff() {
-        GameManager.instance.cantAttackMessage.SetActive(false);
+    private void HealthMessageOff() {
+        GameManager.instance.healthManaMessage.SetActive(false);
+    }
+    
+    public void ManaMessageOn() {
+        Animator anim = GameManager.instance.healthManaMessageText.GetComponent<Animator>();
+        GameManager.instance.healthManaMessage.SetActive(true); // 닳은 체력을 띄워주는 메시지 켜주기
+        anim.SetTrigger("mana");
+        CancelInvoke("ManaMessageOff");
+        Invoke("ManaMessageOff", 2f);
+    }
+
+    private void ManaMessageOff() {
+        GameManager.instance.healthManaMessage.SetActive(false);
     }
     
 }

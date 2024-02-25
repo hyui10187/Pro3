@@ -8,7 +8,7 @@ public class InventoryManager : MonoBehaviour {
 
     public static InventoryManager instance;
     
-    public Slot[] slots;
+    public InventorySlot[] slots;
     public Transform slotHolder;
     public int maxSlotNum; // 확장할 수 있는 최대 슬롯갯수
     public GameObject slotPrefab;
@@ -30,7 +30,7 @@ public class InventoryManager : MonoBehaviour {
             Instantiate(slotPrefab, slotHolder);
         }
 
-        slots = slotHolder.GetComponentsInChildren<Slot>();
+        slots = slotHolder.GetComponentsInChildren<InventorySlot>();
     }
     
     private void RedrawSlotUI() { // 인벤토리 UI를 다시 그려주는 메소드
@@ -60,16 +60,6 @@ public class InventoryManager : MonoBehaviour {
 
     public void AddSlot() {
         inventory.CurSlotCnt++;
-    }
-    
-    public void OnOffInventory() {
-
-        if(!GameManager.instance.inventoryPanel.activeSelf) {
-            GameManager.instance.inventoryPanel.SetActive(true);
-            
-        } else {
-            GameManager.instance.inventoryPanel.SetActive(false);
-        }
     }
 
 }

@@ -75,39 +75,40 @@ public class Player : MonoBehaviour {
         bool hUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Horizontal") || leftUp || rightUp;
         bool vUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Vertical") || upUp || downUp ;
 
-        // Check Horizontal Move
-        if(hDown) {
-            isHorizonMove = true;
-            dirVec = new Vector3(h, 0, 0);
-            anim.SetFloat("horizonMove", h);
-            anim.SetFloat("verticalMove", 0);
-            
-        } else if(vDown) {
-            isHorizonMove = false;
-            dirVec = new Vector3(0, v, 0);
-            anim.SetFloat("verticalMove", v);
-            anim.SetFloat("horizonMove", 0);
-            
-        } else if(hUp || vUp) {
-            isHorizonMove = h != 0;
-
-            if(isHorizonMove) {
+        if(!GameManager.instance.storagePanel.activeSelf && !GameManager.instance.storePanel.activeSelf) {
+            if(hDown) {
+                isHorizonMove = true;
                 dirVec = new Vector3(h, 0, 0);
                 anim.SetFloat("horizonMove", h);
                 anim.SetFloat("verticalMove", 0);
-            }
-
-            if(!isHorizonMove && v != 0) {
+        
+            } else if(vDown) {
+                isHorizonMove = false;
                 dirVec = new Vector3(0, v, 0);
                 anim.SetFloat("verticalMove", v);
                 anim.SetFloat("horizonMove", 0);
-            }
+        
+            } else if(hUp || vUp) {
+                isHorizonMove = h != 0;
+
+                if(isHorizonMove) {
+                    dirVec = new Vector3(h, 0, 0);
+                    anim.SetFloat("horizonMove", h);
+                    anim.SetFloat("verticalMove", 0);
+                }
+
+                if(!isHorizonMove && v != 0) {
+                    dirVec = new Vector3(0, v, 0);
+                    anim.SetFloat("verticalMove", v);
+                    anim.SetFloat("horizonMove", 0);
+                }
+            }   
         }
 
         bool isHorizonChanged = false;
         bool isVerticalChanged = false;
 
-        if(!isAttack && !GameManager.instance.storagePanel.activeSelf) { // 공격중이면 공격 애니메이션이 끝나기 전에는 이동 애니메이션이 실행되지 않도록
+        if(!isAttack && !GameManager.instance.storagePanel.activeSelf && !GameManager.instance.storePanel.activeSelf) {
             
             if(anim.GetInteger("hAxisRaw") != h) {
                 anim.SetInteger("hAxisRaw", (int)h);
@@ -135,10 +136,9 @@ public class Player : MonoBehaviour {
         if(Input.GetButtonDown("Jump")) { // 플레이어가 스페이스 바를 눌렀으면
             PlayerAction();
         }
-
-        // Inventory Open/Close
+        
         if(Input.GetButtonDown("Inventory")) { // 플레이어가 I 키를 눌렀으면
-            GameManager.instance.ControlInventory();
+            PanelManager.instance.InventoryOnOff();
         }
 
         if(Input.GetButtonDown("Cancel")) { // 플레이어가 ESC 키를 눌렀으면
@@ -148,7 +148,7 @@ public class Player : MonoBehaviour {
                 GameManager.instance.storagePanel.SetActive(false);
                 GameManager.instance.storePanel.SetActive(false);
             } else {
-                GameManager.instance.ControlMenuPanel();
+                PanelManager.instance.MenuOnOff();
             }
         }
         
@@ -164,15 +164,15 @@ public class Player : MonoBehaviour {
     }
 
     public void PlayerAction() {
-        if(scanObj != null && !GameManager.instance.storagePanel.activeSelf) {
+        if(scanObj != null && !GameManager.instance.storagePanel.activeSelf && !GameManager.instance.storePanel.activeSelf) {
             GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
         }
     }
 
     public void PlayerAttack() {
 
-        if(isAttack || curTime > 0 || GameManager.instance.storagePanel.activeSelf) {
-            return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있으면 돌려보내기
+        if(isAttack || curTime > 0 || GameManager.instance.storagePanel.activeSelf || GameManager.instance.storePanel.activeSelf) {
+            return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있거나 상점 패널이 켜져있으면 돌려보내기
         }
         
         if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
@@ -211,7 +211,7 @@ public class Player : MonoBehaviour {
     
     private void JoystickTouch() { // 가상 조이스틱 터치
 
-        if(GameManager.instance.storagePanel.activeSelf) {
+        if(GameManager.instance.storagePanel.activeSelf || GameManager.instance.storePanel.activeSelf) {
             return;
         }
         
@@ -278,7 +278,7 @@ public class Player : MonoBehaviour {
             return;
         }
 
-        if(!isDamaged && !isSlide && !isAttack && !GameManager.instance.storagePanel.activeSelf) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
+        if(!isDamaged && !isSlide && !isAttack && !GameManager.instance.storagePanel.activeSelf && !GameManager.instance.storePanel.activeSelf) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
             Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
             rigid.velocity = moveVec * moveSpeed;
             //rigid.velocity = new Vector2(h, v) * moveSpeed;
@@ -381,8 +381,8 @@ public class Player : MonoBehaviour {
             isDamaged = true;
         }
 
-        GameManager.instance.damagedMessageText.text = "-" + damage;
-        AlertManager.instance.DamagedMessageOn();
+        GameManager.instance.healthManaMessageText.text = "-" + damage;
+        AlertManager.instance.HealthMessageOn();
         GameManager.instance.curHealth -= damage; // 플레이어의 체력을 깎아주기
 
         if(GameManager.instance.curHealth <= 0) { // 플레이어의 체력이 0 이하가 되면
@@ -401,7 +401,7 @@ public class Player : MonoBehaviour {
         gameObject.layer = 9; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해준다
         sprite.color = new Color(1, 1, 1, 1);
         isDamaged = false;
-        GameManager.instance.damagedMessage.SetActive(false);
+        GameManager.instance.healthManaMessage.SetActive(false);
     }
 
     public void PlayerDead() {
@@ -413,7 +413,7 @@ public class Player : MonoBehaviour {
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
         GameManager.instance.expSlider.SetActive(false);
-        GameManager.instance.damagedMessage.SetActive(false);
+        GameManager.instance.inventoryPanel.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기
         

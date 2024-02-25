@@ -11,22 +11,37 @@ public class ItemPotionEffect : ItemEffect {
     
     public override bool ExecuteRole() {
 
-        GameManager.instance.curHealth += recoveryHealthPoint;
-        GameManager.instance.curMana += recoveryManaPoint;
-
-        if(GameManager.instance.curHealth > GameManager.instance.maxHealth) {
-            GameManager.instance.curHealth = GameManager.instance.maxHealth;
+        if(0 < recoveryHealthPoint) { // 빨강물약이면 + 되는 체력 표기
+            GameManager.instance.healthManaMessageText.text = "+" + recoveryHealthPoint;
+            GameManager.instance.curHealth += recoveryHealthPoint;
+            AlertManager.instance.HealthMessageOn();
+        } else if(recoveryHealthPoint < 0) { // 초록물약이면 - 되는 체력 표기
+            GameManager.instance.healthManaMessageText.text = recoveryHealthPoint.ToString();
+            GameManager.instance.curHealth += recoveryHealthPoint;
+            AlertManager.instance.HealthMessageOn();
         }
 
-        if(GameManager.instance.curMana > GameManager.instance.maxMana) {
+        if(0 < recoveryManaPoint) { // 파랑물약이면 + 되는 마나 표기
+            GameManager.instance.healthManaMessageText.text = "+" + recoveryManaPoint;
+            GameManager.instance.curMana += recoveryManaPoint;
+            AlertManager.instance.ManaMessageOn();
+        }
+        
+        if(GameManager.instance.maxHealth < GameManager.instance.curHealth) {
+            GameManager.instance.curHealth = GameManager.instance.maxHealth;
+        } else if(GameManager.instance.curHealth < 0) {
+            GameManager.instance.curHealth = 0;
+        }
+
+        if(GameManager.instance.maxMana < GameManager.instance.curMana) {
             GameManager.instance.curMana = GameManager.instance.maxMana;
         }
 
-        if(increaseSpeedPercent > 0) {
-            GameManager.instance.SpeedEffectOn();
+        if(0 < increaseSpeedPercent) { // 노랑 물약이면
+            PanelManager.instance.SpeedEffectOn();
 
-            GameManager.instance.curMoveSpeed = GameManager.instance.originMoveSpeed; // 물약을 중복으로 먹을 수 있으니 현재 이동속도를 기본 이동속도로 일단 초기화
-            GameManager.instance.curMoveSpeed = GameManager.instance.curMoveSpeed + (GameManager.instance.curMoveSpeed * increaseSpeedPercent); // 물약의 이동속도 증가율만쿰 현재 이동속도 증가시킴
+            GameManager.instance.curMoveSpeed = GameManager.instance.originMoveSpeed; // 노랑물약을 중복으로 먹을 수 있으니 현재 이동속도를 기본 이동속도로 일단 초기화
+            GameManager.instance.curMoveSpeed += (GameManager.instance.curMoveSpeed * increaseSpeedPercent); // 노랑물약의 이동속도 증가율만쿰 현재 이동속도 증가시킴
         }
         
         return true;

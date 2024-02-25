@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class QuestData { // 구조체
+public class QuestData {
 
     public string questName;
     public int[] npcId;

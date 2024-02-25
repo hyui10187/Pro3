@@ -29,6 +29,7 @@ public class Item {
         itemName = eatItem.itemName;
         itemImage = eatItem.itemImage;
         itemCount = eatItem.itemCount;
+        itemPrice = eatItem.itemPrice;
         itemEffects = eatItem.itemEffects;
     }
     

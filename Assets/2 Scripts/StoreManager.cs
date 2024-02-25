@@ -35,12 +35,4 @@ public class StoreManager : MonoBehaviour {
         }
     }
 
-    public void OnOffStorePanel() { // 상점 패널을 켜고 끄는 메소드
-        if(!GameManager.instance.storePanel.activeSelf) {
-            GameManager.instance.storePanel.SetActive(true);
-        } else {
-            GameManager.instance.storePanel.SetActive(false);
-        }
-    }
-
 }

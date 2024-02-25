@@ -39,6 +39,9 @@ public class GameManager : MonoBehaviour {
     public GameObject speedEffect;
     public GameObject questPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
+    public GameObject helpButton;
+    public GameObject FPSButton;
+    public GameObject FPSPanel;
 
     [Header("UI - UpMiddle")]
     public GameObject goldPanel;
@@ -46,7 +49,6 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI - UpRight")]
     public GameObject minimapPanel;
-    public GameObject helpButton;
     public GameObject menuButton;
     public GameObject inventoryButton;
     public GameObject virtualButton;
@@ -60,11 +62,15 @@ public class GameManager : MonoBehaviour {
     public GameObject saveMessage;
     public GameObject fullMessage;
     public GameObject acquisitionMessage;
+    public GameObject consumptionMessage;
     public GameObject purchaseMessage;
     public GameObject cantPurchaseMessage;
+    public GameObject sellMessage;
     public GameObject cantAttackMessage;
-    public GameObject damagedMessage;
-    public Text damagedMessageText;
+    public GameObject healthManaMessage;
+    public Text healthManaMessageText;
+    public GameObject itemDescriptionPanel;
+    public Text itemDescriptionText;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -166,7 +172,6 @@ public class GameManager : MonoBehaviour {
         
         if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
             timePanel.SetActive(true); // 시계 패널을 켜주기
-            
         }
         
         ObjData objData = scanObject.GetComponent<ObjData>();
@@ -179,15 +184,7 @@ public class GameManager : MonoBehaviour {
             }
         } else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) { // 퀘스트 아이템인 Coin한테 말을 걸었을 경우
             
-            //scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 Coin을 Trigger로 만들어줘서 먹을 수 있게 해주기
-
-            //else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) { // 퀘스트 아이템인 Coin을 먹었을 경우
             if(Inventory.instance.possessItems.Count < Inventory.instance.CurSlotCnt) { // 인벤토리에 슬롯 여분이 있을 경우
-                //FieldItems fieldItems = scanObject.GetComponent<FieldItems>();
-                //Inventory.instance.AddItem(fieldItems.GetItem());
-                // scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 Coin을 
-                // scanObject.transform.position = player.transform.position; // 반지 아이템을 플레이어의 위치로 옮겨줌
-            
                 hasQuestItem = true;
                 canEatQuestItem = true;
             
@@ -208,10 +205,6 @@ public class GameManager : MonoBehaviour {
 
         Talk(objData.objId, objData.isNpc, scanObject.name);
         talkPanel.SetActive(isAction); // 대화창을 끄고 켜는 것은 isAction 플래그 값이랑 동일하다
-    }
-
-    public void ControlInventory() {
-        inventoryManager.OnOffInventory();
     }
 
     private void Talk(int objId, bool isNpc, string npcName) {
@@ -249,9 +242,9 @@ public class GameManager : MonoBehaviour {
                 animal.CancelInvoke();
                 animal.Think();
             } else if(isNpc && objId == 160000) { // 카리나이면
-                StorageManager.instance.OnOffStoragePanel(); // 창고 패널 켜주기
+                PanelManager.instance.StorageOnOff(); // 창고 패널 켜주기
             } else if(isNpc && objId == 170000) { // 린샹이면
-                StoreManager.instance.OnOffStorePanel(); // 상점 패널 켜주기
+                PanelManager.instance.StoreOnOff(); // 상점 패널 켜주기
             }
 
             expSlider.SetActive(true);
@@ -266,20 +259,6 @@ public class GameManager : MonoBehaviour {
 
         isAction = true;
         talkIndex++;
-    }
-
-    public void ControlMenuPanel() {
-
-        if(storagePanel.activeSelf) {
-            return;
-        }
-        
-        if(!menuPanel.activeSelf) {
-            menuPanel.SetActive(true);
-            
-        } else {
-            menuPanel.SetActive(false);
-        }
     }
 
     private void ControlLevel() {
@@ -321,18 +300,6 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void SpeedEffectOn() {
-        CancelInvoke("SpeedEffectOff"); // 기존에 이동속도 버프 꺼주는 메소드가 실행될 예정이었을 수 있으니 취소해주고 시작
-        
-        speedEffect.SetActive(true); // 이동속도 버프 켜주기
-        Invoke("SpeedEffectOff", 5);
-    }
-
-    public void SpeedEffectOff() {
-        speedEffect.SetActive(false); // 이동속도 버프 꺼주기
-        curMoveSpeed = originMoveSpeed; // 현재 이동속도를 기본 이동속도로 초기화
-    }
-
     public void GameStart() {
         isLive = true;
         
@@ -342,8 +309,8 @@ public class GameManager : MonoBehaviour {
         curHealth = maxHealth;
         Player.instance.anim.SetTrigger("start");
 
-        PanelOff();
-        PanelOn();
+        PanelManager.instance.PanelOff();
+        PanelManager.instance.PanelOn();
     }
 
     public void GameStop() {
@@ -395,7 +362,7 @@ public class GameManager : MonoBehaviour {
 
     public void GoToMainMenu() { // 메인메뉴로 나가는 메소드
         isLive = false;
-        PanelOff(); // 모든 패널 꺼주기
+        PanelManager.instance.PanelOff(); // 모든 패널 꺼주기
         startPanel.SetActive(true);
     }
 
@@ -435,119 +402,8 @@ public class GameManager : MonoBehaviour {
             Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
         }
 
-        PanelOff();
-        PanelOn();
-    }
-
-    public void VirtualPanelOnOff() { // 가상 키보드를 켜거나 꺼주는 메소드
-
-        if(!virtualJoystick.activeSelf) { // 가상 조이스틱이 꺼져있다면
-            virtualJoystick.SetActive(true); // 가상 조이스틱 켜주기
-            attackButton.SetActive(true); // 가상 키 켜주기
-            actionButton.SetActive(true); // 가상 키 켜주기
-        } else {
-            virtualJoystick.SetActive(false);
-            attackButton.SetActive(false);
-            actionButton.SetActive(false);
-        }
-    }
-
-    public void HelpOnOff() { // 우측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
-
-        if(storagePanel.activeSelf) {
-           return; 
-        }
-        
-        if(!helpPanel.activeSelf) { // Help 창이 꺼져 있다면
-            helpPanel.SetActive(true); // 켜주기
-            expSlider.SetActive(false);
-        } else {
-            helpPanel.SetActive(false);
-            expSlider.SetActive(true);
-        }
-    }
-
-    private void PanelOn() {
-
-        // UI - UpLeft
-        gaugePanel.SetActive(true);
-        buffPanel.SetActive(true);
-        questPanel.SetActive(true);
-
-        // UI - UpMiddle
-        goldPanel.SetActive(true);
-
-        // UI - UpRight
-        minimapPanel.SetActive(true);
-        helpButton.SetActive(true);
-        menuButton.SetActive(true);
-        inventoryButton.SetActive(true);
-        virtualButton.SetActive(true);
-
-        // UI - MiddleMiddle
-
-        // UI - MiddleRight
-
-        // UI - BottomLeft
-
-        // UI - BottomBottom
-        expSlider.SetActive(true);
-        
-        // UI - BottomRight
-
-        VirtualPanelOnOff();
-    }
-    
-    private void PanelOff() {
-        
-        // UI - Panel
-        startPanel.SetActive(false);
-        menuPanel.SetActive(false);
-        deadPanel.SetActive(false);
-        weatherPanel.SetActive(false);
-        
-        // UI - UpLeft
-        gaugePanel.SetActive(false);
-        buffPanel.SetActive(false);
-        frozenEffect.SetActive(false);
-        speedEffect.SetActive(false);
-        questPanel.SetActive(false);
-
-        // UI - UpMiddle
-        goldPanel.SetActive(false);
-        timePanel.SetActive(false);
-
-        // UI - UpRight
-        minimapPanel.SetActive(false);
-        helpButton.SetActive(false);
-        menuButton.SetActive(false);
-        inventoryButton.SetActive(false);
-        virtualButton.SetActive(false);
-
-        // UI - MiddleMiddle
-        helpPanel.SetActive(false);
-        saveMessage.SetActive(false);
-        fullMessage.SetActive(false);
-        acquisitionMessage.SetActive(false);
-        purchaseMessage.SetActive(false);
-        cantPurchaseMessage.SetActive(false);
-        cantAttackMessage.SetActive(false);
-        damagedMessage.SetActive(false);
-        
-        // UI - MiddleRight
-        inventoryPanel.SetActive(false);
-        monsterPanel.SetActive(false);
-        
-        // UI - BottomLeft
-        virtualJoystick.SetActive(false);
-        
-        // UI - BottomBottom
-        talkPanel.SetActive(false);
-        expSlider.SetActive(false);
-        
-        // UI - BottomRight
-        attackButton.SetActive(false);
-        actionButton.SetActive(false);
+        PanelManager.instance.PanelOff();
+        PanelManager.instance.PanelOn();
     }
 
 }

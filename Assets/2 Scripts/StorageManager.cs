@@ -48,15 +48,7 @@ public class StorageManager : MonoBehaviour {
         }
     }
 
-    public void OnOffStoragePanel() {
-        if(!GameManager.instance.storagePanel.activeSelf) {
-            GameManager.instance.storagePanel.SetActive(true);
-        } else {
-            GameManager.instance.storagePanel.SetActive(false);
-        }
-    }
-
-        public int CurSlotCnt {
+    public int CurSlotCnt {
         get => curSlotCnt;
         set {
             curSlotCnt = value;
