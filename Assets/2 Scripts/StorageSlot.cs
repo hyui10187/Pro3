@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class StorageSlot : MonoBehaviour, IPointerUpHandler {
+public class StorageSlot : MonoBehaviour {
     
     public int slotNum; // 슬롯 번호
     public Item item;
@@ -27,11 +26,16 @@ public class StorageSlot : MonoBehaviour, IPointerUpHandler {
         }
     }
 
-    public void OnPointerUp(PointerEventData eventData) { // 마우스로 클릭했다가 뗄때 호출되는 메소드
-
+    public void ButtonDown() {
         bool canWithdraw = Inventory.instance.AddItem(item); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
         
         if(canWithdraw) {
+
+            if(item.itemName == "Sword") {
+                Inventory.instance.hasSword = true;
+            }
+            
+            AlertManager.instance.AlertMessageOn(item.itemName, 10);
             StorageManager.instance.RemoveStorageItem(slotNum);
         }
     }

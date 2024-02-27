@@ -60,13 +60,7 @@ public class GameManager : MonoBehaviour {
     [Header("UI - MiddleMiddle")]
     public GameObject helpPanel;
     public GameObject saveMessage;
-    public GameObject fullMessage;
-    public GameObject acquisitionMessage;
-    public GameObject consumptionMessage;
-    public GameObject purchaseMessage;
-    public GameObject cantPurchaseMessage;
-    public GameObject sellMessage;
-    public GameObject cantAttackMessage;
+    public GameObject alertMessage;
     public GameObject healthManaMessage;
     public Text healthManaMessageText;
     public GameObject itemDescriptionPanel;
@@ -189,7 +183,7 @@ public class GameManager : MonoBehaviour {
                 canEatQuestItem = true;
             
             } else { // 인벤토리가 꽉 차 있을 경우
-                AlertManager.instance.FullMessageOn();
+                AlertManager.instance.AlertMessageOn("", 8);
                 canEatQuestItem = false;
             }
 
@@ -243,8 +237,10 @@ public class GameManager : MonoBehaviour {
                 animal.Think();
             } else if(isNpc && objId == 160000) { // 카리나이면
                 PanelManager.instance.StorageOnOff(); // 창고 패널 켜주기
+                PanelManager.instance.InventoryOnOff(); // 인벤토리 패널도 같이 켜주기
             } else if(isNpc && objId == 170000) { // 린샹이면
                 PanelManager.instance.StoreOnOff(); // 상점 패널 켜주기
+                PanelManager.instance.InventoryOnOff(); // 인벤토리 패널도 같이 켜주기
             }
 
             expSlider.SetActive(true);

@@ -176,7 +176,7 @@ public class Player : MonoBehaviour {
         }
         
         if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
-            AlertManager.instance.CantAttackMessageOn(); // 공격불가 알림메시지 띄워주기
+            AlertManager.instance.AlertMessageOn("", 6); // 공격불가 알림메시지 띄워주기
             return;
         }
 

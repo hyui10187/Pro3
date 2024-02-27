@@ -70,6 +70,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(5800, new string[] { "다양한 상품이 진열되어 있다." });
         talkData.Add(5900, new string[] { "싱싱한 당근이 가득 담겨있다." });
         talkData.Add(6100, new string[] { "튼실한 무가 가득 담겨있다." });
+        talkData.Add(6200, new string[] { "굳게 잠겨 있는 문이다.", "열쇠로 열어볼까?", "열쇠를 돌리니까 문이 열렸다." });
 
         // NPC 대사   // NPC 대사는 10000 단위   // 이동형 NPC는 30000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });

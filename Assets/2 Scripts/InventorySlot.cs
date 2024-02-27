@@ -50,6 +50,12 @@ public class InventorySlot : MonoBehaviour {
                 bool canEntrust = StorageManager.instance.AddItem(item); // 창고에 아이템을 넣어주기
 
                 if(canEntrust && item != null) {
+
+                    if(item.itemName == "Sword") {
+                        Inventory.instance.hasSword = false; // 창고에 sword를 맡길 경우 hasSword 플래그 값 내려주기
+                    }
+
+                    AlertManager.instance.AlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
                     Inventory.instance.EntrustItem(slotNum);
                 }
                 return;
@@ -57,7 +63,7 @@ public class InventorySlot : MonoBehaviour {
 
             if(GameManager.instance.storePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
                 GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
-                AlertManager.instance.SellMessageOn(item.itemName); // 아이템을 판매하였다는 메시지를 띄워주기
+                AlertManager.instance.AlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
                 Inventory.instance.RemoveItem(slotNum);
                 return;
             }
@@ -69,7 +75,7 @@ public class InventorySlot : MonoBehaviour {
             }
 
             if(isUse) {
-                AlertManager.instance.ConsumptionMessageOn(item.itemName);
+                AlertManager.instance.AlertMessageOn(item.itemName, 4); // 소비 메시지
                 Inventory.instance.RemoveItem(slotNum);
             }
         }

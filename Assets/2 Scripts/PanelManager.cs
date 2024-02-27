@@ -132,11 +132,11 @@ public class PanelManager : MonoBehaviour {
             }
 
             if(isUse && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
-                AlertManager.instance.ConsumptionMessageOn(item.itemName);
+                AlertManager.instance.AlertMessageOn(item.itemName, 4);
                 Inventory.instance.RemoveItem(slotNum);
 
             } else if(isUse && item.itemCount == 1) { // 아이템이 1개만 있을 경우
-                AlertManager.instance.ConsumptionMessageOn(item.itemName);
+                AlertManager.instance.AlertMessageOn(item.itemName, 4);
                 Inventory.instance.RemoveItem(slotNum);
                 ItemDescriptionOnOff(-1, null); // 아이템 설명 패널을 꺼주기
             }
@@ -146,9 +146,11 @@ public class PanelManager : MonoBehaviour {
     public void DeleteButton() { // 아이템 설명 패널에서 삭제 버튼을 클릭했을 경우 호출할 메소드
         
         if(slotNum != -1 && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
+            AlertManager.instance.AlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             
         } else if(slotNum != -1 && 1 == item.itemCount) { // 아이템이 1개만 있을 경우
+            AlertManager.instance.AlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             ItemDescriptionOnOff(-1, null);
         }
@@ -156,6 +158,8 @@ public class PanelManager : MonoBehaviour {
     
     public void PanelOn() {
 
+        GameManager.instance.weatherPanel.SetActive(true);
+        
         // UI - UpLeft
         GameManager.instance.gaugePanel.SetActive(true);
         GameManager.instance.buffPanel.SetActive(true);
@@ -217,12 +221,7 @@ public class PanelManager : MonoBehaviour {
         // UI - MiddleMiddle
         GameManager.instance.helpPanel.SetActive(false);
         GameManager.instance.saveMessage.SetActive(false);
-        GameManager.instance.fullMessage.SetActive(false);
-        GameManager.instance.acquisitionMessage.SetActive(false);
-        GameManager.instance.purchaseMessage.SetActive(false);
-        GameManager.instance.cantPurchaseMessage.SetActive(false);
-        GameManager.instance.sellMessage.SetActive(false);
-        GameManager.instance.cantAttackMessage.SetActive(false);
+        GameManager.instance.alertMessage.SetActive(false);
         GameManager.instance.healthManaMessage.SetActive(false);
         
         // UI - MiddleRight

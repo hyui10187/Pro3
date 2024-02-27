@@ -5,20 +5,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class StoreSlot : MonoBehaviour, IPointerUpHandler {
+public class StoreSlot : MonoBehaviour {
     
     public Item item;
-    public Image itemImage;
 
-    public void UpdateSlot() {
-        itemImage.sprite = item.itemImage;
-        itemImage.gameObject.SetActive(true); // 슬롯의 아이템 이미지 켜주기
-    }
-
-    public void OnPointerUp(PointerEventData eventData) { // 마우스로 클릭했다가 뗄때 호출되는 메소드
-
+    public void ButtonDown() { // 마우스로 클릭했다가 뗄때 호출되는 메소드
         if(GameManager.instance.curGold < item.itemPrice) {
-            AlertManager.instance.CantPurchaseMessageOn(0);
+            AlertManager.instance.AlertMessageOn("", 7); // 소지금 부족 메시지
             return;
         }
         
@@ -26,9 +19,9 @@ public class StoreSlot : MonoBehaviour, IPointerUpHandler {
 
         if(canPurchase) {
             GameManager.instance.curGold -= item.itemPrice;
-            AlertManager.instance.PurchaseMessageOn(item.itemName);
+            AlertManager.instance.AlertMessageOn(item.itemName, 1); // 구매 메시지
         } else {
-            AlertManager.instance.CantPurchaseMessageOn(1);
+            AlertManager.instance.AlertMessageOn("", 8); // 인벤토리가 가득차서 구매 불가 메시지
         }
     }
 
