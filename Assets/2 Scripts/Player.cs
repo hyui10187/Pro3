@@ -343,7 +343,29 @@ public class Player : MonoBehaviour {
                 transform.position = GameManager.instance.upLadderPos[i].position;
             }
         }
+
+        if(other.gameObject.name == "DoorInCheck 1" && Inventory.instance.hasKey) {
+            Transform parentTransform = other.transform.parent; // 부모 Transform을 우선 가져오고
+            Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true); // 꺼져있는 자식 컴포넌트도 가져오기
+
+            foreach(Transform childTransform in childTransforms) {
+                if(childTransform.gameObject.name == "Locked") {
+                    childTransform.gameObject.SetActive(false);
+                } else if(childTransform.gameObject.name == "Unlocked") {
+                    childTransform.gameObject.SetActive(true);
+                    break;
+                }
+            }
+        }
         
+        for(int i = 1; i < GameManager.instance.doorInPos.Length; i++) { // 문을 이용했을때 이동로직
+            if(other.gameObject.name == "DoorIn " + i) {
+                transform.position = GameManager.instance.doorInPos[i].position;
+            } else if(other.gameObject.name == "DoorOut " + i) {
+                transform.position = GameManager.instance.doorOutPos[i].position;
+            }
+        }
+
     }
 
     private void Slide() {

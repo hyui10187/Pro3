@@ -21,10 +21,14 @@ public class GameManager : MonoBehaviour {
     public GameObject downStairPosParent;
     public GameObject upLadderPosParent;
     public GameObject downLadderPosParent;
+    public GameObject doorInPosParent;
+    public GameObject doorOutPosParent;
     public Transform[] upStairPos;
     public Transform[] downStairPos;
     public Transform[] upLadderPos;
     public Transform[] downLadderPos;
+    public Transform[] doorInPos;
+    public Transform[] doorOutPos;
 
     [Header("UI - Panel")]
     public GameObject startPanel; // 게임 시작 패널
@@ -117,7 +121,6 @@ public class GameManager : MonoBehaviour {
     public GameObject scanObject; // 스캔한 게임 오브젝트
     
     private void Awake() {
-        Application.targetFrameRate = 120; // 120 프레임으로 고정시키기
         instance = this;
 
         InitPos();
@@ -128,6 +131,8 @@ public class GameManager : MonoBehaviour {
         downStairPos = downStairPosParent.GetComponentsInChildren<Transform>();
         upLadderPos = upLadderPosParent.GetComponentsInChildren<Transform>();
         downLadderPos = downLadderPosParent.GetComponentsInChildren<Transform>();
+        doorInPos = doorInPosParent.GetComponentsInChildren<Transform>();
+        doorOutPos = doorOutPosParent.GetComponentsInChildren<Transform>();
     }
     
     private void Start() {
@@ -153,6 +158,10 @@ public class GameManager : MonoBehaviour {
         ControlLevel();
         ControlConditionUI();
         curGameTime += Time.deltaTime;
+
+        if(SpawnManager.instance.enemyCount == 0 && questManager.questId == 50) {
+            questManager.CheckQuest(0);
+        }
     }
 
     public void Action(GameObject scanObj) {
@@ -183,7 +192,7 @@ public class GameManager : MonoBehaviour {
                 canEatQuestItem = true;
             
             } else { // 인벤토리가 꽉 차 있을 경우
-                AlertManager.instance.AlertMessageOn("", 8);
+                AlertManager.instance.AlertMessageOn("", 5);
                 canEatQuestItem = false;
             }
 
@@ -237,10 +246,14 @@ public class GameManager : MonoBehaviour {
                 animal.Think();
             } else if(isNpc && objId == 160000) { // 카리나이면
                 PanelManager.instance.StorageOnOff(); // 창고 패널 켜주기
-                PanelManager.instance.InventoryOnOff(); // 인벤토리 패널도 같이 켜주기
+                inventoryPanel.SetActive(true); // 인벤토리 패널도 같이 켜주기
             } else if(isNpc && objId == 170000) { // 린샹이면
                 PanelManager.instance.StoreOnOff(); // 상점 패널 켜주기
-                PanelManager.instance.InventoryOnOff(); // 인벤토리 패널도 같이 켜주기
+                inventoryPanel.SetActive(true); // 인벤토리 패널도 같이 켜주기
+            }
+
+            if(objId == 6200) { // 열쇠로 문을 여는 대사가 끝나면
+                scanObject.gameObject.SetActive(false);
             }
 
             expSlider.SetActive(true);

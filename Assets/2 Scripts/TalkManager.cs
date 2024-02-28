@@ -71,6 +71,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(5900, new string[] { "싱싱한 당근이 가득 담겨있다." });
         talkData.Add(6100, new string[] { "튼실한 무가 가득 담겨있다." });
         talkData.Add(6200, new string[] { "굳게 잠겨 있는 문이다.", "열쇠로 열어볼까?", "열쇠를 돌리니까 문이 열렸다." });
+        talkData.Add(6300, new string[] { "나무상자가 잠겨있다.", "열쇠로 열어볼까?", "열쇠를 돌리니까 나무 상자가 열렸다.", "안에서 사탕을 얻었다." });
 
         // NPC 대사   // NPC 대사는 10000 단위   // 이동형 NPC는 30000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
@@ -91,6 +92,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(160000, new string[] { "좋은 하루야!", "가방이 무거우면 짐을 좀 맡아줄까?" });
         talkData.Add(170000, new string[] { "어서와!", "물건을 구매할래?" });
         talkData.Add(180000, new string[] { "너무 피곤해", "얼른 퇴근하고 싶다..." });
+        talkData.Add(190000, new string[] { "너가 새로 왔다는 모험가구나?", "이 마을이 처음이니까 한가지 팁을 알려줄께", "마을 밖의 나무는 무기로 부술 수 있어", "부수면 열매나 목재를 얻을 수 있지", "궁금한게 있으면 언제든지 물어봐" });
         
         // 퀘스트 10: 카밀과 대화하기
         talkData.Add(10000 + 10, new string[] { "반가워!", "이 마을이 아직 낯설지?", "모두 좋은 사람들이라 금방 친해질거야", "벽난로 옆에 있는 루나랑 인사했어?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });
@@ -109,6 +111,15 @@ public class TalkManager : MonoBehaviour {
 
         // 퀘스트 50: 몬스터 처치하기
         talkData.Add(110000 + 50, new string[] { "용감한 모험자여 자네만 믿고 있겠네", "부디 마을을 위험에서 건져주게" });
+        
+        // 퀘스트 60: 촌장의 보답
+        talkData.Add(110000 + 60, new string[] { "역시 자네는 우리에게 희망을 주는구려", "우리 마을에는 검증된 자만이 이용할 수 있는 공간이 있네", "그 공간을 자네도 이용할 수 있도록 열쇠를 주겠네", "다녀오는 김에 조니의 근황도 물어봐주면 고맙겠네" });
+        
+        // 퀘스트 70: 조니의 근황 듣기
+        talkData.Add(180000 + 70, new string[] { "아이 귀찮아", "나의 근황?", "보다시피 매우 못지내고 있어", "퇴근이나 하고 싶네" });
+        
+        // 퀘스트 80:
+        
     }
 
     public string GetTalk(int sumId, int talkIndex) {

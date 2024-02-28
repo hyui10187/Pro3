@@ -25,6 +25,7 @@ public class QuestManager : MonoBehaviour {
     public GameObject questItemParent;
     public GameObject ring;
     public GameObject sword;
+    public GameObject key;
     
     private Dictionary<int, QuestData> questList;
 
@@ -42,6 +43,9 @@ public class QuestManager : MonoBehaviour {
         questList.Add(30, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
         questList.Add(40, new QuestData("촌장의 근심거리 듣기", new int[] { 110000 })); // 촌장
         questList.Add(50, new QuestData("몬스터 처치하기", new int[] { 0 }));
+        questList.Add(60, new QuestData("촌장의 보답", new int[] { 110000 }));
+        questList.Add(70, new QuestData("조니의 근황 듣기", new int[] { 180000 }));
+        questList.Add(80, new QuestData("상점 방문하기", new int[] { 0 }));
     }
 
     private void GenerateQuestItem() {
@@ -142,7 +146,13 @@ public class QuestManager : MonoBehaviour {
                 }
                 break;
             
-            case 50: // 몬스터 처치하기
+            case 50:
+                break;
+            
+            case 60: // 몬스터 처치하기
+                if(questActionIndex == 1) {
+                    key.SetActive(true); // 촌장 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                }
                 break;
             
             default:

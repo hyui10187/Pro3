@@ -15,6 +15,7 @@ public class Inventory : MonoBehaviour {
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
     public bool hasSword;
+    public bool hasKey;
 
     public int CurSlotCnt {
         get => curSlotCnt;
@@ -133,6 +134,8 @@ public class Inventory : MonoBehaviour {
                 
                 if(fieldItems.item.itemName == "Sword") {
                     hasSword = true;
+                } else if(fieldItems.item.itemName == "Key") {
+                    hasKey = true;
                 }
 
                 AlertManager.instance.AlertMessageOn(fieldItems.item.itemName, 0); // 아이템을 획득하였다는 메시지를 띄워주기
@@ -140,7 +143,7 @@ public class Inventory : MonoBehaviour {
                 //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
             } else { // 인벤토리가 꽉 차있다면
-                AlertManager.instance.AlertMessageOn("", 8);
+                AlertManager.instance.AlertMessageOn("", 5);
             }
         }
         
