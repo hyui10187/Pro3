@@ -28,6 +28,8 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(8, "인벤토리가 가득차서\n아이템을 구매할 수 없습니다.");
         alertData.Add(9, "\n아이템을 삭제하였습니다.");
         alertData.Add(10, "\n아이템을 창고에서 찾았습니다.");
+        alertData.Add(11, "골드를 획득했습니다.");
+        alertData.Add(12, "레벨이 올랐습니다.");
     }
     
     public void SaveMessageOn() {

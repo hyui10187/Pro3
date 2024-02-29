@@ -147,6 +147,7 @@ public class Player : MonoBehaviour {
                 GameManager.instance.inventoryPanel.SetActive(false);
                 GameManager.instance.storagePanel.SetActive(false);
                 GameManager.instance.storePanel.SetActive(false);
+                GameManager.instance.itemDescriptionPanel.SetActive(false);
             } else {
                 PanelManager.instance.MenuOnOff();
             }
@@ -344,7 +345,21 @@ public class Player : MonoBehaviour {
             }
         }
 
-        if(other.gameObject.name == "DoorInCheck 1" && Inventory.instance.hasKey) {
+        if(other.gameObject.name == "DoorInCheck 1" && Inventory.instance.hasStoreKey && !Inventory.instance.isDoorOpen) {
+            Transform parentTransform = other.transform.parent; // 부모 Transform을 우선 가져오고
+            Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true); // 꺼져있는 자식 컴포넌트도 가져오기
+
+            foreach(Transform childTransform in childTransforms) {
+                if(childTransform.gameObject.name == "Locked") {
+                    childTransform.gameObject.SetActive(false);
+                } else if(childTransform.gameObject.name == "Unlocked") {
+                    childTransform.gameObject.SetActive(true);
+                    break;
+                }
+            }
+        }
+        
+        if(other.gameObject.name == "ChestCheck 1" && Inventory.instance.hasChestKey && !Inventory.instance.isChestOpen) {
             Transform parentTransform = other.transform.parent; // 부모 Transform을 우선 가져오고
             Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true); // 꺼져있는 자식 컴포넌트도 가져오기
 

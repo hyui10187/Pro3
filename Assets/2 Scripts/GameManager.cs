@@ -122,7 +122,6 @@ public class GameManager : MonoBehaviour {
     
     private void Awake() {
         instance = this;
-
         InitPos();
     }
 
@@ -223,10 +222,10 @@ public class GameManager : MonoBehaviour {
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
 
             if(hasQuestItem && QuestManager.instance.questItem[0] != null) {
-                scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 Coin을 Trigger로 만들어주기
-                scanObject.SetActive(false); // 퀘스트 아이템인 Coin을 꺼주기
-                scanObject.transform.position = player.transform.position; // 퀘스트 아이템인 Coin을 플레이어의 위치로 옮겨줌
-                scanObject.SetActive(true); // 퀘스트 아이템인 Coin을 다시 켜줘서 바로 먹어지도록 하기
+                scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 은화를 Trigger로 만들어주기
+                scanObject.SetActive(false); // 퀘스트 아이템인 은화를 꺼주기
+                scanObject.transform.position = player.transform.position; // 퀘스트 아이템인 은화를 플레이어의 위치로 옮겨줌
+                scanObject.SetActive(true); // 퀘스트 아이템인 은화를 다시 켜줘서 바로 먹어지도록 하기
             }
             
             if(scanObject.CompareTag("Stone")) {
@@ -234,26 +233,51 @@ public class GameManager : MonoBehaviour {
                 scanObject.SetActive(false); // 그리고 기존에 대화한 돌맹이 오브젝트는 꺼주기
             }
 
-            if(isNpc && objId == 30000) {
+            if(isNpc && objId == 30000) { // 이동형 NPC 베르톨트
                 NPC npc = scanObject.GetComponent<NPC>();
                 npc.isCollision = false;
                 npc.CancelInvoke();
                 npc.Think();
-            } else if(isNpc && objId == 130000) {
+            } else if(isNpc && objId == 130000) { // 이동형 NPC 생쥐
                 Animal animal = scanObject.GetComponent<Animal>();
                 animal.isCollision = false;
                 animal.CancelInvoke();
                 animal.Think();
-            } else if(isNpc && objId == 160000) { // 카리나이면
+            } else if(isNpc && objId == 160000) { // 기능형 NPC 카리나
                 PanelManager.instance.StorageOnOff(); // 창고 패널 켜주기
                 inventoryPanel.SetActive(true); // 인벤토리 패널도 같이 켜주기
-            } else if(isNpc && objId == 170000) { // 린샹이면
+            } else if(isNpc && objId == 170000) { // 기능형 NPC 린샹이면
                 PanelManager.instance.StoreOnOff(); // 상점 패널 켜주기
                 inventoryPanel.SetActive(true); // 인벤토리 패널도 같이 켜주기
             }
 
             if(objId == 6200) { // 열쇠로 문을 여는 대사가 끝나면
                 scanObject.gameObject.SetActive(false);
+                Inventory.instance.isDoorOpen = true;
+
+            } else if(objId == 6300) { // 열쇠로 상자를 여는 대사가 끝나면
+                scanObject.gameObject.SetActive(false);
+                Transform parentTransform = scanObject.transform.parent;
+                Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
+
+                foreach(Transform childTransform in childTransforms) {
+                    if(childTransform.gameObject.name == "Candy") {
+                        childTransform.gameObject.SetActive(true);
+                        Inventory.instance.isChestOpen = true;
+                    }
+                }
+            } else if(objId == 6400) { // 열려있는 상자에서 사탕을 발견하는 대사가 끝나면
+                scanObject.gameObject.SetActive(false);
+                Transform parentTransform = scanObject.transform.parent;
+                Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
+                questManager.candy.SetActive(true);
+
+                foreach(Transform childTransform in childTransforms) {
+                    if(childTransform.gameObject.name == "Opened") {
+                        childTransform.gameObject.SetActive(true);
+                        questManager.candy.SetActive(true);
+                    }
+                }
             }
 
             expSlider.SetActive(true);
@@ -279,6 +303,8 @@ public class GameManager : MonoBehaviour {
             maxMana += 5;
             curHealth = maxHealth;
             curMana = maxMana;
+            
+            AlertManager.instance.AlertMessageOn("", 12);
         }
     }
     

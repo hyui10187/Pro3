@@ -25,7 +25,9 @@ public class QuestManager : MonoBehaviour {
     public GameObject questItemParent;
     public GameObject ring;
     public GameObject sword;
-    public GameObject key;
+    public GameObject storeKey;
+    public GameObject chestKey;
+    public GameObject candy;
     
     private Dictionary<int, QuestData> questList;
 
@@ -40,12 +42,13 @@ public class QuestManager : MonoBehaviour {
     private void GenerateData() {
         questList.Add(10, new QuestData("카밀과 대화하기", new int[] { 10000 })); // 카밀
         questList.Add(20, new QuestData("루나와 대화하기", new int[] { 20000 })); // 루나
-        questList.Add(30, new QuestData("루나의 동전 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
+        questList.Add(30, new QuestData("루나의 은화 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
         questList.Add(40, new QuestData("촌장의 근심거리 듣기", new int[] { 110000 })); // 촌장
         questList.Add(50, new QuestData("몬스터 처치하기", new int[] { 0 }));
         questList.Add(60, new QuestData("촌장의 보답", new int[] { 110000 }));
         questList.Add(70, new QuestData("조니의 근황 듣기", new int[] { 180000 }));
-        questList.Add(80, new QuestData("상점 방문하기", new int[] { 0 }));
+        questList.Add(80, new QuestData("콜린의 선물 받기", new int[] { 80000 }));
+        questList.Add(90, new QuestData("퀘스트", new int[] { 0 }));
     }
 
     private void GenerateQuestItem() {
@@ -89,37 +92,13 @@ public class QuestManager : MonoBehaviour {
 
         switch(questId) {
 
-            case 10: // 카밀과 대화하기
-                //if(questActionIndex == 2) { // 대화를 2번 모두 마쳤을때
-                //    questItem[0].SetActive(true); // 동전 켜주기
-                //}
-                break;
-            
             case 20: // 루나와 대화하기
                 if(questActionIndex == 1 && questItem[0] != null) { // 루나와 대화가 끝나고 나면
                     questItem[0].SetActive(true); // 동전 켜주기
                 }
-                
-                
-                // if(questActionIndex == 0) { // 게임을 저장하고 로드했을 경우를 대비하여
-                //     questItem[0].SetActive(true); // 동전 켜주기
-                // }
-                // if(questActionIndex == 2) {
-                //
-                //     int num = Inventory.instance.possessItems.Count;
-                //     
-                //     for(int i = 0; i < num; i++) { // 퀘스트 아이템 coin 인벤토리에서 제거하기
-                //         if(Inventory.instance.possessItems[i].itemType == Item.ItemType.Quest) {
-                //             Inventory.instance.RemoveItem(i);
-                //             break;
-                //         }
-                //     }
-                //     
-                //     ring.SetActive(true); // 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
-                // }
                 break;
                 
-            case 30: // 루나의 동전 찾아주기
+            case 30: // 루나의 은화 찾아주기
                 if(questActionIndex == 0 && questItem[0] != null) { // 게임을 저장하고 로드했을 경우를 대비하여
                     questItem[0].SetActive(true); // 동전 켜주기
                 }
@@ -145,17 +124,17 @@ public class QuestManager : MonoBehaviour {
                     sword.SetActive(true); // 촌장 앞에 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
-            
-            case 50:
-                break;
-            
+
             case 60: // 몬스터 처치하기
                 if(questActionIndex == 1) {
-                    key.SetActive(true); // 촌장 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                    storeKey.SetActive(true); // 촌장 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
             
-            default:
+            case 80:
+                if(questActionIndex == 1) {
+                    chestKey.SetActive(true); // 콜린 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                }
                 break;
         }
     }

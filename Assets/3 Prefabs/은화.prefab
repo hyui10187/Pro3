@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 364490587156071533}
   - component: {fileID: 9026727571838054403}
   m_Layer: 6
-  m_Name: Coin
+  m_Name: "\uC740\uD654"
   m_TagString: QuestItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -182,8 +182,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item:
     itemType: 2
-    itemName: Coin
+    itemName: "\uC740\uD654"
     itemImage: {fileID: 6582046967323461550, guid: 274d64617113287499ed1c4165d1d8f3, type: 3}
     itemCount: 1
+    itemPrice: 0
     itemEffects: []
   image: {fileID: 866789571067964859}

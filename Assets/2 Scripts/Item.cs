@@ -24,13 +24,17 @@ public class Item {
         return isUsed;
     }
 
-    public Item(Item eatItem) {
-        itemType = eatItem.itemType;
-        itemName = eatItem.itemName;
-        itemImage = eatItem.itemImage;
-        itemCount = eatItem.itemCount;
-        itemPrice = eatItem.itemPrice;
-        itemEffects = eatItem.itemEffects;
+    public Item Clone() {
+
+        Item copyItem = new Item();
+        copyItem.itemType = itemType;
+        copyItem.itemName = itemName;
+        copyItem.itemImage = itemImage;
+        copyItem.itemCount = itemCount;
+        copyItem.itemPrice = itemPrice;
+        copyItem.itemEffects = itemEffects;
+        
+        return copyItem;
     }
     
 }

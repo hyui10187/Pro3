@@ -20,11 +20,12 @@ public class StorageManager : MonoBehaviour {
     private Inventory inventory;
     
     private void Awake() {
-        instance = this;
         MakeSlots();
-        onChangeItem += RedrawSlotUI; // onChangeItem 대리자에 RedrawSlotUI 메소드 연결
         RedrawSlotUI();
+        SlotChange();
+        onChangeItem += RedrawSlotUI; // onChangeItem 대리자에 RedrawSlotUI 메소드 연결
 //        inventory.onSlotCountChange += SlotChange;
+        instance = this;
     }
 
     private void MakeSlots() {
@@ -47,6 +48,13 @@ public class StorageManager : MonoBehaviour {
             slots[i].UpdateSlot();
         }
     }
+    
+    private void SlotChange() { // 슬롯을 켜거나 꺼주는 메소드
+
+        for(int i = 0; i < slots.Length; i++) { // 슬롯 전체 길이만큼 루프를 돈다
+            slots[i].slotNum = i;
+        }
+    }
 
     public int CurSlotCnt {
         get => curSlotCnt;
@@ -64,7 +72,7 @@ public class StorageManager : MonoBehaviour {
         
         bool isAdded = false;
         int index = -1;
-
+        
         if(possessItems.Count < CurSlotCnt) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
             if(possessItems.Count > 0) {
                 for(int i = 0; i < possessItems.Count; i++) {
@@ -74,16 +82,16 @@ public class StorageManager : MonoBehaviour {
                         break;
                     }
                 }
-
-                if(isAdded) { // 기존에 가지고 있눈 아이템일 경우
+                
+                if(isAdded) { // 기존에 가지고 있는 아이템일 경우
                     possessItems[index].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
-                    possessItems.Add(eatItem);
+                    possessItems.Add(eatItem.Clone());
                 }
 
             } else {
-                possessItems.Add(eatItem); // 새롭게 아이템을 추가해줌
+                possessItems.Add(eatItem.Clone()); // 새롭게 아이템을 추가해줌
             }
 
             if(onChangeItem != null) {

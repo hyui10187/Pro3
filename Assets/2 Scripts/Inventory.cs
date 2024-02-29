@@ -15,8 +15,11 @@ public class Inventory : MonoBehaviour {
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
     public bool hasSword;
-    public bool hasKey;
-
+    public bool hasStoreKey;
+    public bool hasChestKey;
+    public bool isDoorOpen;
+    public bool isChestOpen;
+        
     public int CurSlotCnt {
         get => curSlotCnt;
         set {
@@ -54,13 +57,11 @@ public class Inventory : MonoBehaviour {
                     possessItems[index].itemCount += itemCount; // 기존 아이템의 갯수를 먹은 아이템의 갯수만큼 늘려주기
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
-                    Item copyItem = new Item(eatItem);
-                    possessItems.Add(copyItem);
+                    possessItems.Add(eatItem.Clone());
                 }
 
             } else {
-                Item copyItem = new Item(eatItem);
-                possessItems.Add(copyItem); // 새롭게 아이템을 추가해줌
+                possessItems.Add(eatItem.Clone()); // 새롭게 아이템을 추가해줌
             }
 
             if(onChangeItem != null) {
@@ -114,16 +115,19 @@ public class Inventory : MonoBehaviour {
 
             if(fieldItems.item.itemName == "SmallGold") {
                 GameManager.instance.curGold += 5;
+                AlertManager.instance.AlertMessageOn("5 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
                 
             } else if(fieldItems.item.itemName == "MiddleGold") {
                 GameManager.instance.curGold += 10;
+                AlertManager.instance.AlertMessageOn("10 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
                 
             } else if(fieldItems.item.itemName == "LargeGold") {
                 GameManager.instance.curGold += 15;
+                AlertManager.instance.AlertMessageOn("15 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
             }
@@ -132,10 +136,12 @@ public class Inventory : MonoBehaviour {
             
             if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
                 
-                if(fieldItems.item.itemName == "Sword") {
+                if(fieldItems.item.itemName == "소드") {
                     hasSword = true;
-                } else if(fieldItems.item.itemName == "Key") {
-                    hasKey = true;
+                } else if(fieldItems.item.itemName == "상점 열쇠") {
+                    hasStoreKey = true;
+                } else if(fieldItems.item.itemName == "상자 열쇠") {
+                    hasChestKey = true;
                 }
 
                 AlertManager.instance.AlertMessageOn(fieldItems.item.itemName, 0); // 아이템을 획득하였다는 메시지를 띄워주기
