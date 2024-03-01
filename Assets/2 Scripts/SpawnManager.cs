@@ -8,7 +8,7 @@ public class SpawnManager : MonoBehaviour {
 
     public static SpawnManager instance;
     
-    public GameObject enemyPrefab;
+    public GameObject monsterPrefab;
     public Transform enemyParent;
     public Transform[] spawnPos;
     public GameObject[] enemies;
@@ -20,7 +20,7 @@ public class SpawnManager : MonoBehaviour {
         enemies = new GameObject[spawnPos.Length];
 
         for(int i = 0; i < spawnPos.Length; i++) { // 스폰 위치마다 몬스터를 1마리씩 생성해주기
-            GameObject enemy = Instantiate(enemyPrefab, spawnPos[i].position, quaternion.identity, enemyParent);
+            GameObject enemy = Instantiate(monsterPrefab, spawnPos[i].position, quaternion.identity, enemyParent);
             enemy.SetActive(false); // 생성하자마자 일단 전부 꺼두기
             enemies[i] = enemy;
         }

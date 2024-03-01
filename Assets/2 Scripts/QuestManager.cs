@@ -107,7 +107,7 @@ public class QuestManager : MonoBehaviour {
                     int num = Inventory.instance.possessItems.Count;
                     
                     for(int i = 0; i < num; i++) { // 퀘스트 아이템인 coin을 인벤토리에서 제거하기
-                        if(Inventory.instance.possessItems[i].itemType == Item.ItemType.Quest) {
+                        if(Inventory.instance.possessItems[i].itemType == ItemType.Quest) {
                             Inventory.instance.RemoveItem(i);
                             break;
                         }

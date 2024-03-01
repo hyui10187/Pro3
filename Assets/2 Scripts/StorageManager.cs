@@ -1,70 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class StorageManager : MonoBehaviour {
     
     public static StorageManager instance;
     
-    public StorageSlot[] slots;
+    public StorageSlot[] storageSlots;
     public Transform slotHolder;
-    public int maxSlotNum; // 확장할 수 있는 최대 슬롯갯수
+    public int storageSlotCount; // 창고 슬롯의 갯수
     public GameObject slotPrefab;
     
     public delegate void OnchangeItem();
     public OnchangeItem onChangeItem;
 
     public List<Item> possessItems;
-    public int curSlotCnt; // 슬롯의 갯수
     private Inventory inventory;
     
     private void Awake() {
         MakeSlots();
-        RedrawSlotUI();
-        SlotChange();
-        onChangeItem += RedrawSlotUI; // onChangeItem 대리자에 RedrawSlotUI 메소드 연결
-//        inventory.onSlotCountChange += SlotChange;
+        RedrawStorageSlots();
+        onChangeItem += RedrawStorageSlots; // onChangeItem 대리자에 RedrawStorageSlots 메소드 연결
         instance = this;
     }
 
-    private void MakeSlots() {
+    private void MakeSlots() { // 창고 슬롯을 만들어내는 메소드
 
-        for(int i = 0; i < maxSlotNum; i++) {
+        for(int i = 0; i < storageSlotCount; i++) {
             Instantiate(slotPrefab, slotHolder);
         }
         
-        slots = slotHolder.GetComponentsInChildren<StorageSlot>();
+        storageSlots = slotHolder.GetComponentsInChildren<StorageSlot>();
     }
     
-    private void RedrawSlotUI() { // 인벤토리 UI를 다시 그려주는 메소드
+    private void RedrawStorageSlots() { // 창고 슬롯들을 다시 그려주는 메소드
 
-        for(int i = 0; i < slots.Length; i++) {
-            slots[i].RemoveSlot(); // 처음에는 for 루프를 돌면서 모든 아이템을 다 제거해주기
+        for(int i = 0; i < storageSlots.Length; i++) {
+            storageSlots[i].RemoveSlot(); // 처음에는 for 루프를 돌면서 창고 슬롯의 item 변수를 비워주기
+            storageSlots[i].slotNum = i; // 슬롯 번호를 순서대로 부여하기
         }
 
         for(int i = 0; i < possessItems.Count; i++) {
-            slots[i].item = possessItems[i];
-            slots[i].UpdateSlot();
-        }
-    }
-    
-    private void SlotChange() { // 슬롯을 켜거나 꺼주는 메소드
-
-        for(int i = 0; i < slots.Length; i++) { // 슬롯 전체 길이만큼 루프를 돈다
-            slots[i].slotNum = i;
+            storageSlots[i].item = possessItems[i];
+            storageSlots[i].UpdateSlot();
         }
     }
 
-    public int CurSlotCnt {
-        get => curSlotCnt;
-        set {
-            curSlotCnt = value;
-//            onSlotCountChange.Invoke(slotCnt);
-        }
-    }
-
-    public bool AddItem(Item eatItem) {
+    public bool AddItem(Item eatItem) { // 창고 슬롯에 아이템을 추가해주는 메소드
 
         if(eatItem == null) {
             return false;
@@ -73,7 +55,7 @@ public class StorageManager : MonoBehaviour {
         bool isAdded = false;
         int index = -1;
         
-        if(possessItems.Count < CurSlotCnt) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
+        if(possessItems.Count < storageSlotCount) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
             if(possessItems.Count > 0) {
                 for(int i = 0; i < possessItems.Count; i++) {
                     if(possessItems[i].itemName == eatItem.itemName) {
@@ -95,10 +77,10 @@ public class StorageManager : MonoBehaviour {
             }
 
             if(onChangeItem != null) {
-                onChangeItem.Invoke(); // 인벤토리 다시 그려주기
+                onChangeItem.Invoke(); // 창고 슬롯 다시 그려주기
             }
             
-            return true; // 아이템 슬롯의 갯수에 여유가 있으면 아이템을 먹어서 인벤토리에 추가해주고 true 반환
+            return true; // 창고 슬롯의 갯수에 여유가 있으면 창고 슬롯에 아이템을 추가해주고 true 반환
             
         } else { // 현재 보유 슬롯과 현재 보유중인 아이템의 갯수가 같으면
             for(int i = 0; i < possessItems.Count; i++) {
@@ -116,7 +98,7 @@ public class StorageManager : MonoBehaviour {
                 }
                 return true;
             } else {
-                return false; // 아이템 슬롯에 여유가 없으면 아이템을 그대로 두고 false 반환
+                return false; // 창고 슬롯이 꽉 찼으면 아이템을 그대로 두고 false 반환
             }
         }
     }

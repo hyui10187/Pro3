@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviour {
 
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
-    public bool hasSword;
+    public bool equipSword;
     public bool hasStoreKey;
     public bool hasChestKey;
     public bool isDoorOpen;
@@ -111,7 +111,7 @@ public class Inventory : MonoBehaviour {
         
         if(other.CompareTag("Item") || other.CompareTag("QuestItem")) { // 닿은 물체의 태그가 Item이거나 QuestItem 이라면
             
-            FieldItems fieldItems = other.GetComponent<FieldItems>();
+            ItemScript fieldItems = other.GetComponent<ItemScript>();
 
             if(fieldItems.item.itemName == "SmallGold") {
                 GameManager.instance.curGold += 5;
@@ -136,9 +136,7 @@ public class Inventory : MonoBehaviour {
             
             if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
                 
-                if(fieldItems.item.itemName == "소드") {
-                    hasSword = true;
-                } else if(fieldItems.item.itemName == "상점 열쇠") {
+                if(fieldItems.item.itemName == "상점 열쇠") {
                     hasStoreKey = true;
                 } else if(fieldItems.item.itemName == "상자 열쇠") {
                     hasChestKey = true;

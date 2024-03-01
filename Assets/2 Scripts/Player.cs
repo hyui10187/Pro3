@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class Player : MonoBehaviour {
     
@@ -64,7 +63,54 @@ public class Player : MonoBehaviour {
         }
         
         JoystickTouch();
+        PlayerMove();
+        
+        if(Input.GetButtonDown("Jump")) { // 플레이어가 스페이스 바를 눌렀으면
+            PlayerAction();
+        }
 
+        if(Input.GetButtonDown("Stats")) { // 플레이어가 S 키를 눌렀으면
+            PanelManager.instance.StatsOnOff();
+        }
+        
+        if(Input.GetButtonDown("Equipment")) { // 플레이어가 E 키를 눌렀으면
+            PanelManager.instance.EquipmentOnOff();
+        }
+        
+        if(Input.GetButtonDown("Inventory")) { // 플레이어가 I 키를 눌렀으면
+            PanelManager.instance.InventoryOnOff();
+        }
+
+        if(Input.GetButtonDown("Cancel")) { // 플레이어가 ESC 키를 눌렀으면
+            PlayerEsc();
+        }
+        
+        if(Input.GetButtonDown("Attack")) { // 플레이어가 A 키를 눌렀으면
+            PlayerAttack();
+        }
+        
+        // 모바일용 변수들은 매 프레임마다 초기화 해주기
+        upDown = false;
+        downDown = false;
+        leftDown = false;
+        rightDown = false;
+    }
+
+    private void PlayerEsc() {
+        if(GameManager.instance.inventoryPanel.activeSelf || GameManager.instance.storagePanel.activeSelf || GameManager.instance.storePanel.activeSelf || GameManager.instance.statsPanel.activeSelf || GameManager.instance.equipmentPanel.activeSelf) {
+            GameManager.instance.inventoryPanel.SetActive(false);
+            GameManager.instance.storagePanel.SetActive(false);
+            GameManager.instance.storePanel.SetActive(false);
+            GameManager.instance.statsPanel.SetActive(false);
+            GameManager.instance.equipmentPanel.SetActive(false);
+            GameManager.instance.itemDescriptionPanel.SetActive(false);
+        } else {
+            PanelManager.instance.MenuOnOff();
+        }
+    }
+    
+    private void PlayerMove() {
+        
         // Move Value
         h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal") + leftValue + rightValue; // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
         v = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Vertical") + upValue + downValue;
@@ -131,37 +177,6 @@ public class Player : MonoBehaviour {
         
         anim.SetBool("isHorizonChanged", isHorizonChanged);
         anim.SetBool("isVerticalChanged", isVerticalChanged);
-
-        // Scan Object
-        if(Input.GetButtonDown("Jump")) { // 플레이어가 스페이스 바를 눌렀으면
-            PlayerAction();
-        }
-        
-        if(Input.GetButtonDown("Inventory")) { // 플레이어가 I 키를 눌렀으면
-            PanelManager.instance.InventoryOnOff();
-        }
-
-        if(Input.GetButtonDown("Cancel")) { // 플레이어가 ESC 키를 눌렀으면
-
-            if(GameManager.instance.inventoryPanel.activeSelf || GameManager.instance.storagePanel.activeSelf || GameManager.instance.storePanel.activeSelf) {
-                GameManager.instance.inventoryPanel.SetActive(false);
-                GameManager.instance.storagePanel.SetActive(false);
-                GameManager.instance.storePanel.SetActive(false);
-                GameManager.instance.itemDescriptionPanel.SetActive(false);
-            } else {
-                PanelManager.instance.MenuOnOff();
-            }
-        }
-        
-        if(Input.GetButtonDown("Attack")) { // 플레이어가 A 키를 눌렀으면
-            PlayerAttack();
-        }
-        
-        // Mobile Var Init   // 모바일용 변수들은 매 프레임마다 초기화 해주기
-        upDown = false;
-        downDown = false;
-        leftDown = false;
-        rightDown = false;
     }
 
     public void PlayerAction() {
@@ -176,7 +191,7 @@ public class Player : MonoBehaviour {
             return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있거나 상점 패널이 켜져있으면 돌려보내기
         }
         
-        if(!Inventory.instance.hasSword) { // 무기를 가지고 있지 않으면
+        if(!Inventory.instance.equipSword) { // 무기를 가지고 있지 않으면
             AlertManager.instance.AlertMessageOn("", 6); // 공격불가 알림메시지 띄워주기
             return;
         }
@@ -190,23 +205,33 @@ public class Player : MonoBehaviour {
 
         foreach(Collider2D collision in collider2Ds) {
 
-            if(collision.CompareTag("Enemy")) { // 플레이어의 공격에 맞은게 Enemy 라면 
-                Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-                enemy.curHealth -= 20; // Enemy의 체력을 깎아주기
-                enemy.Damaged(transform.position); // Enemy의 피격 메소드 실행
+            if(collision.CompareTag("Monster")) { // 플레이어의 공격에 맞은게 Monster 라면 
+                Monster monster = collision.gameObject.GetComponent<Monster>();
+                monster.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
+                monster.Damaged(transform.position); // Enemy의 피격 메소드 실행
             }
 
             if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 라면
                 DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                desObject.curHealth -= 20;
+                desObject.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
                 desObject.Damaged();
             }
-                
+
             if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
                 DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                desObject.curHealth -= 20;
+                desObject.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
                 desObject.Damaged();
             }
+        }
+    }
+    
+    public void AttackEnd() {
+        anim.SetBool("isAttack", false);
+        isAttack = false;
+        
+        if(h != 0 || v != 0) { // 계속 이동하는 상태이면서 공격 애니메이션이 끝났을 경우
+            CancelInvoke("KeepWalk");
+            Invoke("KeepWalk", 0.1f);
         }
     }
     
@@ -282,7 +307,6 @@ public class Player : MonoBehaviour {
         if(!isDamaged && !isSlide && !isAttack && !GameManager.instance.storagePanel.activeSelf && !GameManager.instance.storePanel.activeSelf) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
             Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
             rigid.velocity = moveVec * moveSpeed;
-            //rigid.velocity = new Vector2(h, v) * moveSpeed;
         }
 
         Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
@@ -311,12 +335,12 @@ public class Player : MonoBehaviour {
             
         } else if(other.gameObject.CompareTag("Enemy")) { // 플레이어가 적한테 닿으면
 
-            Enemy enemy = other.gameObject.GetComponent<Enemy>();
+            Monster monster = other.gameObject.GetComponent<Monster>();
             
-            if(enemy.isDead) {
+            if(monster.isDead) {
                 return;
             }
-            OnDamaged(other.transform.position, enemy.collisionDamage);
+            OnDamaged(other.transform.position, monster.collisionDamage);
             
         } else if(other.gameObject.CompareTag("Obstacle")) {
             OnDamaged(other.transform.position, GameManager.instance.obstacleDamage);
@@ -459,16 +483,6 @@ public class Player : MonoBehaviour {
 
     private void DeadPanelOn() {
         GameManager.instance.deadPanel.SetActive(true);
-    }
-    
-    public void AttackEnd() {
-        anim.SetBool("isAttack", false);
-        isAttack = false;
-        
-        if(h != 0 || v != 0) { // 계속 이동하는 상태이면서 공격 애니메이션이 끝났을 경우
-            CancelInvoke("KeepWalk");
-            Invoke("KeepWalk", 0.1f);
-        }
     }
 
     private void KeepWalk() { // 걸으면서 공격할 경우에 공격이 끝나고 다시 걷는 애니메이션을 실행시켜주기 위한 메소드

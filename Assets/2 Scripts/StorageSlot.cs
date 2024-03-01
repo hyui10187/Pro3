@@ -7,7 +7,7 @@ public class StorageSlot : MonoBehaviour {
     
     public int slotNum; // 슬롯 번호
     public Item item;
-    public Image itemImage;
+    public Image itemImage; // 아이템 이미지
     public Text itemCount; // 보유한 아이템 갯수
     
     public void UpdateSlot() {
@@ -30,11 +30,6 @@ public class StorageSlot : MonoBehaviour {
         bool canWithdraw = Inventory.instance.AddItem(item); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
         
         if(canWithdraw) {
-
-            if(item.itemName == "Sword") {
-                Inventory.instance.hasSword = true;
-            }
-            
             AlertManager.instance.AlertMessageOn(item.itemName, 10);
             StorageManager.instance.RemoveStorageItem(slotNum);
         }

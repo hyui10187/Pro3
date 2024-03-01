@@ -4,14 +4,13 @@ using UnityEngine;
 
 [System.Serializable]
 public class Item {
-    
-    public enum ItemType { Equipment, Consumables, Quest, Material, Gold, Etc }
 
     public ItemType itemType;
     public string itemName;
     public Sprite itemImage;
     public int itemCount;
     public int itemPrice;
+    public int itemAttackPower;
     public List<ItemEffect> itemEffects;
 
     public bool Use() {
@@ -32,6 +31,7 @@ public class Item {
         copyItem.itemImage = itemImage;
         copyItem.itemCount = itemCount;
         copyItem.itemPrice = itemPrice;
+        copyItem.itemAttackPower = itemAttackPower;
         copyItem.itemEffects = itemEffects;
         
         return copyItem;

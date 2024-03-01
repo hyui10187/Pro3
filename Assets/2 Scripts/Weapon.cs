@@ -9,10 +9,10 @@ public class Weapon : MonoBehaviour {
     public float shotSpeed; // 총알 발사 속도
     public float timer;
     
-    private Enemy enemy;
+    private Monster monster;
 
     private void Awake() {
-        enemy = GetComponentInParent<Enemy>();
+        monster = GetComponentInParent<Monster>();
     }
 
     private void Update() {
@@ -25,11 +25,11 @@ public class Weapon : MonoBehaviour {
     }
 
     private void Fire() {
-        if(!enemy.scanner.target || enemy.isDead) { // 플레이어가 사정거리의 밖에 있으면 로직 실행안함
+        if(!monster.scanner.target || monster.isDead) { // 플레이어가 사정거리의 밖에 있으면 로직 실행안함
             return;
         }
 
-        Vector3 targetPos = enemy.scanner.target.transform.position; // 플레이어의 위치
+        Vector3 targetPos = monster.scanner.target.transform.position; // 플레이어의 위치
         Vector3 dir = targetPos - transform.position;
         dir = dir.normalized;
         

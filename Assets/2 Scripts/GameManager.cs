@@ -60,6 +60,13 @@ public class GameManager : MonoBehaviour {
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;
     public GameObject storePanel;
+    public GameObject equipmentPanel;
+    public GameObject statsPanel;
+    public GameObject statsUpButton;
+    public Text strPointText;
+    public Text dexPointText;
+    public Text conPointText;
+    public Text wisPointText;
     
     [Header("UI - MiddleMiddle")]
     public GameObject helpPanel;
@@ -69,6 +76,8 @@ public class GameManager : MonoBehaviour {
     public Text healthManaMessageText;
     public GameObject itemDescriptionPanel;
     public Text itemDescriptionText;
+    public Button consumptionButton;
+    public Button equipButton;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -102,6 +111,12 @@ public class GameManager : MonoBehaviour {
     public int curGold;
     public int startGold;
     public int curLevel;
+    public int strPoint;
+    public int dexPoint;
+    public int conPoint;
+    public int wisPoint;
+    public int itemAttackPower;   // 장착중인 아이템의 공격력
+    public int playerAttackPower; // 플레이어의 기본 공격력
 
     [Header("Flag")]
     public bool isLive; // 게임이 진행중인지 체크하는 플래그
@@ -294,16 +309,18 @@ public class GameManager : MonoBehaviour {
         talkIndex++;
     }
 
-    private void ControlLevel() {
+    private void ControlLevel() { // 레벨업을 담당하는 메소드
 
-        if(curExp >= maxExp) {
+        if(maxExp <= curExp) {
             curExp -= maxExp;
             curLevel++;
-            maxHealth += 10;
-            maxMana += 5;
+            maxHealth += 10; // 레벨업하면 플레이어의 최대 체력 늘려주기
+            maxMana += 5;    // 레벨업하면 플레이어의 최대 마나 늘려주기
             curHealth = maxHealth;
             curMana = maxMana;
             
+            PanelManager.instance.StatsOnOff(); // 레벨업 하면 자동으로 스탯창 켜주기
+            PanelManager.instance.StatsUpOnOff(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기
             AlertManager.instance.AlertMessageOn("", 12);
         }
     }
@@ -437,6 +454,8 @@ public class GameManager : MonoBehaviour {
             Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
         }
 
+        PanelManager.instance.RedrawStatsPanel();
+        
         PanelManager.instance.PanelOff();
         PanelManager.instance.PanelOn();
     }

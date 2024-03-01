@@ -23,7 +23,7 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(3, "\n아이템을 창고에 맡겼습니다.");
         alertData.Add(4, "\n아이템을 사용하였습니다.");
         alertData.Add(5, "인벤토리가 가득차서\n아이템을 획득할 수 없습니다.");
-        alertData.Add(6, "무기를 보유하지 않아서\n공격할 수 없습니다.");
+        alertData.Add(6, "무기를 장착하지 않아서\n공격할 수 없습니다.");
         alertData.Add(7, "소지금이 부족하여\n아이템을 구매할 수 없습니다.");
         alertData.Add(8, "인벤토리가 가득차서\n아이템을 구매할 수 없습니다.");
         alertData.Add(9, "\n아이템을 삭제하였습니다.");
