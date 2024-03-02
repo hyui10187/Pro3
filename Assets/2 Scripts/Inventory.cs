@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviour {
 
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
-    public bool equipSword;
+    public bool equipWeapon;
     public bool hasStoreKey;
     public bool hasChestKey;
     public bool isDoorOpen;

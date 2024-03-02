@@ -52,8 +52,8 @@ public class InventorySlot : MonoBehaviour {
 
                 if(canEntrust && item != null) {
 
-                    if(item.itemName == "소드") {
-                        Inventory.instance.equipSword = false; // 창고에 소드를 맡길 경우 equipSword 플래그 값 내려주기
+                    if(item.itemType == ItemType.Weapon) {
+                        Inventory.instance.equipWeapon = false; // 창고에 소드를 맡길 경우 equipSword 플래그 값 내려주기
                     }
 
                     AlertManager.instance.AlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
@@ -64,8 +64,8 @@ public class InventorySlot : MonoBehaviour {
 
             if(GameManager.instance.storePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
 
-                if(item.itemName == "소드") {
-                    Inventory.instance.equipSword = false; // 상점에 소드를 판매할 경우 equipSword 플래그 값 내려주기
+                if(item.itemType == ItemType.Weapon) {
+                    Inventory.instance.equipWeapon = false; // 상점에 소드를 판매할 경우 equipSword 플래그 값 내려주기
                 }
                 
                 GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기

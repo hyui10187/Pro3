@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour {
     public GameObject menuButton;
     public GameObject inventoryButton;
     public GameObject virtualButton;
+    public GameObject equipmentButton;
 
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;
@@ -63,10 +64,16 @@ public class GameManager : MonoBehaviour {
     public GameObject equipmentPanel;
     public GameObject statsPanel;
     public GameObject statsUpButton;
+    public Text statsPointText;
     public Text strPointText;
     public Text dexPointText;
     public Text conPointText;
     public Text wisPointText;
+    public Text attackPowerText;
+    public Text defensivePowerText;
+    public Text attackSpeedText;
+    public Text moveSpeedText;
+    public Text jopText;
     
     [Header("UI - MiddleMiddle")]
     public GameObject helpPanel;
@@ -78,6 +85,7 @@ public class GameManager : MonoBehaviour {
     public Text itemDescriptionText;
     public Button consumptionButton;
     public Button equipButton;
+    public Text equipButtonText;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -101,6 +109,7 @@ public class GameManager : MonoBehaviour {
     [Header("Player Info")]
     public GameObject player;
     public float curMoveSpeed;
+    public int itemMoveSpeed;
     public float originMoveSpeed;
     public float curHealth;
     public float maxHealth;
@@ -111,23 +120,26 @@ public class GameManager : MonoBehaviour {
     public int curGold;
     public int startGold;
     public int curLevel;
+    public int statsPoint;
     public int strPoint;
     public int dexPoint;
     public int conPoint;
     public int wisPoint;
     public int itemAttackPower;   // 장착중인 아이템의 공격력
     public int playerAttackPower; // 플레이어의 기본 공격력
+    public int defensivePower;
+    public int attackSpeed;
 
     [Header("Flag")]
     public bool isLive; // 게임이 진행중인지 체크하는 플래그
     public bool isAction; // 대화를 하는중인지 체크하기 위한 플래그값
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
     public bool hasQuestItem;
-    public bool isMonsterPanelOn;
     public bool isNewGame;
     public bool canEatQuestItem = true; // 퀘스트 아이템을 먹을 수 있는지 플래그값
 
     [Header("Etc")]
+    public GameObject globalLight;
     public int talkIndex;
     public float frozenTime;
     public float frozenCoolTime;
@@ -220,6 +232,10 @@ public class GameManager : MonoBehaviour {
             animal.CancelInvoke();
         }
 
+        if(objData == null) {
+            return;
+        }
+        
         Talk(objData.objId, objData.isNpc, scanObject.name);
         talkPanel.SetActive(isAction); // 대화창을 끄고 켜는 것은 isAction 플래그 값이랑 동일하다
     }
@@ -244,8 +260,8 @@ public class GameManager : MonoBehaviour {
             }
             
             if(scanObject.CompareTag("Stone")) {
-                ItemManager.instance.DropMaterial(player.transform.position, 1); // 돌맹이 재료 아이템과 대화가 끝나면 해당 아이템을 플레이어의 위치에 생성
-                scanObject.SetActive(false); // 그리고 기존에 대화한 돌맹이 오브젝트는 꺼주기
+                ItemManager.instance.DropMaterial(player.transform.position, 1); // 돌멩이 재료 아이템과 대화가 끝나면 해당 아이템을 플레이어의 위치에 생성
+                scanObject.SetActive(false); // 기존에 대화한 돌멩이 오브젝트는 꺼주기
             }
 
             if(isNpc && objId == 30000) { // 이동형 NPC 베르톨트
@@ -318,9 +334,11 @@ public class GameManager : MonoBehaviour {
             maxMana += 5;    // 레벨업하면 플레이어의 최대 마나 늘려주기
             curHealth = maxHealth;
             curMana = maxMana;
-            
+            statsPoint++;
+
+            PanelManager.instance.RedrawStatsPanel();
             PanelManager.instance.StatsOnOff(); // 레벨업 하면 자동으로 스탯창 켜주기
-            PanelManager.instance.StatsUpOnOff(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기
+            PanelManager.instance.StatsUpOn(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기
             AlertManager.instance.AlertMessageOn("", 12);
         }
     }
@@ -334,10 +352,6 @@ public class GameManager : MonoBehaviour {
         } else { // 얼음 필드로 나와있는 상태이면
             frozenEffect.SetActive(true); // 추위 디버프 켜주기
             WeatherManager.instance.SnowOn(); // 눈 내리는 것을 켜주는 메소드 호출
-
-            if(isMonsterPanelOn) {
-                monsterPanel.SetActive(true);
-            }
             
             frozenCoolTime += Time.deltaTime;
 
@@ -458,6 +472,7 @@ public class GameManager : MonoBehaviour {
         
         PanelManager.instance.PanelOff();
         PanelManager.instance.PanelOn();
+        globalLight.SetActive(true);
     }
 
 }

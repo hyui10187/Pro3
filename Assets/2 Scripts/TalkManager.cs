@@ -34,7 +34,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(1800, new string[] { "딱딱한 나무 의자다." });
         talkData.Add(1900, new string[] { "여러명이 앉을 수 있는 의자다." });
         talkData.Add(2100, new string[] { "모험에 관한 흥미로운 책들이 꽂혀있다." });
-        talkData.Add(2200, new string[] { "여권에 투숙하는 사람들의 명단이 적혀있다." });
+        talkData.Add(2200, new string[] { "여관에 투숙하는 사람들의 명단이 적혀있다." });
         talkData.Add(2300, new string[] { "항아리에 귀한 향신료가 담겨있다." });
         talkData.Add(2400, new string[] { "문이 굳게 잠겨있다.", "열쇠가 있어야 열 수 있을것 같다." });
         talkData.Add(2500, new string[] { "물이 상당히 깊어 보인다.", "배가 있어야 건널 수 있을것 같다." });
@@ -122,7 +122,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(180000 + 70, new string[] { "아이 귀찮아", "나의 근황?", "보다시피 매우 못지내고 있어", "퇴근이나 하고 싶네" });
         
         // 퀘스트 80: 콜린의 선물 받기
-        talkData.Add(80000 + 80, new string[] { "여어", "너가 마을 밖의 몬스터들을 물리쳐 줬다며?", "나도 몬스터 때문에 골치였었거든", "감사의 의미로 이 열쇠를 줄께", "상자를 열 수 있는 열쇠야", "어느 상자를 여는 열쇠였는지는 까먹었네", "한번 잘 찾아봐!" });
+        talkData.Add(80000 + 80, new string[] { "여어", "너가 마을 밖의 몬스터들을 물리쳐 줬다며?", "나도 몬스터 때문에 골치가 아팠었거든", "감사의 의미로 이 열쇠를 줄께", "상자를 열 수 있는 열쇠야", "어떤 상자를 여는 열쇠인지는 까먹었어", "한번 잘 찾아봐!" });
         
     }
 

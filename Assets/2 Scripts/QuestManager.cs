@@ -120,7 +120,7 @@ public class QuestManager : MonoBehaviour {
             case 40: // 촌장의 근심거리 듣기
                 if(questActionIndex == 1) { // 촌장과 대화가 끝나면
                     SpawnManager.instance.GenerateEnemy(); // 몬스터를 전부 켜주기
-                    GameManager.instance.isMonsterPanelOn = true; // 몬스터 패널을 켜주기
+                    GameManager.instance.monsterPanel.SetActive(true); // 몬스터 패널을 켜주기
                     sword.SetActive(true); // 촌장 앞에 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
@@ -128,6 +128,7 @@ public class QuestManager : MonoBehaviour {
             case 60: // 몬스터 처치하기
                 if(questActionIndex == 1) {
                     storeKey.SetActive(true); // 촌장 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                    GameManager.instance.monsterPanel.SetActive(false); // 몬스터 패널을 꺼주기
                 }
                 break;
             

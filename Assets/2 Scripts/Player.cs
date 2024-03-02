@@ -191,7 +191,7 @@ public class Player : MonoBehaviour {
             return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있거나 상점 패널이 켜져있으면 돌려보내기
         }
         
-        if(!Inventory.instance.equipSword) { // 무기를 가지고 있지 않으면
+        if(!Inventory.instance.equipWeapon) { // 무기를 가지고 있지 않으면
             AlertManager.instance.AlertMessageOn("", 6); // 공격불가 알림메시지 띄워주기
             return;
         }

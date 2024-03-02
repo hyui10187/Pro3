@@ -22,8 +22,8 @@ public class EquipmentSlot : MonoBehaviour {
             if(InventoryManager.instance.inventorySlots[i].item.itemName == itemName) {
                 InventoryManager.instance.inventorySlots[i].equipImage.SetActive(false); // 장착중이라는 E 아이콘을 꺼주기
 
-                if(itemName == "소드") { // 소드를 해제했으면 equipSword 플래그값 내려주기
-                    Inventory.instance.equipSword = false;
+                if(itemType == ItemType.Weapon) { // 무기를 해제했으면 equipSword 플래그값 내려주기
+                    Inventory.instance.equipWeapon = false;
                 }
                 
                 RemoveSlot();

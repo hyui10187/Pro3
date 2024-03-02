@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recoveryHealthPoint: 0
   recoveryManaPoint: 0
-  increaseSpeedPercent: 0.2
+  increaseSpeedPoint: 1

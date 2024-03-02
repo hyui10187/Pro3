@@ -73,14 +73,17 @@ public class PanelManager : MonoBehaviour {
     
     public void SpeedEffectOn() {
         CancelInvoke("SpeedEffectOff"); // 기존에 이동속도 버프 꺼주는 메소드가 실행될 예정이었을 수 있으니 취소해주고 시작
-        
         GameManager.instance.speedEffect.SetActive(true); // 이동속도 버프 켜주기
         Invoke("SpeedEffectOff", 5);
+        RedrawStatsPanel();
     }
 
     public void SpeedEffectOff() {
+        RedrawStatsPanel();
         GameManager.instance.speedEffect.SetActive(false); // 이동속도 버프 꺼주기
         GameManager.instance.curMoveSpeed = GameManager.instance.originMoveSpeed; // 현재 이동속도를 기본 이동속도로 초기화
+        GameManager.instance.itemMoveSpeed = 0;
+        RedrawStatsPanel();
     }
     
     public void HelpOnOff() { // 우측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
@@ -122,12 +125,12 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void StatsUpOnOff() {
-        if(!GameManager.instance.statsUpButton.activeSelf) {
-            GameManager.instance.statsUpButton.SetActive(true);
-        } else {
-            GameManager.instance.statsUpButton.SetActive(false);
-        }
+    public void StatsUpOn() {
+        GameManager.instance.statsUpButton.SetActive(true);
+    }
+
+    private void StatsUpOff() {
+        GameManager.instance.statsUpButton.SetActive(false);
     }
 
     public void StatsUpButtonClick(int idx) { // 스탯을 올리는 버튼을 클릭했을때 메소드
@@ -150,19 +153,29 @@ public class PanelManager : MonoBehaviour {
                 GameManager.instance.wisPoint++;
                 break;
         }
+
+        GameManager.instance.statsPoint--;
         
-        StatsUpOnOff();
+        if(GameManager.instance.statsPoint < 1) {
+            StatsUpOff();
+        }
+        
         RedrawStatsPanel();
     }
 
     public void RedrawStatsPanel() {
-        GameManager.instance.strPointText.text = GameManager.instance.strPoint.ToString();
-        GameManager.instance.dexPointText.text = GameManager.instance.dexPoint.ToString();
-        GameManager.instance.conPointText.text = GameManager.instance.conPoint.ToString();
-        GameManager.instance.wisPointText.text = GameManager.instance.wisPoint.ToString();
+        GameManager.instance.statsPointText.text = "스탯 포인트 " + GameManager.instance.statsPoint;
+        GameManager.instance.strPointText.text = "근력   " + GameManager.instance.strPoint;
+        GameManager.instance.dexPointText.text = "민첩   " + GameManager.instance.dexPoint;
+        GameManager.instance.conPointText.text = "체력   " + GameManager.instance.conPoint;
+        GameManager.instance.wisPointText.text = "지혜   " + GameManager.instance.wisPoint;
 
         GameManager.instance.playerAttackPower = GameManager.instance.strPoint * 2;
+        GameManager.instance.attackPowerText.text = "공격력 " + GameManager.instance.playerAttackPower + " (+" + GameManager.instance.itemAttackPower + ")";
+        
         GameManager.instance.originMoveSpeed = GameManager.instance.dexPoint == 0 ? 5 : GameManager.instance.dexPoint + 5;
+        GameManager.instance.moveSpeedText.text = "이동속도 " + GameManager.instance.originMoveSpeed + " (+" + GameManager.instance.itemMoveSpeed + ")";
+        
         GameManager.instance.curMoveSpeed = GameManager.instance.originMoveSpeed;
     }
     
@@ -170,21 +183,35 @@ public class PanelManager : MonoBehaviour {
         
         slotNum = clickSlotNum;
         item = clickItem;
-        
-        GameManager.instance.consumptionButton.interactable = true; // 사용 버튼을 기본적으로 활성화
-        GameManager.instance.equipButton.interactable = false; // 장착 버튼을 기본적으로 비활성화
 
-        if(!GameManager.instance.itemDescriptionPanel.activeSelf) {
-            switch(item.itemType) { // 장비 아이템의 설명창을 띄울 경우 장착 버튼을 활성화
-                case ItemType.Weapon:
-                case ItemType.Ring:
+        if(!GameManager.instance.itemDescriptionPanel.activeSelf) { // 아이템 설명창이 꺼져있을 경우
+            switch(item.itemType) {
+                case ItemType.Weapon: // 장비 아이템의 설명창을 띄울 경우 장착 버튼을 활성화
                 case ItemType.Shield:
+                case ItemType.Ring:
                 case ItemType.Necklace:
                     GameManager.instance.consumptionButton.interactable = false;
                     GameManager.instance.equipButton.interactable = true;
                     break;
+                
+                case ItemType.Consumables: // 소비 아이템일 경우 사용 버튼을 활성화
+                    GameManager.instance.consumptionButton.interactable = true;
+                    GameManager.instance.equipButton.interactable = false;
+                    break;
+                
+                default: // 나머지 아이템일 경우 사용, 장착을 모두 비활성화
+                    GameManager.instance.consumptionButton.interactable = false;
+                    GameManager.instance.equipButton.interactable = false;
+                    break;
+            }
+
+            if(InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 이미 장착중일 경우
+                GameManager.instance.equipButtonText.text = "해제"; // 가운데 버튼의 문구를 해제로 바꿔주기
+            } else {
+                GameManager.instance.equipButtonText.text = "장착";
             }
             GameManager.instance.itemDescriptionPanel.SetActive(true);
+
         } else {
             GameManager.instance.itemDescriptionPanel.SetActive(false);
         }
@@ -194,9 +221,9 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.itemDescriptionPanel.SetActive(false);
     }
 
-    public void EquipButton() {
-        if(!InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) {
-            InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(true);
+    public void EquipButton() { // 장착 버튼을 클릭했을때 호출되는 메소드
+        if(!InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 장착되었다는 E 문구가 꺼져있는 상태면
+            InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(true); // 장착되었다는 E 문구 켜주기
 
             for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++) {
                 if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType) {
@@ -204,15 +231,28 @@ public class PanelManager : MonoBehaviour {
                 }
             }
 
-            if(item.itemName == "소드") {
-                Inventory.instance.equipSword = true;
+            if(item.itemType == ItemType.Weapon) {
+                Inventory.instance.equipWeapon = true;
                 GameManager.instance.itemAttackPower = item.itemAttackPower;
             }
-            
+
+            RedrawStatsPanel();
             ItemDescriptionOff();
-        } else {
-            InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(false);
-            Inventory.instance.equipSword = false;
+            
+        } else { // 장착되었다는 E 문구가 켜져있는 상태면
+            
+            for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++) {
+                if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType) {
+                    EquipmentManager.instance.equipmentSlots[i].RemoveSlot(); // 장비창의 해당하는 슬롯에 장착되어 있던 이미지를 지워주기
+                }
+            }
+            
+            InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(false); // 인벤토리의 슬롯에서 장착되었다는 E 문구 꺼주기
+
+            if(item.itemType == ItemType.Weapon) {
+                Inventory.instance.equipWeapon = false;    
+            }
+            
             GameManager.instance.itemAttackPower = 0;
             ItemDescriptionOff();
         }
@@ -248,14 +288,18 @@ public class PanelManager : MonoBehaviour {
         } else if(slotNum != -1 && item.itemCount == 1) { // 아이템이 1개만 있을 경우
             AlertManager.instance.AlertMessageOn(item.itemName, 9);
 
-            if(InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) {
-                InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(false);
+            if(InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 장착된 아이템을 삭제한거면
+                InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(false); // 장착되었다는 E 문구 꺼주기
 
                 for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++) {
                     if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType) {
                         EquipmentManager.instance.equipmentSlots[i].RemoveSlot();
                         break;
                     }
+                }
+
+                if(item.itemType == ItemType.Weapon) { // 무기를 삭제한 것이면
+                    Inventory.instance.equipWeapon = false;
                 }
             }
             
@@ -283,7 +327,8 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.menuButton.SetActive(true);
         GameManager.instance.inventoryButton.SetActive(true);
         GameManager.instance.virtualButton.SetActive(true);
-
+        GameManager.instance.equipmentButton.SetActive(true);
+        
         // UI - MiddleMiddle
 
         // UI - MiddleRight
@@ -325,6 +370,7 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.menuButton.SetActive(false);
         GameManager.instance.inventoryButton.SetActive(false);
         GameManager.instance.virtualButton.SetActive(false);
+        GameManager.instance.equipmentButton.SetActive(false);
 
         // UI - MiddleMiddle
         GameManager.instance.helpPanel.SetActive(false);

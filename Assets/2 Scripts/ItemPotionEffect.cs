@@ -7,7 +7,7 @@ public class ItemPotionEffect : ItemEffect {
 
     public int recoveryHealthPoint; // 회복시킬 HP양
     public int recoveryManaPoint; // 회복시킬 MP양
-    public float increaseSpeedPercent; // 증가시킬 이동속도양
+    public int increaseSpeedPoint; // 증가시킬 이동속도양
     
     public override bool ExecuteRole() {
 
@@ -37,11 +37,11 @@ public class ItemPotionEffect : ItemEffect {
             GameManager.instance.curMana = GameManager.instance.maxMana;
         }
 
-        if(0 < increaseSpeedPercent) { // 노랑 물약이면
-            PanelManager.instance.SpeedEffectOn();
-
+        if(0 < increaseSpeedPoint) { // 노랑 물약이면
             GameManager.instance.curMoveSpeed = GameManager.instance.originMoveSpeed; // 노랑물약을 중복으로 먹을 수 있으니 현재 이동속도를 기본 이동속도로 일단 초기화
-            GameManager.instance.curMoveSpeed += (GameManager.instance.curMoveSpeed * increaseSpeedPercent); // 노랑물약의 이동속도 증가율만쿰 현재 이동속도 증가시킴
+            GameManager.instance.curMoveSpeed += increaseSpeedPoint; // 노랑물약의 이동속도 증가율만쿰 현재 이동속도 증가시킴
+            GameManager.instance.itemMoveSpeed = increaseSpeedPoint;
+            PanelManager.instance.SpeedEffectOn();
         }
         
         return true;
