@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class HUD : MonoBehaviour {
     
-    public enum InfoType { Health, HealthText, Mana, ManaText, Time, Level , Exp, Monster, Gold }
+    public enum InfoType { Health, HealthText, Mana, ManaText, Time, Level , Exp, Monster, Gold, LongPressBar }
 
     public InfoType type;
 
@@ -66,7 +66,16 @@ public class HUD : MonoBehaviour {
             case InfoType.Gold:
                 uiText.text = GameManager.instance.curGold.ToString();
                 break;
+            
+            case InfoType.LongPressBar:
+
+                if(Inventory.instance.isInventorySlotClick) {
+                    slider.value += Time.deltaTime;
+                } else {
+                    slider.value = 0;
+                }
+                break;
         }
     }
-    
+
 }

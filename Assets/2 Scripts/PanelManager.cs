@@ -18,14 +18,8 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void MenuOnOff() {
-
-        if(GameManager.instance.storagePanel.activeSelf) {
-            return;
-        }
-        
         if(!GameManager.instance.menuPanel.activeSelf) {
             GameManager.instance.menuPanel.SetActive(true);
-            
         } else {
             GameManager.instance.menuPanel.SetActive(false);
         }
@@ -41,11 +35,11 @@ public class PanelManager : MonoBehaviour {
     
     public void FPSOnOff() {
         
-        if(!GameManager.instance.FPSPanel.activeSelf) {
-            GameManager.instance.FPSPanel.SetActive(true);
+        if(!GameManager.instance.fpsPanel.activeSelf) {
+            GameManager.instance.fpsPanel.SetActive(true);
             FPS.instance.ControlFPSPanel();
         } else {
-            GameManager.instance.FPSPanel.SetActive(false);
+            GameManager.instance.fpsPanel.SetActive(false);
             FPS.instance.StopControlFPSPanel();
         }
     }
@@ -125,11 +119,11 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void StatsUpOn() {
+    public void StatsUpButtonOn() {
         GameManager.instance.statsUpButton.SetActive(true);
     }
 
-    private void StatsUpOff() {
+    private void StatsUpButtonOff() {
         GameManager.instance.statsUpButton.SetActive(false);
     }
 
@@ -157,7 +151,7 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.statsPoint--;
         
         if(GameManager.instance.statsPoint < 1) {
-            StatsUpOff();
+            StatsUpButtonOff();
         }
         
         RedrawStatsPanel();
@@ -221,7 +215,7 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.itemDescriptionPanel.SetActive(false);
     }
 
-    public void EquipButton() { // 장착 버튼을 클릭했을때 호출되는 메소드
+    public void EquipButtonClick() { // 장착 버튼을 클릭했을때 호출되는 메소드
         if(!InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 장착되었다는 E 문구가 꺼져있는 상태면
             InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(true); // 장착되었다는 E 문구 켜주기
 
@@ -258,7 +252,7 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void ConsumptionButton() { // 아이템 설명 패널에서 사용 버튼을 클릭했을 경우 호출할 메소드
+    public void ConsumptionButtonClick() { // 아이템 설명 패널에서 사용 버튼을 클릭했을 경우 호출할 메소드
         
         if(slotNum != -1) { // 파라미터로 넘어온 slotNum이 존재할 경우
             bool isUse = false;
@@ -279,7 +273,7 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void DeleteButton() { // 아이템 설명 패널에서 삭제 버튼을 클릭했을 경우 호출할 메소드
+    public void DeleteButtonClick() { // 아이템 설명 패널에서 삭제 버튼을 클릭했을 경우 호출할 메소드
         
         if(slotNum != -1 && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
             AlertManager.instance.AlertMessageOn(item.itemName, 9);
@@ -308,16 +302,22 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
+    public void LanguageButtonClick() {
+        
+    }
+    
     public void PanelOn() {
 
+        // UI - Panel
         GameManager.instance.weatherPanel.SetActive(true);
+        GameManager.instance.longPressBar.SetActive(true);
         
         // UI - UpLeft
         GameManager.instance.gaugePanel.SetActive(true);
         GameManager.instance.buffPanel.SetActive(true);
         GameManager.instance.questPanel.SetActive(true);
         GameManager.instance.helpButton.SetActive(true);
-        GameManager.instance.FPSButton.SetActive(true);
+        GameManager.instance.fpsButton.SetActive(true);
 
         // UI - UpMiddle
         GameManager.instance.goldPanel.SetActive(true);
@@ -350,6 +350,7 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.menuPanel.SetActive(false);
         GameManager.instance.deadPanel.SetActive(false);
         GameManager.instance.weatherPanel.SetActive(false);
+        GameManager.instance.longPressBar.SetActive(false);
         
         // UI - UpLeft
         GameManager.instance.gaugePanel.SetActive(false);
@@ -358,8 +359,8 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.speedEffect.SetActive(false);
         GameManager.instance.questPanel.SetActive(false);
         GameManager.instance.helpButton.SetActive(false);
-        GameManager.instance.FPSButton.SetActive(false);
-        GameManager.instance.FPSPanel.SetActive(false);
+        GameManager.instance.fpsButton.SetActive(false);
+        GameManager.instance.fpsPanel.SetActive(false);
 
         // UI - UpMiddle
         GameManager.instance.goldPanel.SetActive(false);

@@ -24,11 +24,19 @@ public class InventorySlot : MonoBehaviour {
         } else {
             clickTime = 0;
         }
+
+        if(0.2f < clickTime && clickTime < 0.3f) { // 0.2초 이상 누르고 있으면 롱프레스바 띄워주기
+            GameManager.instance.longPressBar.transform.position = Input.mousePosition; // 롱프레스바의 위치를 클릭한 마우스 위치로 옮겨주기
+            GameManager.instance.longPressBarBackground.SetActive(true);
+            GameManager.instance.longPressBarFillArea.SetActive(true);
+        }
         
-        if(minClickTime < clickTime && !GameManager.instance.itemDescriptionPanel.activeSelf) { // 롱프레스일 경우
+        if(minClickTime < clickTime && !GameManager.instance.itemDescriptionPanel.activeSelf) { // 롱프레스를 1초 이상 했을 경우
+            GameManager.instance.longPressBarBackground.SetActive(false);
+            GameManager.instance.longPressBarFillArea.SetActive(false); // 롱프레스바를 꺼주기
             string itemDescription = ItemDescription.instance.GetDescription(item.itemName);
             GameManager.instance.itemDescriptionText.text = item.itemName + "\n\n" + itemDescription;
-            PanelManager.instance.ItemDescriptionOnOff(slotNum, item);
+            PanelManager.instance.ItemDescriptionOnOff(slotNum, item); // 아이템 설명창 띄워쥑
         }
     }
 
@@ -36,11 +44,15 @@ public class InventorySlot : MonoBehaviour {
 
         if(item != null) {
             isClick = true;
+            Inventory.instance.isInventorySlotClick = true;
         }
     }
 
     public void ButtonUp() {
         isClick = false;
+        Inventory.instance.isInventorySlotClick = false;
+        GameManager.instance.longPressBarBackground.SetActive(false);
+        GameManager.instance.longPressBarFillArea.SetActive(false); // 롱프레스바를 꺼주기
 
         if(minClickTime < clickTime) { // 롱프레스일 경우
             return;

@@ -30,6 +30,7 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(10, "\n아이템을 창고에서 찾았습니다.");
         alertData.Add(11, "골드를 획득했습니다.");
         alertData.Add(12, "레벨이 올랐습니다.");
+        alertData.Add(13, "아직 지원하지 않는 기능입니다.");
     }
     
     public void SaveMessageOn() {

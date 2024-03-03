@@ -19,7 +19,8 @@ public class Inventory : MonoBehaviour {
     public bool hasChestKey;
     public bool isDoorOpen;
     public bool isChestOpen;
-        
+    public bool isInventorySlotClick;
+
     public int CurSlotCnt {
         get => curSlotCnt;
         set {

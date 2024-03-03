@@ -32,9 +32,13 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI - Panel")]
     public GameObject startPanel; // 게임 시작 패널
+    public GameObject filterPanel;
     public GameObject menuPanel;
     public GameObject deadPanel;
     public GameObject weatherPanel; // 날씨
+    public GameObject longPressBar;
+    public GameObject longPressBarBackground;
+    public GameObject longPressBarFillArea;
     
     [Header("UI - UpLeft")]
     public GameObject gaugePanel;
@@ -44,8 +48,8 @@ public class GameManager : MonoBehaviour {
     public GameObject questPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject helpButton;
-    public GameObject FPSButton;
-    public GameObject FPSPanel;
+    public GameObject fpsButton;
+    public GameObject fpsPanel;
 
     [Header("UI - UpMiddle")]
     public GameObject goldPanel;
@@ -150,8 +154,25 @@ public class GameManager : MonoBehaviour {
     private void Awake() {
         instance = this;
         InitPos();
+        startPanel.SetActive(true);
+        StopCoroutine("FilterPanelFade");
+        StartCoroutine("FilterPanelFade");
     }
 
+    private IEnumerator FilterPanelFade() {
+
+        Image filterPanelImage = filterPanel.GetComponent<Image>();
+        float fadeTime = 1;
+
+        while(0 < fadeTime) {
+            fadeTime -= 0.01f;
+            yield return new WaitForSeconds(0.01f); // 0.01 초마다 실행
+            filterPanelImage.color = new Color(0, 0, 0, fadeTime);
+        }
+        
+        filterPanel.SetActive(false);
+    }
+    
     private void InitPos() {
         upStairPos = upStairPosParent.GetComponentsInChildren<Transform>();
         downStairPos = downStairPosParent.GetComponentsInChildren<Transform>();
@@ -173,7 +194,6 @@ public class GameManager : MonoBehaviour {
         //curMana = maxMana; // 게임 처음 시작시 현재 마나(mana)를 최대 마나(maxMana)로 초기화
         currentQuestText.text = questManager.CheckQuest();
     }
-
 
     private void Update() {
 
@@ -338,7 +358,7 @@ public class GameManager : MonoBehaviour {
 
             PanelManager.instance.RedrawStatsPanel();
             PanelManager.instance.StatsOnOff(); // 레벨업 하면 자동으로 스탯창 켜주기
-            PanelManager.instance.StatsUpOn(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기
+            PanelManager.instance.StatsUpButtonOn(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기
             AlertManager.instance.AlertMessageOn("", 12);
         }
     }
@@ -383,7 +403,7 @@ public class GameManager : MonoBehaviour {
         isLive = false;
     }
 
-    public void GameSave() {
+    public void SaveButtonClick() {
         SaveData();
         menuPanel.SetActive(false);
         AlertManager.instance.SaveMessageOn();
@@ -404,10 +424,10 @@ public class GameManager : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
-    public void GameLoad() {
+    public void LoadGameButtonClick() {
 
         if(!PlayerPrefs.HasKey("PlayerX")) { // 한번도 저장한 적이 없으면
-            NewGame(); // 새로운 게임을 시작
+            NewGameButtonClick(); // 새로운 게임을 시작
             return;
         }
         
@@ -426,14 +446,16 @@ public class GameManager : MonoBehaviour {
         Application.Quit();
     }
 
-    public void GoToMainMenu() { // 메인메뉴로 나가는 메소드
+    public void GoToMainMenuButtonClick() { // 메인메뉴로 나가는 메소드
         isLive = false;
         PanelManager.instance.PanelOff(); // 모든 패널 꺼주기
         startPanel.SetActive(true);
     }
 
-    public void NewGame() { // New Game 버튼을 클릭했을때 실행하는 메소드
+    public void NewGameButtonClick() { // New Game 버튼을 클릭했을때 실행하는 메소드
 
+        startPanel.SetActive(false);
+        
         isNewGame = true;
         isLive = true;
         Player.instance.isDead = false;
@@ -470,9 +492,16 @@ public class GameManager : MonoBehaviour {
 
         PanelManager.instance.RedrawStatsPanel();
         
+        filterPanel.SetActive(true);
+        StopCoroutine("FilterPanelFade");
+        StartCoroutine("FilterPanelFade");
+        Invoke("GlobalLightOn", 0.1f);
+    }
+
+    private void GlobalLightOn() {
+        globalLight.SetActive(true);
         PanelManager.instance.PanelOff();
         PanelManager.instance.PanelOn();
-        globalLight.SetActive(true);
     }
 
 }
