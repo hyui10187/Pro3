@@ -45,10 +45,10 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void StoreOnOff() { // 상점 패널을 켜고 끄는 메소드
-        if(!GameManager.instance.storePanel.activeSelf) {
-            GameManager.instance.storePanel.SetActive(true);
+        if(!GameManager.instance.groceryStorePanel.activeSelf) {
+            GameManager.instance.groceryStorePanel.SetActive(true);
         } else {
-            GameManager.instance.storePanel.SetActive(false);
+            GameManager.instance.groceryStorePanel.SetActive(false);
         }
     }
     
@@ -303,7 +303,15 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void LanguageButtonClick() {
-        
+        AlertManager.instance.AlertMessageOn("", 13);
+    }
+
+    public void ConfirmPanelOn() {
+        GameManager.instance.confirmPanel.SetActive(true);
+    }
+    
+    public void ConfirmPanelOff() {
+        GameManager.instance.confirmPanel.SetActive(false);
     }
     
     public void PanelOn() {
@@ -346,7 +354,6 @@ public class PanelManager : MonoBehaviour {
     public void PanelOff() {
         
         // UI - Panel
-        GameManager.instance.startPanel.SetActive(false);
         GameManager.instance.menuPanel.SetActive(false);
         GameManager.instance.deadPanel.SetActive(false);
         GameManager.instance.weatherPanel.SetActive(false);
@@ -378,6 +385,7 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.saveMessage.SetActive(false);
         GameManager.instance.alertMessage.SetActive(false);
         GameManager.instance.healthManaMessage.SetActive(false);
+        GameManager.instance.confirmPanel.SetActive(false);
         
         // UI - MiddleRight
         GameManager.instance.inventoryPanel.SetActive(false);

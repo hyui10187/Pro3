@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;
-    public GameObject storePanel;
+    public GameObject groceryStorePanel;
     public GameObject equipmentPanel;
     public GameObject statsPanel;
     public GameObject statsUpButton;
@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour {
     public Button consumptionButton;
     public Button equipButton;
     public Text equipButtonText;
+    public GameObject confirmPanel;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -139,7 +140,6 @@ public class GameManager : MonoBehaviour {
     public bool isAction; // 대화를 하는중인지 체크하기 위한 플래그값
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
     public bool hasQuestItem;
-    public bool isNewGame;
     public bool canEatQuestItem = true; // 퀘스트 아이템을 먹을 수 있는지 플래그값
 
     [Header("Etc")]
@@ -154,25 +154,15 @@ public class GameManager : MonoBehaviour {
     private void Awake() {
         instance = this;
         InitPos();
+        Invoke("StartPanelOn", 0.5f);
+    }
+
+    private void StartPanelOn() {
         startPanel.SetActive(true);
-        StopCoroutine("FilterPanelFade");
-        StartCoroutine("FilterPanelFade");
+        StopCoroutine("FilterPanelFadeIn");
+        StartCoroutine("FilterPanelFadeIn");
     }
 
-    private IEnumerator FilterPanelFade() {
-
-        Image filterPanelImage = filterPanel.GetComponent<Image>();
-        float fadeTime = 1;
-
-        while(0 < fadeTime) {
-            fadeTime -= 0.01f;
-            yield return new WaitForSeconds(0.01f); // 0.01 초마다 실행
-            filterPanelImage.color = new Color(0, 0, 0, fadeTime);
-        }
-        
-        filterPanel.SetActive(false);
-    }
-    
     private void InitPos() {
         upStairPos = upStairPosParent.GetComponentsInChildren<Transform>();
         downStairPos = downStairPosParent.GetComponentsInChildren<Transform>();
@@ -180,19 +170,6 @@ public class GameManager : MonoBehaviour {
         downLadderPos = downLadderPosParent.GetComponentsInChildren<Transform>();
         doorInPos = doorInPosParent.GetComponentsInChildren<Transform>();
         doorOutPos = doorOutPosParent.GetComponentsInChildren<Transform>();
-    }
-    
-    private void Start() {
-        //
-        // if(!isNewGame) {
-        //     GameLoad();
-        // }
-        
-        curHealth = maxHealth; // 게임 처음 시작시 현재 체력(health)을 최대 체력(maxHealth)으로 초기화
-        curGold = startGold;
-        curMoveSpeed = originMoveSpeed; // 게임 처음 시작시 현재 이동속도(curMoveSpeed)를 기본 이동속도(originMoveSpeed)로 초기화
-        //curMana = maxMana; // 게임 처음 시작시 현재 마나(mana)를 최대 마나(maxMana)로 초기화
-        currentQuestText.text = questManager.CheckQuest();
     }
 
     private void Update() {
@@ -386,23 +363,6 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void GameStart() {
-        isLive = true;
-        
-        ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
-        NPC.instance.Think(); // NPC 생각 메소드 호출
-        
-        curHealth = maxHealth;
-        Player.instance.anim.SetTrigger("start");
-
-        PanelManager.instance.PanelOff();
-        PanelManager.instance.PanelOn();
-    }
-
-    public void GameStop() {
-        isLive = false;
-    }
-
     public void SaveButtonClick() {
         SaveData();
         menuPanel.SetActive(false);
@@ -439,7 +399,23 @@ public class GameManager : MonoBehaviour {
         player.transform.position = new Vector3(x, y, 0);
         questManager.questId = questId;
         questManager.questActionIndex = questActionIndex;
+        
         questManager.ControlObject();
+        isLive = true;
+        
+        NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
+        NPC.instance.Think(); // NPC 생각 메소드 호출
+        Animal.instance.CancelInvoke();
+        Animal.instance.Think();
+        
+        startPanel.SetActive(false);
+        
+        filterPanel.SetActive(true);
+        StopCoroutine("FilterPanelFade");
+        StartCoroutine("FilterPanelFade");
+        Invoke("GlobalLightOn", 0.1f);
+        
+        PanelManager.instance.RedrawStatsPanel();
     }
     
     public void GameExit() { // 게임을 종료하는 메소드
@@ -449,18 +425,19 @@ public class GameManager : MonoBehaviour {
     public void GoToMainMenuButtonClick() { // 메인메뉴로 나가는 메소드
         isLive = false;
         PanelManager.instance.PanelOff(); // 모든 패널 꺼주기
-        startPanel.SetActive(true);
+        StopCoroutine("FilterPanelFadeOut");
+        StartCoroutine("FilterPanelFadeOut");
     }
 
     public void NewGameButtonClick() { // New Game 버튼을 클릭했을때 실행하는 메소드
 
         startPanel.SetActive(false);
         
-        isNewGame = true;
         isLive = true;
         Player.instance.isDead = false;
         isHouse = false; // 기본적으로 밖에서 시작하니까
         curGold = startGold;
+        curMoveSpeed = originMoveSpeed;
         
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {
@@ -475,12 +452,13 @@ public class GameManager : MonoBehaviour {
         
         NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
         NPC.instance.Think(); // NPC 생각 메소드 호출
-        Animal.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
-        Animal.instance.Think(); // NPC 생각 메소드 호출
+        Animal.instance.CancelInvoke();
+        Animal.instance.Think();
 
         player.transform.position = Vector3.zero;
         questManager.questId = 10;
         questManager.questActionIndex = 0;
+        currentQuestText.text = questManager.CheckQuest();
 
         curHealth = maxHealth; // 체력 초기화
         Player.instance.anim.SetTrigger("start"); // 기본적으로 아래를 바라보는 애니메이션으로 변경
@@ -493,15 +471,54 @@ public class GameManager : MonoBehaviour {
         PanelManager.instance.RedrawStatsPanel();
         
         filterPanel.SetActive(true);
-        StopCoroutine("FilterPanelFade");
-        StartCoroutine("FilterPanelFade");
+        StopCoroutine("FilterPanelFadeIn");
+        StartCoroutine("FilterPanelFadeIn");
         Invoke("GlobalLightOn", 0.1f);
     }
 
+    private IEnumerator FilterPanelFadeIn() { // 검정색 필터를 서서히 투명하게 만들어줘서 Fade In 효과를 주는 코루틴
+        
+        Image filterPanelImage = filterPanel.GetComponent<Image>();
+        float fadeTime = 1;
+
+        while(0 < fadeTime) {
+            fadeTime -= 0.01f;
+            yield return new WaitForSeconds(0.01f); // 0.01 초마다 실행
+            filterPanelImage.color = new Color(0, 0, 0, fadeTime);
+        }
+        
+        filterPanel.SetActive(false);
+    }
+    
+    private IEnumerator FilterPanelFadeOut() { // 검정색 필터를 서서히 투명하게 만들어줘서 Fade Out 효과를 주는 코루틴
+        
+        filterPanel.SetActive(true);
+        
+        Image filterPanelImage = filterPanel.GetComponent<Image>();
+        float fadeTime = 0;
+
+        while(fadeTime < 1) {
+            fadeTime += 0.01f;
+            yield return new WaitForSeconds(0.01f); // 0.01 초마다 실행
+            filterPanelImage.color = new Color(0, 0, 0, fadeTime);
+        }
+        
+        filterPanel.SetActive(false);
+        startPanel.SetActive(true);
+    }
+    
     private void GlobalLightOn() {
         globalLight.SetActive(true);
         PanelManager.instance.PanelOff();
         PanelManager.instance.PanelOn();
+    }
+
+    public bool IsNPCPanelOn() {
+        if(storagePanel.activeSelf || groceryStorePanel.activeSelf) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

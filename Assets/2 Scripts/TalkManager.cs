@@ -74,6 +74,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(6300, new string[] { "나무상자가 잠겨있다.", "열쇠로 열어볼까?", "열쇠를 돌리니까 나무 상자가 열렸다." });
         talkData.Add(6400, new string[] { "상자 안에서 사탕을 얻었다." });
         talkData.Add(6500, new string[] { "나무 상자가 열려있다.", "안에 아무것도 없다." });
+        talkData.Add(6600, new string[] { "생기있는 식물이 자라고 있는 화분이다." });
 
         // NPC 대사   // NPC 대사는 10000 단위   // 이동형 NPC는 30000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
@@ -96,6 +97,7 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(180000, new string[] { "너무 피곤해", "얼른 퇴근하고 싶다..." });
         talkData.Add(190000, new string[] { "너가 새로 왔다는 모험가구나?", "이 마을이 처음이니까 한가지 팁을 알려줄께", "마을 밖의 덤불은 무기로 부술 수 있어", "부수면 열매나 목재를 얻을 수 있지", "팁이 생각나면 또 말해줄께" });
         talkData.Add(200000, new string[] { "쉿", "이곳은 엄숙한 공간이야" });
+        talkData.Add(210000, new string[] { "쉿", "이곳은 엄숙한 공간이야" });
         
         // 퀘스트 10: 카밀과 대화하기
         talkData.Add(10000 + 10, new string[] { "반가워!", "이 마을이 아직 낯설지?", "모두 좋은 사람들이라 금방 친해질거야", "벽난로 옆에 있는 루나랑 인사했어?", "루나가 걱정이 있는것 같던데", "무슨 일인지 물어봐줄래?" });

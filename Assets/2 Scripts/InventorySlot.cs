@@ -74,7 +74,7 @@ public class InventorySlot : MonoBehaviour {
                 return;
             }
 
-            if(GameManager.instance.storePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
+            if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
 
                 if(item.itemType == ItemType.Weapon) {
                     Inventory.instance.equipWeapon = false; // 상점에 소드를 판매할 경우 equipSword 플래그 값 내려주기
