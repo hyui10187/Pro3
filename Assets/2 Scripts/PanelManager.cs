@@ -218,6 +218,7 @@ public class PanelManager : MonoBehaviour {
     public void EquipButtonClick() { // 장착 버튼을 클릭했을때 호출되는 메소드
         if(!InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 장착되었다는 E 문구가 꺼져있는 상태면
             InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(true); // 장착되었다는 E 문구 켜주기
+            Inventory.instance.possessItems[slotNum].isEquipped = true;
 
             for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++) {
                 if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType) {
@@ -225,9 +226,16 @@ public class PanelManager : MonoBehaviour {
                 }
             }
 
-            if(item.itemType == ItemType.Weapon) {
-                Inventory.instance.equipWeapon = true;
-                GameManager.instance.itemAttackPower = item.itemAttackPower;
+            switch(item.itemType) {
+                
+                case ItemType.Weapon:
+                    Inventory.instance.equipWeapon = true;
+                    GameManager.instance.itemAttackPower = item.itemAttackPower;
+                    break;
+                
+                case ItemType.Ring:
+                    GameManager.instance.maxMana += 5;
+                    break;
             }
 
             RedrawStatsPanel();
@@ -242,12 +250,21 @@ public class PanelManager : MonoBehaviour {
             }
             
             InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(false); // 인벤토리의 슬롯에서 장착되었다는 E 문구 꺼주기
+            Inventory.instance.possessItems[slotNum].isEquipped = false;
 
-            if(item.itemType == ItemType.Weapon) {
-                Inventory.instance.equipWeapon = false;    
+            switch(item.itemType) {
+                
+                case ItemType.Weapon:
+                    Inventory.instance.equipWeapon = false;
+                    GameManager.instance.itemAttackPower = 0;
+                    break;
+                
+                case ItemType.Ring:
+                    GameManager.instance.maxMana -= 5;
+                    break;
             }
             
-            GameManager.instance.itemAttackPower = 0;
+            RedrawStatsPanel();
             ItemDescriptionOff();
         }
     }

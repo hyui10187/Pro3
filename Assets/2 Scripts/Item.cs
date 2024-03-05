@@ -11,6 +11,7 @@ public class Item {
     public int itemCount;
     public int itemPrice;
     public int itemAttackPower;
+    public bool isEquipped;
     public List<ItemEffect> itemEffects;
 
     public bool Use() {

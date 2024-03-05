@@ -48,7 +48,9 @@ public class QuestManager : MonoBehaviour {
         questList.Add(60, new QuestData("촌장의 보답", new int[] { 110000 }));
         questList.Add(70, new QuestData("조니의 근황 듣기", new int[] { 180000 }));
         questList.Add(80, new QuestData("콜린의 선물 받기", new int[] { 80000 }));
-        questList.Add(90, new QuestData("퀘스트", new int[] { 0 }));
+        questList.Add(90, new QuestData("써니에게 사탕주기", new int[] { 120000 }));
+        questList.Add(100, new QuestData("대니의 부탁 들어주기", new int[] { 140000 }));
+        questList.Add(110, new QuestData("퀘스트", new int[] { 0 }));
     }
 
     private void GenerateQuestItem() {

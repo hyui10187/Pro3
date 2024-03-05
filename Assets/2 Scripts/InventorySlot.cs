@@ -60,6 +60,11 @@ public class InventorySlot : MonoBehaviour {
         } else { // 일반 클릭일 경우
             if(GameManager.instance.storagePanel.activeSelf) { // 창고 패널이 켜져있는 상태면
 
+                if(item.isEquipped) {
+                    AlertManager.instance.AlertMessageOn("", 14);
+                    return;
+                }
+                
                 bool canEntrust = StorageManager.instance.AddItem(item); // 창고에 아이템을 넣어주기
 
                 if(canEntrust && item != null) {
@@ -104,12 +109,14 @@ public class InventorySlot : MonoBehaviour {
         itemImage.gameObject.SetActive(true); // 슬롯의 아이템 이미지 켜주기
         itemCount.text = item.itemCount.ToString();
         itemCount.gameObject.SetActive(true); // 슬롯의 아이템 갯수 켜주기
+        equipImage.SetActive(item.isEquipped); // 장착 되었는지 여부 켜주거나 꺼주거나
     }
 
     public void RemoveSlot() {
         item = null;
         itemImage.gameObject.SetActive(false);
         itemCount.gameObject.SetActive(false);
+        equipImage.gameObject.SetActive(false);
     }
 
 }

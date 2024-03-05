@@ -22,10 +22,18 @@ public class EquipmentSlot : MonoBehaviour {
             if(InventoryManager.instance.inventorySlots[i].item.itemName == itemName) {
                 InventoryManager.instance.inventorySlots[i].equipImage.SetActive(false); // 장착중이라는 E 아이콘을 꺼주기
 
-                if(itemType == ItemType.Weapon) { // 무기를 해제했으면 equipSword 플래그값 내려주기
-                    Inventory.instance.equipWeapon = false;
+                switch(itemType) {
+                    
+                    case ItemType.Weapon: // 무기를 해제했으면 equipSword 플래그값 내려주기
+                        Inventory.instance.equipWeapon = false;
+                        GameManager.instance.itemAttackPower = 0;
+                        break;
+
+                    case ItemType.Ring:
+                        GameManager.instance.maxMana -= 5;
+                        break;
                 }
-                
+
                 RemoveSlot();
                 break;
             }
