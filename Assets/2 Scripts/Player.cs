@@ -97,19 +97,18 @@ public class Player : MonoBehaviour {
     }
 
     private void PlayerEsc() {
-        if(GameManager.instance.inventoryPanel.activeSelf || GameManager.instance.storagePanel.activeSelf || GameManager.instance.groceryStorePanel.activeSelf || GameManager.instance.statsPanel.activeSelf || GameManager.instance.equipmentPanel.activeSelf) {
-            GameManager.instance.inventoryPanel.SetActive(false);
-            GameManager.instance.storagePanel.SetActive(false);
-            GameManager.instance.groceryStorePanel.SetActive(false);
-            GameManager.instance.statsPanel.SetActive(false);
-            GameManager.instance.equipmentPanel.SetActive(false);
-            GameManager.instance.itemDescriptionPanel.SetActive(false);
+        if(GameManager.instance.IsPanelOn()) {
+            GameManager.instance.EscPanelOff();
         } else {
             PanelManager.instance.MenuOnOff();
         }
     }
     
     private void PlayerMove() {
+
+        if(GameManager.instance.IsNPCPanelOn()) {
+            return;
+        }
         
         // Move Value
         h = GameManager.instance.isAction ? 0 : Input.GetAxisRaw("Horizontal") + leftValue + rightValue; // GameManager의 isAction 플래그값이 true 라면 h와 v의 값을 0으로 만들어서 이동하지 못하도록 한다
@@ -120,42 +119,39 @@ public class Player : MonoBehaviour {
         bool vDown = GameManager.instance.isAction ? false : Input.GetButtonDown("Vertical") || upDown || downDown;
         bool hUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Horizontal") || leftUp || rightUp;
         bool vUp = GameManager.instance.isAction ? false : Input.GetButtonUp("Vertical") || upUp || downUp ;
+        
+        if(hDown) {
+            isHorizonMove = true;
+            dirVec = new Vector3(h, 0, 0);
+            anim.SetFloat("horizonMove", h);
+            anim.SetFloat("verticalMove", 0);
+    
+        } else if(vDown) {
+            isHorizonMove = false;
+            dirVec = new Vector3(0, v, 0);
+            anim.SetFloat("verticalMove", v);
+            anim.SetFloat("horizonMove", 0);
+    
+        } else if(hUp || vUp) {
+            isHorizonMove = h != 0;
 
-        if(!GameManager.instance.storagePanel.activeSelf && !GameManager.instance.groceryStorePanel.activeSelf) {
-            if(hDown) {
-                isHorizonMove = true;
+            if(isHorizonMove) {
                 dirVec = new Vector3(h, 0, 0);
                 anim.SetFloat("horizonMove", h);
                 anim.SetFloat("verticalMove", 0);
-        
-            } else if(vDown) {
-                isHorizonMove = false;
+            }
+
+            if(!isHorizonMove && v != 0) {
                 dirVec = new Vector3(0, v, 0);
                 anim.SetFloat("verticalMove", v);
                 anim.SetFloat("horizonMove", 0);
+            }
+        }   
         
-            } else if(hUp || vUp) {
-                isHorizonMove = h != 0;
-
-                if(isHorizonMove) {
-                    dirVec = new Vector3(h, 0, 0);
-                    anim.SetFloat("horizonMove", h);
-                    anim.SetFloat("verticalMove", 0);
-                }
-
-                if(!isHorizonMove && v != 0) {
-                    dirVec = new Vector3(0, v, 0);
-                    anim.SetFloat("verticalMove", v);
-                    anim.SetFloat("horizonMove", 0);
-                }
-            }   
-        }
-
         bool isHorizonChanged = false;
         bool isVerticalChanged = false;
 
-        if(!isAttack && !GameManager.instance.storagePanel.activeSelf && !GameManager.instance.groceryStorePanel.activeSelf) {
-            
+        if(!isAttack) {
             if(anim.GetInteger("hAxisRaw") != h) {
                 anim.SetInteger("hAxisRaw", (int)h);
                 isHorizonChanged = true;
@@ -180,9 +176,10 @@ public class Player : MonoBehaviour {
     }
 
     public void PlayerAction() {
-        if(scanObj != null && !GameManager.instance.storagePanel.activeSelf && !GameManager.instance.groceryStorePanel.activeSelf) {
-            GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
+        if(scanObj == null || GameManager.instance.IsNPCPanelOn()) {
+            return;
         }
+        GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
     }
 
     public void PlayerAttack() {
@@ -192,7 +189,7 @@ public class Player : MonoBehaviour {
         }
         
         if(!Inventory.instance.equipWeapon) { // 무기를 가지고 있지 않으면
-            AlertManager.instance.AlertMessageOn("", 6); // 공격불가 알림메시지 띄워주기
+            AlertManager.instance.SmallAlertMessageOn("", 6); // 공격불가 알림메시지 띄워주기
             return;
         }
 
@@ -300,11 +297,11 @@ public class Player : MonoBehaviour {
 
         float moveSpeed = GameManager.instance.curMoveSpeed;
         
-        if(isDead) {
+        if(isDead || GameManager.instance.IsNPCPanelOn()) {
             return;
         }
-
-        if(!isDamaged && !isSlide && !isAttack && !GameManager.instance.storagePanel.activeSelf && !GameManager.instance.groceryStorePanel.activeSelf) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
+        
+        if(!isDamaged && !isSlide && !isAttack) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
             Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
             rigid.velocity = moveVec * moveSpeed;
         }

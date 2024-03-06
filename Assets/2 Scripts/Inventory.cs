@@ -55,7 +55,12 @@ public class Inventory : MonoBehaviour {
                 }
 
                 if(isAdded) { // 이미 보유중인 아이템일 경우
-                    possessItems[index].itemCount += itemCount; // 기존 아이템의 갯수를 먹은 아이템의 갯수만큼 늘려주기
+
+                    if(eatItem.itemCount == 0) { // 아이템의 갯수가 0개이면 = 장비아이템일 경우
+                        possessItems.Add(eatItem.Clone()); // 새롭게 아이템을 추가해주기
+                    } else {
+                        possessItems[index].itemCount += itemCount; // 기존 아이템의 갯수를 먹은 아이템의 갯수만큼 늘려주기
+                    }
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
                     possessItems.Add(eatItem.Clone());
@@ -116,19 +121,19 @@ public class Inventory : MonoBehaviour {
 
             if(fieldItems.item.itemName == "SmallGold") {
                 GameManager.instance.curGold += 5;
-                AlertManager.instance.AlertMessageOn("5 ", 11);
+                AlertManager.instance.SmallAlertMessageOn("5 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
                 
             } else if(fieldItems.item.itemName == "MiddleGold") {
                 GameManager.instance.curGold += 10;
-                AlertManager.instance.AlertMessageOn("10 ", 11);
+                AlertManager.instance.SmallAlertMessageOn("10 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
                 
             } else if(fieldItems.item.itemName == "LargeGold") {
                 GameManager.instance.curGold += 15;
-                AlertManager.instance.AlertMessageOn("15 ", 11);
+                AlertManager.instance.SmallAlertMessageOn("15 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
             }
@@ -143,12 +148,12 @@ public class Inventory : MonoBehaviour {
                     hasChestKey = true;
                 }
 
-                AlertManager.instance.AlertMessageOn(fieldItems.item.itemName, 0); // 아이템을 획득하였다는 메시지를 띄워주기
+                AlertManager.instance.SmallAlertMessageOn(fieldItems.item.itemName, 0); // 아이템을 획득하였다는 메시지를 띄워주기
                 Destroy(fieldItems.gameObject);
                 //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
             } else { // 인벤토리가 꽉 차있다면
-                AlertManager.instance.AlertMessageOn("", 5);
+                AlertManager.instance.SmallAlertMessageOn("", 5);
             }
         }
         

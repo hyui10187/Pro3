@@ -32,6 +32,7 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(12, "레벨이 올랐습니다.");
         alertData.Add(13, "아직 지원하지 않는 기능입니다.");
         alertData.Add(14, "장착중인 아이템은 창고에 맡길 수 없습니다.\n먼저 장착을 해제해주세요.");
+        alertData.Add(15, "장착중인 아이템은 삭제하실 수 없습니다.\n먼저 장착을 해제해주세요.");
     }
     
     public void SaveMessageOn() {
@@ -44,18 +45,30 @@ public class AlertManager : MonoBehaviour {
         GameManager.instance.saveMessage.SetActive(false);
     }
 
-    public void AlertMessageOn(String itemName, int idx) {
-        Text acquisitionText = GameManager.instance.alertMessage.GetComponentInChildren<Text>();
+    public void SmallAlertMessageOn(String itemName, int idx) {
+        Text acquisitionText = GameManager.instance.smallAlertMessage.GetComponentInChildren<Text>();
         acquisitionText.text = itemName + alertData[idx];
-        GameManager.instance.alertMessage.SetActive(true);
-        CancelInvoke("AlertMessageOff");
-        Invoke("AlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기
-    }    
-
-    private void AlertMessageOff() {
-        GameManager.instance.alertMessage.SetActive(false);
+        GameManager.instance.smallAlertMessage.SetActive(true);
+        CancelInvoke("SmallAlertMessageOff");
+        Invoke("SmallAlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기
     }
 
+    private void SmallAlertMessageOff() {
+        GameManager.instance.smallAlertMessage.SetActive(false);
+    }
+
+    public void BigAlertMessageOn(String itemName, int idx) {
+        Text acquisitionText = GameManager.instance.bigAlertMessage.GetComponentInChildren<Text>();
+        acquisitionText.text = itemName + alertData[idx];
+        GameManager.instance.bigAlertMessage.SetActive(true);
+        CancelInvoke("BigAlertMessageOff");
+        Invoke("BigAlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기
+    }
+
+    private void BigAlertMessageOff() {
+        GameManager.instance.bigAlertMessage.SetActive(false);
+    }
+    
     public void HealthMessageOn() {
         Animator anim = GameManager.instance.healthManaMessageText.GetComponent<Animator>();
         GameManager.instance.healthManaMessage.SetActive(true); // 닳은 체력을 띄워주는 메시지 켜주기

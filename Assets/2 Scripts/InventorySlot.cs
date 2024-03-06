@@ -26,7 +26,15 @@ public class InventorySlot : MonoBehaviour {
         }
 
         if(0.2f < clickTime && clickTime < 0.3f) { // 0.2초 이상 누르고 있으면 롱프레스바 띄워주기
-            GameManager.instance.longPressBar.transform.position = Input.mousePosition; // 롱프레스바의 위치를 클릭한 마우스 위치로 옮겨주기
+            if(Input.GetMouseButton(0)) { // 마우스 왼쪽 버튼을 클릭중이라면
+                GameManager.instance.longPressBar.transform.position = Input.mousePosition; // 롱프레스바의 위치를 클릭한 마우스 위치로 옮겨주기
+
+            } else if(0 < Input.touchCount) { // 모바일에서 터치 중이라면
+                Vector3 touchPosition = Input.GetTouch(0).position;
+                touchPosition.z = -Camera.main.transform.position.z; // 카메라가 위치한 z 좌표로 설정
+                GameManager.instance.longPressBar.transform.position = Camera.main.ScreenToWorldPoint(touchPosition + Vector3.up * 20);
+            }
+            
             GameManager.instance.longPressBarBackground.SetActive(true);
             GameManager.instance.longPressBarFillArea.SetActive(true);
         }
@@ -60,8 +68,8 @@ public class InventorySlot : MonoBehaviour {
         } else { // 일반 클릭일 경우
             if(GameManager.instance.storagePanel.activeSelf) { // 창고 패널이 켜져있는 상태면
 
-                if(item.isEquipped) {
-                    AlertManager.instance.AlertMessageOn("", 14);
+                if(item.isEquipped) { // 장착중인 아이템을 창고에 맡기려고 할 경우
+                    AlertManager.instance.BigAlertMessageOn("", 14);
                     return;
                 }
                 
@@ -73,7 +81,7 @@ public class InventorySlot : MonoBehaviour {
                         Inventory.instance.equipWeapon = false; // 창고에 소드를 맡길 경우 equipSword 플래그 값 내려주기
                     }
 
-                    AlertManager.instance.AlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
+                    AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
                     Inventory.instance.EntrustItem(slotNum);
                 }
                 return;
@@ -86,7 +94,7 @@ public class InventorySlot : MonoBehaviour {
                 }
                 
                 GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
-                AlertManager.instance.AlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
+                AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
                 Inventory.instance.RemoveItem(slotNum);
                 return;
             }
@@ -98,7 +106,7 @@ public class InventorySlot : MonoBehaviour {
             }
 
             if(isUse) {
-                AlertManager.instance.AlertMessageOn(item.itemName, 4); // 소비 메시지
+                AlertManager.instance.SmallAlertMessageOn(item.itemName, 4); // 소비 메시지
                 Inventory.instance.RemoveItem(slotNum);
             }
         }
@@ -107,9 +115,12 @@ public class InventorySlot : MonoBehaviour {
     public void UpdateSlot() {
         itemImage.sprite = item.itemImage;
         itemImage.gameObject.SetActive(true); // 슬롯의 아이템 이미지 켜주기
-        itemCount.text = item.itemCount.ToString();
-        itemCount.gameObject.SetActive(true); // 슬롯의 아이템 갯수 켜주기
         equipImage.SetActive(item.isEquipped); // 장착 되었는지 여부 켜주거나 꺼주거나
+
+        if(item.itemCount != 0) {
+            itemCount.text = item.itemCount.ToString();
+            itemCount.gameObject.SetActive(true); // 슬롯의 아이템 갯수 켜주기   
+        }
     }
 
     public void RemoveSlot() {

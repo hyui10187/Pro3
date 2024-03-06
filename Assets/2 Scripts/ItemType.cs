@@ -2,4 +2,4 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemType { Weapon, Shield, Necklace, Ring, Consumables, Quest, Material, Gold, Etc }
+public enum ItemType { Helmet, Necklace, Armor, Weapon, Shield, Gloves, Ring, Boots, Consumables, Quest, Material, Gold, Key }

@@ -44,11 +44,19 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void StoreOnOff() { // 상점 패널을 켜고 끄는 메소드
+    public void GroceryStoreOnOff() { // 잡화상점 패널을 켜고 끄는 메소드
         if(!GameManager.instance.groceryStorePanel.activeSelf) {
             GameManager.instance.groceryStorePanel.SetActive(true);
         } else {
             GameManager.instance.groceryStorePanel.SetActive(false);
+        }
+    }
+    
+    public void EquipmentStoreOnOff() { // 장비상점 패널을 켜고 끄는 메소드
+        if(!GameManager.instance.equipmentStorePanel.activeSelf) {
+            GameManager.instance.equipmentStorePanel.SetActive(true);
+        } else {
+            GameManager.instance.equipmentStorePanel.SetActive(false);
         }
     }
     
@@ -234,7 +242,7 @@ public class PanelManager : MonoBehaviour {
                     break;
                 
                 case ItemType.Ring:
-                    GameManager.instance.maxMana += 5;
+                    GameManager.instance.maxMana += 10;
                     break;
             }
 
@@ -260,7 +268,7 @@ public class PanelManager : MonoBehaviour {
                     break;
                 
                 case ItemType.Ring:
-                    GameManager.instance.maxMana -= 5;
+                    GameManager.instance.maxMana -= 10;
                     break;
             }
             
@@ -279,11 +287,11 @@ public class PanelManager : MonoBehaviour {
             }
 
             if(isUse && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
-                AlertManager.instance.AlertMessageOn(item.itemName, 4);
+                AlertManager.instance.SmallAlertMessageOn(item.itemName, 4);
                 Inventory.instance.RemoveItem(slotNum);
 
             } else if(isUse && item.itemCount == 1) { // 아이템이 1개만 있을 경우
-                AlertManager.instance.AlertMessageOn(item.itemName, 4);
+                AlertManager.instance.SmallAlertMessageOn(item.itemName, 4);
                 Inventory.instance.RemoveItem(slotNum);
                 ItemDescriptionOnOff(-1, null); // 아이템 설명 패널을 꺼주기
             }
@@ -291,36 +299,25 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void DeleteButtonClick() { // 아이템 설명 패널에서 삭제 버튼을 클릭했을 경우 호출할 메소드
+
+        if(item.isEquipped) { // 장착중인 아이템을 삭제하려고 할 경우
+            AlertManager.instance.BigAlertMessageOn("", 15);
+            return;
+        }
         
         if(slotNum != -1 && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
-            AlertManager.instance.AlertMessageOn(item.itemName, 9);
+            AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             
         } else if(slotNum != -1 && item.itemCount == 1) { // 아이템이 1개만 있을 경우
-            AlertManager.instance.AlertMessageOn(item.itemName, 9);
-
-            if(InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 장착된 아이템을 삭제한거면
-                InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(false); // 장착되었다는 E 문구 꺼주기
-
-                for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++) {
-                    if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType) {
-                        EquipmentManager.instance.equipmentSlots[i].RemoveSlot();
-                        break;
-                    }
-                }
-
-                if(item.itemType == ItemType.Weapon) { // 무기를 삭제한 것이면
-                    Inventory.instance.equipWeapon = false;
-                }
-            }
-            
+            AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             ItemDescriptionOnOff(-1, null);
         }
     }
     
     public void LanguageButtonClick() {
-        AlertManager.instance.AlertMessageOn("", 13);
+        AlertManager.instance.SmallAlertMessageOn("", 13);
     }
 
     public void ConfirmPanelOn() {
@@ -400,7 +397,8 @@ public class PanelManager : MonoBehaviour {
         // UI - MiddleMiddle
         GameManager.instance.helpPanel.SetActive(false);
         GameManager.instance.saveMessage.SetActive(false);
-        GameManager.instance.alertMessage.SetActive(false);
+        GameManager.instance.smallAlertMessage.SetActive(false);
+        GameManager.instance.bigAlertMessage.SetActive(false);
         GameManager.instance.healthManaMessage.SetActive(false);
         GameManager.instance.confirmPanel.SetActive(false);
         

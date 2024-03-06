@@ -64,10 +64,11 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;
-    public GameObject groceryStorePanel;
     public GameObject equipmentPanel;
     public GameObject statsPanel;
     public GameObject statsUpButton;
+    public GameObject groceryStorePanel;
+    public GameObject equipmentStorePanel;
     public Text statsPointText;
     public Text strPointText;
     public Text dexPointText;
@@ -82,7 +83,8 @@ public class GameManager : MonoBehaviour {
     [Header("UI - MiddleMiddle")]
     public GameObject helpPanel;
     public GameObject saveMessage;
-    public GameObject alertMessage;
+    public GameObject smallAlertMessage;
+    public GameObject bigAlertMessage;
     public GameObject healthManaMessage;
     public Text healthManaMessageText;
     public GameObject itemDescriptionPanel;
@@ -215,7 +217,7 @@ public class GameManager : MonoBehaviour {
                 canEatQuestItem = true;
             
             } else { // 인벤토리가 꽉 차 있을 경우
-                AlertManager.instance.AlertMessageOn("", 5);
+                AlertManager.instance.SmallAlertMessageOn("", 5);
                 canEatQuestItem = false;
             }
 
@@ -271,12 +273,15 @@ public class GameManager : MonoBehaviour {
                 animal.isCollision = false;
                 animal.CancelInvoke();
                 animal.Think();
-            } else if(isNpc && objId == 160000) { // 기능형 NPC 카리나
-                PanelManager.instance.StorageOnOff(); // 창고 패널 켜주기
-                inventoryPanel.SetActive(true); // 인벤토리 패널도 같이 켜주기
-            } else if(isNpc && objId == 170000) { // 기능형 NPC 린샹이면
-                PanelManager.instance.StoreOnOff(); // 상점 패널 켜주기
-                inventoryPanel.SetActive(true); // 인벤토리 패널도 같이 켜주기
+            } else if(isNpc && objId == 160000) { // 기능형 NPC 카리나(창고)
+                PanelManager.instance.StorageOnOff();
+                inventoryPanel.SetActive(true);
+            } else if(isNpc && objId == 170000) { // 기능형 NPC 린샹(잡화상점)
+                PanelManager.instance.GroceryStoreOnOff();
+                inventoryPanel.SetActive(true);
+            } else if(isNpc && objId == 210000) { // 기능형 NPC 밀로(장비상점)
+                PanelManager.instance.EquipmentStoreOnOff();
+                inventoryPanel.SetActive(true);
             }
 
             if(objId == 6200) { // 열쇠로 문을 여는 대사가 끝나면
@@ -336,7 +341,7 @@ public class GameManager : MonoBehaviour {
             PanelManager.instance.RedrawStatsPanel();
             PanelManager.instance.StatsOnOff(); // 레벨업 하면 자동으로 스탯창 켜주기
             PanelManager.instance.StatsUpButtonOn(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기
-            AlertManager.instance.AlertMessageOn("", 12);
+            AlertManager.instance.SmallAlertMessageOn("", 12);
         }
     }
     
@@ -402,6 +407,15 @@ public class GameManager : MonoBehaviour {
         
         questManager.ControlObject();
         isLive = true;
+        Player.instance.isDead = false;
+        Player.instance.isAttack = false;
+        Player.instance.isDamaged = false;
+        Player.instance.isSlide = false;
+        
+        curHealth = maxHealth;
+        curMana = maxMana;
+        
+        Player.instance.anim.SetTrigger("start"); // 아래를 바라보는 애니메이션으로 바꿔주기
         
         NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
         NPC.instance.Think(); // NPC 생각 메소드 호출
@@ -411,8 +425,8 @@ public class GameManager : MonoBehaviour {
         startPanel.SetActive(false);
         
         filterPanel.SetActive(true);
-        StopCoroutine("FilterPanelFade");
-        StartCoroutine("FilterPanelFade");
+        StopCoroutine("FilterPanelFadeIn");
+        StartCoroutine("FilterPanelFadeIn");
         Invoke("GlobalLightOn", 0.1f);
         
         PanelManager.instance.RedrawStatsPanel();
@@ -514,11 +528,29 @@ public class GameManager : MonoBehaviour {
     }
 
     public bool IsNPCPanelOn() {
-        if(storagePanel.activeSelf || groceryStorePanel.activeSelf) {
+        if(storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf) {
             return true;
         } else {
             return false;
         }
     }
 
+    public bool IsPanelOn() {
+        if(statsPanel.activeSelf || equipmentPanel.activeSelf || inventoryPanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void EscPanelOff() {
+        statsPanel.SetActive(false);
+        equipmentPanel.SetActive(false);
+        inventoryPanel.SetActive(false);
+        storagePanel.SetActive(false);
+        groceryStorePanel.SetActive(false);
+        equipmentStorePanel.SetActive(false);
+        itemDescriptionPanel.SetActive(false);
+    }
+    
 }
