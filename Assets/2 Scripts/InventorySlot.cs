@@ -44,7 +44,7 @@ public class InventorySlot : MonoBehaviour {
             GameManager.instance.longPressBarFillArea.SetActive(false); // 롱프레스바를 꺼주기
             string itemDescription = ItemDescription.instance.GetDescription(item.itemName);
             GameManager.instance.itemDescriptionText.text = item.itemName + "\n\n" + itemDescription;
-            PanelManager.instance.ItemDescriptionOnOff(slotNum, item); // 아이템 설명창 띄워쥑
+            PanelManager.instance.ItemDescriptionOnOff(slotNum, item); // 아이템 설명창 띄워주기
         }
     }
 
@@ -77,8 +77,8 @@ public class InventorySlot : MonoBehaviour {
 
                 if(canEntrust && item != null) {
 
-                    if(item.itemType == ItemType.Weapon) {
-                        Inventory.instance.equipWeapon = false; // 창고에 소드를 맡길 경우 equipSword 플래그 값 내려주기
+                    if(item.itemType == ItemType.Quest) {
+                        QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
                     }
 
                     AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
@@ -89,8 +89,14 @@ public class InventorySlot : MonoBehaviour {
 
             if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
 
-                if(item.itemType == ItemType.Weapon) {
-                    Inventory.instance.equipWeapon = false; // 상점에 소드를 판매할 경우 equipSword 플래그 값 내려주기
+                if(item.isEquipped) { // 장착중인 아이템을 상점에 판매하려고 할 경우
+                    AlertManager.instance.BigAlertMessageOn("", 14);
+                    return;
+                }
+
+                if(item.itemType == ItemType.Quest) { // 퀘스트 아이템을 상점에 판매하려고 할 경우
+                    AlertManager.instance.BigAlertMessageOn("", 16);
+                    return;
                 }
                 
                 GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기

@@ -17,14 +17,12 @@ public class QuestManager : MonoBehaviour {
     public GameObject questText;
     public GameObject offButton;
     public GameObject onButton;
-    
+
     [Header("Quest Item")]
-    public List<GameObject> questItem;
-    public GameObject coinPrefab;
-    public Transform[] questItemSpawnPos;
-    public GameObject questItemParent;
+    public GameObject coin;
     public GameObject ring;
     public GameObject sword;
+    public GameObject necklace;
     public GameObject storeKey;
     public GameObject chestKey;
     public GameObject candy;
@@ -32,17 +30,15 @@ public class QuestManager : MonoBehaviour {
     private Dictionary<int, QuestData> questList;
 
     private void Awake() {
-        questItem = new List<GameObject>();
         questList = new Dictionary<int, QuestData>();
         GenerateData();
-        GenerateQuestItem();
         instance = this;
     }
 
     private void GenerateData() {
         questList.Add(10, new QuestData("카밀과 대화하기", new int[] { 10000 })); // 카밀
         questList.Add(20, new QuestData("루나와 대화하기", new int[] { 20000 })); // 루나
-        questList.Add(30, new QuestData("루나의 은화 찾아주기", new int[] { 1000, 20000 })); // 코인, 루나
+        questList.Add(30, new QuestData("루나의 은화 찾아주기", new int[] { 20000 })); // 루나
         questList.Add(40, new QuestData("촌장의 근심거리 듣기", new int[] { 110000 })); // 촌장
         questList.Add(50, new QuestData("몬스터 처치하기", new int[] { 0 }));
         questList.Add(60, new QuestData("촌장의 보답", new int[] { 110000 }));
@@ -53,12 +49,6 @@ public class QuestManager : MonoBehaviour {
         questList.Add(110, new QuestData("퀘스트", new int[] { 0 }));
     }
 
-    private void GenerateQuestItem() {
-        GameObject coin = Instantiate(coinPrefab, questItemSpawnPos[0].position, quaternion.identity, questItemParent.transform);
-        coin.SetActive(false);
-        questItem.Add(coin);
-    }
-    
     public int GetQuestTalkIndex() {
         return questId + questActionIndex;
     }
@@ -95,20 +85,20 @@ public class QuestManager : MonoBehaviour {
         switch(questId) {
 
             case 20: // 루나와 대화하기
-                if(questActionIndex == 1 && questItem[0] != null) { // 루나와 대화가 끝나고 나면
-                    questItem[0].SetActive(true); // 동전 켜주기
+                if(questActionIndex == 1 && coin != null) { // 루나와 대화가 끝나고 나면
+                    coin.SetActive(true); // 동전 켜주기
                 }
                 break;
                 
             case 30: // 루나의 은화 찾아주기
-                if(questActionIndex == 0 && questItem[0] != null) { // 게임을 저장하고 로드했을 경우를 대비하여
-                    questItem[0].SetActive(true); // 동전 켜주기
+                if(questActionIndex == 0 && coin != null) { // 게임을 저장하고 로드했을 경우를 대비하여
+                    coin.SetActive(true); // 동전 켜주기
                 }
                 if(questActionIndex == 2) { // 코인, 루나와 대화를 마치고 나면
                 
                     int num = Inventory.instance.possessItems.Count;
                     
-                    for(int i = 0; i < num; i++) { // 퀘스트 아이템인 coin을 인벤토리에서 제거하기
+                    for(int i = 0; i < num; i++) { // 퀘스트 아이템인 은화를 인벤토리에서 제거하기
                         if(Inventory.instance.possessItems[i].itemType == ItemType.Quest) {
                             Inventory.instance.RemoveItem(i);
                             break;
@@ -137,6 +127,22 @@ public class QuestManager : MonoBehaviour {
             case 80:
                 if(questActionIndex == 1) {
                     chestKey.SetActive(true); // 콜린 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                }
+                break;
+            
+            case 90:
+                if(questActionIndex == 2) {
+                    
+                    int num = Inventory.instance.possessItems.Count;
+                    
+                    for(int i = 0; i < num; i++) { // 퀘스트 아이템인 사탕을 인벤토리에서 제거하기
+                        if(Inventory.instance.possessItems[i].itemType == ItemType.Quest) {
+                            Inventory.instance.RemoveItem(i);
+                            break;
+                        }
+                    }
+                    
+                    necklace.SetActive(true); // 써니 앞에 꺼져있던 목걸이 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
         }

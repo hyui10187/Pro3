@@ -184,7 +184,7 @@ public class Player : MonoBehaviour {
 
     public void PlayerAttack() {
 
-        if(isAttack || 0 < curTime || GameManager.instance.IsNPCPanelOn()) {
+        if(isAttack || 0 < curTime || GameManager.instance.isAction || GameManager.instance.IsNPCPanelOn()) {
             return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있거나 상점 패널이 켜져있으면 돌려보내기
         }
         

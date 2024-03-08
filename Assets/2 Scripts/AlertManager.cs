@@ -33,6 +33,7 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(13, "아직 지원하지 않는 기능입니다.");
         alertData.Add(14, "장착중인 아이템은 창고에 맡길 수 없습니다.\n먼저 장착을 해제해주세요.");
         alertData.Add(15, "장착중인 아이템은 삭제하실 수 없습니다.\n먼저 장착을 해제해주세요.");
+        alertData.Add(16, "퀘스트 아이템은 판매하실 수 없습니다.");
     }
     
     public void SaveMessageOn() {

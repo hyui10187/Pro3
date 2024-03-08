@@ -188,10 +188,14 @@ public class PanelManager : MonoBehaviour {
 
         if(!GameManager.instance.itemDescriptionPanel.activeSelf) { // 아이템 설명창이 꺼져있을 경우
             switch(item.itemType) {
+                case ItemType.Helmet:
+                case ItemType.Necklace:
+                case ItemType.Armor:
                 case ItemType.Weapon: // 장비 아이템의 설명창을 띄울 경우 장착 버튼을 활성화
                 case ItemType.Shield:
+                case ItemType.Gloves:
                 case ItemType.Ring:
-                case ItemType.Necklace:
+                case ItemType.Boots:
                     GameManager.instance.consumptionButton.interactable = false;
                     GameManager.instance.equipButton.interactable = true;
                     break;

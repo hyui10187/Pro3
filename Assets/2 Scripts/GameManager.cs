@@ -141,7 +141,6 @@ public class GameManager : MonoBehaviour {
     public bool isLive; // 게임이 진행중인지 체크하는 플래그
     public bool isAction; // 대화를 하는중인지 체크하기 위한 플래그값
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
-    public bool hasQuestItem;
     public bool canEatQuestItem = true; // 퀘스트 아이템을 먹을 수 있는지 플래그값
 
     [Header("Etc")]
@@ -210,12 +209,11 @@ public class GameManager : MonoBehaviour {
             if(curHealth > maxHealth) { // +20 된 체력이 최대 체력보다 크다면
                 curHealth = maxHealth; // 플레이어의 현재 체력을 최대 체력으로 바꿔주기
             }
-        } else if(scanObject.CompareTag("QuestItem") && !hasQuestItem) { // 퀘스트 아이템인 Coin한테 말을 걸었을 경우
+        } else if(scanObject.CompareTag("QuestItem")) { // 퀘스트 아이템인 Coin한테 말을 걸었을 경우
             
             if(Inventory.instance.possessItems.Count < Inventory.instance.CurSlotCnt) { // 인벤토리에 슬롯 여분이 있을 경우
-                hasQuestItem = true;
                 canEatQuestItem = true;
-            
+                
             } else { // 인벤토리가 꽉 차 있을 경우
                 AlertManager.instance.SmallAlertMessageOn("", 5);
                 canEatQuestItem = false;
@@ -251,7 +249,7 @@ public class GameManager : MonoBehaviour {
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
 
-            if(hasQuestItem && QuestManager.instance.questItem[0] != null) {
+            if(scanObject.CompareTag("QuestItem") && QuestManager.instance.coin != null) {
                 scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 은화를 Trigger로 만들어주기
                 scanObject.SetActive(false); // 퀘스트 아이템인 은화를 꺼주기
                 scanObject.transform.position = player.transform.position; // 퀘스트 아이템인 은화를 플레이어의 위치로 옮겨줌
@@ -411,6 +409,7 @@ public class GameManager : MonoBehaviour {
         Player.instance.isAttack = false;
         Player.instance.isDamaged = false;
         Player.instance.isSlide = false;
+        isAction = false;
         
         curHealth = maxHealth;
         curMana = maxMana;
@@ -452,6 +451,7 @@ public class GameManager : MonoBehaviour {
         isHouse = false; // 기본적으로 밖에서 시작하니까
         curGold = startGold;
         curMoveSpeed = originMoveSpeed;
+        isAction = false;
         
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {
