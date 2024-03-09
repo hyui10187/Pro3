@@ -11,12 +11,25 @@ public class PanelManager : MonoBehaviour {
     
     public int slotNum;
     public Item item;
+    public int helpPanelPage;
     
     private void Awake() {
         instance = this;
         slotNum = -1;
     }
-    
+
+    private void Update() {
+
+        if(helpPanelPage == 1) { // 첫번째 페이지일 경우 왼쪽으로 가는 버튼을 비활성화 하기
+            GameManager.instance.leftPageButton.interactable = false;
+        } else if(helpPanelPage == 9) { // 마지막 페이지일 경우 오른쪽으로 가는 버튼을 비활성화 하기
+            GameManager.instance.rightPageButton.interactable = false;
+        } else {
+            GameManager.instance.leftPageButton.interactable = true;
+            GameManager.instance.rightPageButton.interactable = true;
+        }
+    }
+
     public void MenuOnOff() {
         if(!GameManager.instance.menuPanel.activeSelf) {
             GameManager.instance.menuPanel.SetActive(true);
@@ -90,9 +103,8 @@ public class PanelManager : MonoBehaviour {
     
     public void HelpOnOff() { // 우측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
 
-        if(GameManager.instance.storagePanel.activeSelf) {
-            return; 
-        }
+        helpPanelPage = 1; // Help 패널의 페이지 번호는 1로 항상 초기화
+        GetHelpPanelText();
         
         if(!GameManager.instance.helpPanel.activeSelf) { // Help 창이 꺼져 있다면
             GameManager.instance.helpPanel.SetActive(true); // 켜주기
@@ -101,6 +113,21 @@ public class PanelManager : MonoBehaviour {
             GameManager.instance.helpPanel.SetActive(false);
             GameManager.instance.expSlider.SetActive(true);
         }
+    }
+
+    public void LeftPageButtonClick() { // Help 패널에서 왼쪽으로 가는 버튼을 클릭했을때 호출되는 메소드
+        helpPanelPage--;
+        GetHelpPanelText();
+    }
+    
+    public void RightPageButtonClick() { // Help 패널에서 왼쪽으로 가는 버튼을 클릭했을때 호출되는 메소드
+        helpPanelPage++;
+        GetHelpPanelText();
+    }
+
+    private void GetHelpPanelText() {
+        string textData = AlertManager.instance.alertData[20 + helpPanelPage];
+        GameManager.instance.helpPanelText.text = textData;
     }
     
     public void InventoryOnOff() {
@@ -124,6 +151,14 @@ public class PanelManager : MonoBehaviour {
             GameManager.instance.statsPanel.SetActive(true);
         } else {
             GameManager.instance.statsPanel.SetActive(false);
+        }
+    }
+    
+    public void QuestOnOff() {
+        if(!GameManager.instance.questPanel.activeSelf) {
+            GameManager.instance.questPanel.SetActive(true);
+        } else {
+            GameManager.instance.questPanel.SetActive(false);
         }
     }
     
@@ -341,7 +376,7 @@ public class PanelManager : MonoBehaviour {
         // UI - UpLeft
         GameManager.instance.gaugePanel.SetActive(true);
         GameManager.instance.buffPanel.SetActive(true);
-        GameManager.instance.questPanel.SetActive(true);
+        GameManager.instance.questPreviewPanel.SetActive(true);
         GameManager.instance.helpButton.SetActive(true);
         GameManager.instance.fpsButton.SetActive(true);
 
@@ -382,7 +417,7 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.buffPanel.SetActive(false);
         GameManager.instance.frozenEffect.SetActive(false);
         GameManager.instance.speedEffect.SetActive(false);
-        GameManager.instance.questPanel.SetActive(false);
+        GameManager.instance.questPreviewPanel.SetActive(false);
         GameManager.instance.helpButton.SetActive(false);
         GameManager.instance.fpsButton.SetActive(false);
         GameManager.instance.fpsPanel.SetActive(false);
@@ -398,6 +433,15 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.virtualButton.SetActive(false);
         GameManager.instance.equipmentButton.SetActive(false);
 
+        // UI - MiddleLeft
+        GameManager.instance.storagePanel.SetActive(false);
+        GameManager.instance.equipmentPanel.SetActive(false);
+        GameManager.instance.statsPanel.SetActive(false);
+        GameManager.instance.statsUpButton.SetActive(false);
+        GameManager.instance.questPanel.SetActive(false);
+        GameManager.instance.groceryStorePanel.SetActive(false);
+        GameManager.instance.equipmentStorePanel.SetActive(false);
+        
         // UI - MiddleMiddle
         GameManager.instance.helpPanel.SetActive(false);
         GameManager.instance.saveMessage.SetActive(false);

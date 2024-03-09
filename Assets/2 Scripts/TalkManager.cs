@@ -16,7 +16,7 @@ public class TalkManager : MonoBehaviour {
         
         // 사물 대사   // 사물 대사는 100 단위   // 퀘스트 아이템은 1000 단위
         talkData.Add(100, new string[] { "영롱한 촛불이다." });
-        talkData.Add(200, new string[] { "따뜻한 벽난로 앞에 있었더니 체력이 회복되었다." });
+        talkData.Add(200, new string[] { "따뜻한 벽난로 앞에서 몸을 녹이니까 체력이 회복되는것 같다." });
         talkData.Add(300, new string[] { "고풍스러운 괘종시계이다. 현재 시간은..." });
         talkData.Add(400, new string[] { "잠겨있는 나무상자다.", "열쇠가 있어야 열 수 있을것 같다." });
         talkData.Add(500, new string[] { "게시판에 안내사항이 써있다." });
@@ -111,8 +111,8 @@ public class TalkManager : MonoBehaviour {
 
         // 퀘스트 30: 루나의 동전 찾아주기
         talkData.Add(10000 + 30, new string[] { "루나가 은화를 잃어버렸구나", "얼른 찾았으면 좋겠다" });
-        talkData.Add(1000 + 30, new string[] { "루나가 잃어버린 은화를 찾았다!" });
-        talkData.Add(20000 + 30, new string[] { "찾으면 꼭 좀 가져다 줘", "석상이 있는 방에서 잃어버린것 같아" });
+        talkData.Add(1000, new string[] { "루나가 잃어버린 은화를 찾았다!" });
+        talkData.Add(20000 + 30, new string[] { "은화를 찾으면 꼭 좀 가져다 줘", "석상이 있는 방에서 잃어버린것 같아" });
         talkData.Add(20000 + 30 + 1, new string[] { "은화를 찾아줘서 정말 고마워!", "감사의 의미로 이 반지를 줄께", "내 작은 보답이니까 사양하지 말아줘" });
         
         // 퀘스트 40: 촌장의 근심거리 듣기
@@ -140,17 +140,25 @@ public class TalkManager : MonoBehaviour {
         // 퀘스트 110: 대니의 부탁 들어주기
     }
 
-    public string GetTalk(int sumId, int talkIndex) {
-        
+    public string GetTalk(int objId, int questIdPlusQuestActionIndex, bool isNpc, int talkIndex) {
+
+        int sumId = objId + questIdPlusQuestActionIndex;
+
+        if(!isNpc) { // 사물일 경우
+            if(talkIndex == talkData[objId].Length)
+                return null;
+            else
+                return talkData[objId][talkIndex];
+        }
+
         if(!talkData.ContainsKey(sumId)) {
-            if(!talkData.ContainsKey(sumId - sumId % 10)) {
-                // 퀘스트 맨 처음 대사마저 없을때
-                // 기본 대사를 가지고 온다
-                if(talkIndex == talkData[sumId - sumId % 100].Length)
+            
+            if(!talkData.ContainsKey(sumId - sumId % 10)) { // questId에 해당하는 대사가 없는 NPC한테 말을 걸었을 경우
+                if(talkIndex == talkData[sumId - sumId % 1000].Length) // 해당 NPC의 기본대사를 마지막까지 말했으면
                     return null;
                 else
-                    return talkData[sumId - sumId % 100][talkIndex];
-                
+                    return talkData[sumId - sumId % 1000][talkIndex]; // 해당 NPC의 기본 대사를 return
+
             } else {
                 // 해당 퀘스트 진행순서 대사가 없을때
                 // 퀘스트 맨 처음 대사를 가지고 온다

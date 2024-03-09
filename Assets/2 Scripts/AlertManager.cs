@@ -8,7 +8,7 @@ public class AlertManager : MonoBehaviour {
 
     public static AlertManager instance;
 
-    private Dictionary<int, string> alertData;
+    public Dictionary<int, string> alertData;
     
     private void Awake() {
         alertData = new Dictionary<int, string>();
@@ -34,6 +34,15 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(14, "장착중인 아이템은 창고에 맡길 수 없습니다.\n먼저 장착을 해제해주세요.");
         alertData.Add(15, "장착중인 아이템은 삭제하실 수 없습니다.\n먼저 장착을 해제해주세요.");
         alertData.Add(16, "퀘스트 아이템은 판매하실 수 없습니다.");
+        alertData.Add(21, "[도움말]\n- 집 밖에 있을 경우에는 추위로 인해\n체력이 지속적으로 감소합니다.\n\n- 인벤토리 창에서 아이템을 길게 누를 경우\n아이템에 대한 설명창을 볼 수 있습니다.\n\n- 화면 왼쪽 상단에 표시된 퀘스트를 따라\n게임을 진행하세요.\n\n");
+        alertData.Add(22, "[미니맵]\n- 초록색 : 플레이어 캐릭터입니다.\n\n- 보라색 : 상호작용 할 수 있는 사물입니다.\n\n- 하얀색 : 기능을 가진 NPC 혹은 사물\n입니다.\n\n- 분홍색 : 이동할 수 있는 포인트입니다.\n\n");
+        alertData.Add(23, "[미니맵]\n- 파란색 : 획득할 수 있는 아이템입니다.\n\n- 빨간색 : 플레이어에게 피해를 끼칠 수\n있는 몬스터 혹은 장애물입니다.\n\n- 노란색 : 대화할 수 있는 NPC 입니다.\n\n\n\n");
+        alertData.Add(24, "[모바일 조작키]\n- HP MP 버튼 : 캐릭터의 스탯창을\n열거나 닫습니다.\n\n- 퀘스트 버튼 : 퀘스트 창을 열거나\n닫습니다.\n\n- 퀘스트 화살표 버튼 : 진행중인\n퀘스트를 펼치거나 접습니다.\n\n");
+        alertData.Add(25, "[모바일 조작키]\n- FPS 버튼 : 현재 게임의 프레임 수를\n보여줍니다.\n\n- 톱니바퀴 버튼 : 메뉴창을 열거나\n닫습니다.\n\n- 상자 버튼 : 인벤토리 창을 열거나\n닫습니다.\n\n");
+        alertData.Add(26, "[모바일 조작키]\n- 조이스틱 버튼 : 모바일용 가상키를\n켜거나 끕니다.\n\n- 갑옷 버튼 : 장비창을 켜거나 끕니다.\n\n- 무기 버튼 : 장착중인 무기로 적을\n공격을 합니다.\n\n\n");
+        alertData.Add(27, "[모바일 조작키]\n- 미니맵 버튼 : 지도를 펼쳐서 현재\n위치를 확인합니다.\n\n- 말풍선 버튼 : NPC 혹은 사물과\n상호작용을 합니다.\n\n\n\n\n");
+        alertData.Add(28, "[PC 조작키]\n- ESC 키 : 메뉴창을 켜거나 끄거나\n혹은 열려있는 모든 창을 닫습니다.\n\n- 스페이스 바 키 : NPC 혹은 사물과\n상호작용을 합니다.\n\n- E 키 : 장비창을 열거나 닫습니다.\n\n\n");
+        alertData.Add(29, "[PC 조작키]\n- I 키 : 인벤토리 창을 열거나 닫습니다.\n\n- A 키 : 장착중인 무기로 적을 공격합니다.\n\n- S 키 : 스탯창을 열거나 닫습니다.\n\n- Q 키 : 퀘스트창을 열거나 닫습니다.\n\n\n");
     }
     
     public void SaveMessageOn() {
@@ -45,7 +54,17 @@ public class AlertManager : MonoBehaviour {
     private void SaveMessageOff() {
         GameManager.instance.saveMessage.SetActive(false);
     }
-
+    
+    public void LevelUPMessageOn() {
+        GameManager.instance.levelUpMessage.SetActive(true);
+        CancelInvoke("LevelUPMessageOff");
+        Invoke("LevelUPMessageOff", 2f);   
+    }
+    
+    private void LevelUPMessageOff() {
+        GameManager.instance.levelUpMessage.SetActive(false);
+    }
+    
     public void SmallAlertMessageOn(String itemName, int idx) {
         Text acquisitionText = GameManager.instance.smallAlertMessage.GetComponentInChildren<Text>();
         acquisitionText.text = itemName + alertData[idx];

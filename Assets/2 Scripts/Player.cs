@@ -69,6 +69,10 @@ public class Player : MonoBehaviour {
             PlayerAction();
         }
 
+        if(Input.GetButtonDown("Quest")) {
+            PanelManager.instance.QuestOnOff();
+        }
+
         if(Input.GetButtonDown("Stats")) { // 플레이어가 S 키를 눌렀으면
             PanelManager.instance.StatsOnOff();
         }

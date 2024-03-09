@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour {
     public GameObject buffPanel;
     public GameObject frozenEffect;
     public GameObject speedEffect;
-    public GameObject questPanel;
+    public GameObject questPreviewPanel;
     public Text currentQuestText; // 현재 진행중인 퀘스트 이름
     public GameObject helpButton;
     public GameObject fpsButton;
@@ -67,6 +67,9 @@ public class GameManager : MonoBehaviour {
     public GameObject equipmentPanel;
     public GameObject statsPanel;
     public GameObject statsUpButton;
+    public GameObject questPanel;
+    public Text questTitle;
+    public Text questText;
     public GameObject groceryStorePanel;
     public GameObject equipmentStorePanel;
     public Text statsPointText;
@@ -82,6 +85,10 @@ public class GameManager : MonoBehaviour {
     
     [Header("UI - MiddleMiddle")]
     public GameObject helpPanel;
+    public Text helpPanelText;
+    public Button leftPageButton;
+    public Button rightPageButton;
+    public GameObject levelUpMessage;
     public GameObject saveMessage;
     public GameObject smallAlertMessage;
     public GameObject bigAlertMessage;
@@ -136,6 +143,7 @@ public class GameManager : MonoBehaviour {
     public int playerAttackPower; // 플레이어의 기본 공격력
     public int defensivePower;
     public int attackSpeed;
+    public GameObject levelUpEffect;
 
     [Header("Flag")]
     public bool isLive; // 게임이 진행중인지 체크하는 플래그
@@ -183,7 +191,7 @@ public class GameManager : MonoBehaviour {
         ControlConditionUI();
         curGameTime += Time.deltaTime;
 
-        if(SpawnManager.instance.enemyCount == 0 && questManager.questId == 50) {
+        if(SpawnManager.instance.enemyCount == 0 && questManager.questId == 50) { // 몬스터 처지 이벤트 완료되면
             questManager.CheckQuest(0);
         }
     }
@@ -202,14 +210,8 @@ public class GameManager : MonoBehaviour {
         }
         
         ObjData objData = scanObject.GetComponent<ObjData>();
-
-        if(scanObject.CompareTag("Heal")) { // 모닥불에게 말을 걸었을 경우
-            curHealth += 10; // 체력을 20 회복시키기
-            
-            if(curHealth > maxHealth) { // +20 된 체력이 최대 체력보다 크다면
-                curHealth = maxHealth; // 플레이어의 현재 체력을 최대 체력으로 바꿔주기
-            }
-        } else if(scanObject.CompareTag("QuestItem")) { // 퀘스트 아이템인 Coin한테 말을 걸었을 경우
+        
+        if(scanObject.CompareTag("QuestItem")) { // 퀘스트 아이템인 Coin한테 말을 걸었을 경우
             
             if(Inventory.instance.possessItems.Count < Inventory.instance.CurSlotCnt) { // 인벤토리에 슬롯 여분이 있을 경우
                 canEatQuestItem = true;
@@ -238,9 +240,9 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Talk(int objId, bool isNpc, string npcName) {
-        
-        int questTalkIndex = questManager.GetQuestTalkIndex();
-        string talkData = talkManager.GetTalk(objId + questTalkIndex, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
+
+        int questIdPlusQuestActionIndex = questManager.QuestIdPlusQuestActionIndex();
+        string talkData = talkManager.GetTalk(objId, questIdPlusQuestActionIndex, isNpc, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
 
         // End Talk
         if(talkData == null) { // 더이상 다음 대화가 없다면
@@ -248,6 +250,11 @@ public class GameManager : MonoBehaviour {
             timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
+            
+            if(scanObject.CompareTag("Heal")) {
+                HealEffect();
+                return;
+            }
 
             if(scanObject.CompareTag("QuestItem") && QuestManager.instance.coin != null) {
                 scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 은화를 Trigger로 만들어주기
@@ -325,6 +332,12 @@ public class GameManager : MonoBehaviour {
         talkIndex++;
     }
 
+    private void HealEffect() {
+        isAction = true;
+        StopCoroutine("FilterPanelFadeOutAndIn");
+        StartCoroutine("FilterPanelFadeOutAndIn");
+    }
+
     private void ControlLevel() { // 레벨업을 담당하는 메소드
 
         if(maxExp <= curExp) {
@@ -339,8 +352,18 @@ public class GameManager : MonoBehaviour {
             PanelManager.instance.RedrawStatsPanel();
             PanelManager.instance.StatsOnOff(); // 레벨업 하면 자동으로 스탯창 켜주기
             PanelManager.instance.StatsUpButtonOn(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기
-            AlertManager.instance.SmallAlertMessageOn("", 12);
+            LevelUpEffectOn();
+            AlertManager.instance.LevelUPMessageOn();
         }
+    }
+
+    private void LevelUpEffectOn() {
+        levelUpEffect.SetActive(true);
+        Invoke("LevelUpEffectOff", 2);
+    }
+
+    private void LevelUpEffectOff() {
+        levelUpEffect.SetActive(false);
     }
     
     private void ControlConditionUI() {
@@ -402,33 +425,10 @@ public class GameManager : MonoBehaviour {
         player.transform.position = new Vector3(x, y, 0);
         questManager.questId = questId;
         questManager.questActionIndex = questActionIndex;
-        
-        questManager.ControlObject();
-        isLive = true;
-        Player.instance.isDead = false;
-        Player.instance.isAttack = false;
-        Player.instance.isDamaged = false;
-        Player.instance.isSlide = false;
-        isAction = false;
-        
         curHealth = maxHealth;
         curMana = maxMana;
-        
-        Player.instance.anim.SetTrigger("start"); // 아래를 바라보는 애니메이션으로 바꿔주기
-        
-        NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
-        NPC.instance.Think(); // NPC 생각 메소드 호출
-        Animal.instance.CancelInvoke();
-        Animal.instance.Think();
-        
-        startPanel.SetActive(false);
-        
-        filterPanel.SetActive(true);
-        StopCoroutine("FilterPanelFadeIn");
-        StartCoroutine("FilterPanelFadeIn");
-        Invoke("GlobalLightOn", 0.1f);
-        
-        PanelManager.instance.RedrawStatsPanel();
+
+        InitGame();
     }
     
     public void GameExit() { // 게임을 종료하는 메소드
@@ -444,15 +444,6 @@ public class GameManager : MonoBehaviour {
 
     public void NewGameButtonClick() { // New Game 버튼을 클릭했을때 실행하는 메소드
 
-        startPanel.SetActive(false);
-        
-        isLive = true;
-        Player.instance.isDead = false;
-        isHouse = false; // 기본적으로 밖에서 시작하니까
-        curGold = startGold;
-        curMoveSpeed = originMoveSpeed;
-        isAction = false;
-        
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {
                 Transform targetObject = ItemManager.instance.fieldItemParent.transform.GetChild(i);
@@ -463,34 +454,59 @@ public class GameManager : MonoBehaviour {
         } else { // 기존에 만들어진 필드 아이템이 없다면
             ItemManager.instance.GenerateItem(); // 아이템 생성 메소드 호출
         }
-        
-        NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
-        NPC.instance.Think(); // NPC 생각 메소드 호출
-        Animal.instance.CancelInvoke();
-        Animal.instance.Think();
-
-        player.transform.position = Vector3.zero;
-        questManager.questId = 10;
-        questManager.questActionIndex = 0;
-        currentQuestText.text = questManager.CheckQuest();
-
-        curHealth = maxHealth; // 체력 초기화
-        Player.instance.anim.SetTrigger("start"); // 기본적으로 아래를 바라보는 애니메이션으로 변경
 
         if(Inventory.instance.possessItems.Count > 0) { // 현재 인벤토리에 보유중인 아이템이 있다면
             Inventory.instance.possessItems.Clear(); // 보유한 아이템 전부 삭제하기
             Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
         }
+        
+        player.transform.position = Vector3.zero;
+        curHealth = maxHealth; // 체력 초기화
+        curMana = 0;
+        curGold = startGold;
+        curExp = 0;
+        curLevel = 1;
+        curGameTime = 0;
+        originMoveSpeed = 5;
+        curMoveSpeed = originMoveSpeed;
+        questManager.questId = 10;
+        questManager.questActionIndex = 0;
+        currentQuestText.text = questManager.CheckQuest();
+        isHouse = false; // 기본적으로 밖에서 시작하니까
 
+        Inventory.instance.hasCandy = false;
+        Inventory.instance.hasChestKey = false;
+        Inventory.instance.hasStoreKey = false;
+
+        InitGame();
+    }
+
+    private void InitGame() {
+        questManager.ControlObject();
+        isLive = true;
+        Player.instance.isDead = false;
+        Player.instance.isAttack = false;
+        Player.instance.isDamaged = false;
+        Player.instance.isSlide = false;
+        isAction = false;
+
+        Player.instance.anim.SetTrigger("start"); // 아래를 바라보는 애니메이션으로 바꿔주기
+        NPC.instance.CancelInvoke(); // 모든 메소드의 invoke를 중지시킴
+        NPC.instance.Think(); // NPC 생각 메소드 호출
+        Animal.instance.CancelInvoke();
+        Animal.instance.Think();
+        
+        startPanel.SetActive(false);
         PanelManager.instance.RedrawStatsPanel();
         
-        filterPanel.SetActive(true);
         StopCoroutine("FilterPanelFadeIn");
         StartCoroutine("FilterPanelFadeIn");
         Invoke("GlobalLightOn", 0.1f);
     }
 
     private IEnumerator FilterPanelFadeIn() { // 검정색 필터를 서서히 투명하게 만들어줘서 Fade In 효과를 주는 코루틴
+        
+        filterPanel.SetActive(true);
         
         Image filterPanelImage = filterPanel.GetComponent<Image>();
         float fadeTime = 1;
@@ -504,7 +520,7 @@ public class GameManager : MonoBehaviour {
         filterPanel.SetActive(false);
     }
     
-    private IEnumerator FilterPanelFadeOut() { // 검정색 필터를 서서히 투명하게 만들어줘서 Fade Out 효과를 주는 코루틴
+    private IEnumerator FilterPanelFadeOut() { // 검정색 필터를 서서히 어둡게 만들어줘서 Fade Out 효과를 주는 코루틴
         
         filterPanel.SetActive(true);
         
@@ -519,6 +535,33 @@ public class GameManager : MonoBehaviour {
         
         filterPanel.SetActive(false);
         startPanel.SetActive(true);
+    }
+
+    private IEnumerator FilterPanelFadeOutAndIn() {
+        filterPanel.SetActive(true);
+        
+        Image filterPanelImage = filterPanel.GetComponent<Image>();
+        float fadeTime = 0;
+
+        yield return new WaitForSeconds(0.01f);
+        talkPanel.SetActive(false); // 우선 대화창을 꺼주기
+
+        while(fadeTime < 1) {
+            fadeTime += 0.01f;
+            yield return new WaitForSeconds(0.01f); // 0.01 초마다 실행
+            filterPanelImage.color = new Color(0, 0, 0, fadeTime);
+        }
+        
+        while(0 < fadeTime) {
+            fadeTime -= 0.01f;
+            yield return new WaitForSeconds(0.01f); // 0.01 초마다 실행
+            filterPanelImage.color = new Color(0, 0, 0, fadeTime);
+        }
+
+        curHealth = maxHealth;
+        isAction = false;
+        filterPanel.SetActive(false);
+        expSlider.SetActive(true);
     }
     
     private void GlobalLightOn() {
@@ -536,7 +579,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public bool IsPanelOn() {
-        if(statsPanel.activeSelf || equipmentPanel.activeSelf || inventoryPanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf) {
+        if(equipmentPanel.activeSelf || statsPanel.activeSelf || questPanel.activeSelf || inventoryPanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf) {
             return true;
         } else {
             return false;
@@ -544,12 +587,15 @@ public class GameManager : MonoBehaviour {
     }
 
     public void EscPanelOff() {
-        statsPanel.SetActive(false);
         equipmentPanel.SetActive(false);
+        statsPanel.SetActive(false);
         inventoryPanel.SetActive(false);
+        questPanel.SetActive(false);
+        
         storagePanel.SetActive(false);
         groceryStorePanel.SetActive(false);
         equipmentStorePanel.SetActive(false);
+        
         itemDescriptionPanel.SetActive(false);
     }
     
