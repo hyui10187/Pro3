@@ -78,6 +78,9 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(6700, new string[] { "깊은 웅덩이에 사다리가 놓여있다.", "물이 너무 차가워서 들어갈 수가 없다." });
         talkData.Add(6800, new string[] { "커다란 암석이다.", "강력한 곡괭이가 있다면 부술 수 있을것 같다." });
         talkData.Add(6900, new string[] { "약간 금이간 낡은 기둥이다." });
+        talkData.Add(7100, new string[] { "바닐라가 들어있는 항아리다." });
+        talkData.Add(7200, new string[] { "정향이 들어있는 항아리다." });
+        talkData.Add(7300, new string[] { "대니가 가져오라고 한 정향이 들어있는 항아리가 깨져있다.", "지나다니는 사람들이 다칠 수 있으니 우선 파편을 치워야겠다." });
 
         // NPC 대사   // NPC 대사는 10000 단위   // 이동형 NPC는 30000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });
@@ -135,9 +138,10 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(120000 + 90 + 1, new string[] { "어머 이 사탕 나에게 주는거야?", "언니 정말 고마워!", "고마우니까 선물로 이 목걸이를 줄께!" });
         
         // 퀘스트 100: 대니의 부탁 들어주기
-        talkData.Add(140000 + 100, new string[] { "저기 있잖아", "요리를 위해 술이 필요한데 말이야", "카리나 옆에 있는 술통 2개를 가져다 줄 수 있을까?", "아 절대 내가 가져오기 귀찮아서 부탁하는건 아니야!" });
-        
+        talkData.Add(140000 + 100, new string[] { "저기 있잖아", "요리를 위해 향신료가 필요한데 말이야", "카리나 옆에 있는 항아리에 담긴 정향을 가져다 줄 수 있을까?", "아 절대 내가 가져오기 귀찮아서 부탁하는건 아니야!" });
+
         // 퀘스트 110: 대니의 부탁 들어주기
+        talkData.Add(140000 + 110, new string[] { "뭐? 정향이 담긴 항아리가 깨져있었다고?", "사람들이 다치지 않도록 파편을 치웠다니 잘했군", "정향은 내가 직접 창고에서 가져와야겠어" });
     }
 
     public string GetTalk(int objId, int questIdPlusQuestActionIndex, bool isNpc, int talkIndex) {

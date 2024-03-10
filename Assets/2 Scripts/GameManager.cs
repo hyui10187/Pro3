@@ -99,7 +99,8 @@ public class GameManager : MonoBehaviour {
     public Button consumptionButton;
     public Button equipButton;
     public Text equipButtonText;
-    public GameObject confirmPanel;
+    public GameObject goToMainConfirmPanel;
+    public GameObject sleepConfirmPanel;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -252,7 +253,12 @@ public class GameManager : MonoBehaviour {
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
             
             if(scanObject.CompareTag("Heal")) {
-                HealEffect();
+                FadeOutAndInEffect();
+                curHealth = maxHealth;
+                return;
+            } else if(scanObject.CompareTag("Bed")) {
+                isAction = true;
+                PanelManager.instance.SleepConfirmOn();
                 return;
             }
 
@@ -332,8 +338,7 @@ public class GameManager : MonoBehaviour {
         talkIndex++;
     }
 
-    private void HealEffect() {
-        isAction = true;
+    public void FadeOutAndInEffect() {
         StopCoroutine("FilterPanelFadeOutAndIn");
         StartCoroutine("FilterPanelFadeOutAndIn");
     }
@@ -466,7 +471,7 @@ public class GameManager : MonoBehaviour {
         curGold = startGold;
         curExp = 0;
         curLevel = 1;
-        curGameTime = 0;
+        curGameTime = 25200; // 게임시간은 오전 7시부터 시작
         originMoveSpeed = 5;
         curMoveSpeed = originMoveSpeed;
         questManager.questId = 10;
@@ -537,7 +542,8 @@ public class GameManager : MonoBehaviour {
         startPanel.SetActive(true);
     }
 
-    private IEnumerator FilterPanelFadeOutAndIn() {
+    public IEnumerator FilterPanelFadeOutAndIn() {
+        isAction = true;
         filterPanel.SetActive(true);
         
         Image filterPanelImage = filterPanel.GetComponent<Image>();
@@ -557,8 +563,7 @@ public class GameManager : MonoBehaviour {
             yield return new WaitForSeconds(0.01f); // 0.01 초마다 실행
             filterPanelImage.color = new Color(0, 0, 0, fadeTime);
         }
-
-        curHealth = maxHealth;
+        
         isAction = false;
         filterPanel.SetActive(false);
         expSlider.SetActive(true);
@@ -579,7 +584,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public bool IsPanelOn() {
-        if(equipmentPanel.activeSelf || statsPanel.activeSelf || questPanel.activeSelf || inventoryPanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf) {
+        if(equipmentPanel.activeSelf || statsPanel.activeSelf || questPanel.activeSelf || inventoryPanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf || helpPanel.activeSelf) {
             return true;
         } else {
             return false;
@@ -597,6 +602,7 @@ public class GameManager : MonoBehaviour {
         equipmentStorePanel.SetActive(false);
         
         itemDescriptionPanel.SetActive(false);
+        helpPanel.SetActive(false);
     }
     
 }

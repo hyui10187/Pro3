@@ -39,6 +39,8 @@ public class Player : MonoBehaviour {
     public bool leftUp;
     public bool rightUp;
     public VirtualJoystick virtualJoystick;
+
+    public bool isFlipInit;
     
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
@@ -88,6 +90,10 @@ public class Player : MonoBehaviour {
         if(Input.GetButtonDown("Cancel")) { // 플레이어가 ESC 키를 눌렀으면
             PlayerEsc();
         }
+
+        if(Input.GetButtonDown("Help")) {
+            PanelManager.instance.HelpOnOff();
+        }
         
         if(Input.GetButtonDown("Attack")) { // 플레이어가 A 키를 눌렀으면
             PlayerAttack();
@@ -129,13 +135,13 @@ public class Player : MonoBehaviour {
             dirVec = new Vector3(h, 0, 0);
             anim.SetFloat("horizonMove", h);
             anim.SetFloat("verticalMove", 0);
-    
+
         } else if(vDown) {
             isHorizonMove = false;
             dirVec = new Vector3(0, v, 0);
             anim.SetFloat("verticalMove", v);
             anim.SetFloat("horizonMove", 0);
-    
+
         } else if(hUp || vUp) {
             isHorizonMove = h != 0;
 
@@ -150,7 +156,7 @@ public class Player : MonoBehaviour {
                 anim.SetFloat("verticalMove", v);
                 anim.SetFloat("horizonMove", 0);
             }
-        }   
+        }
         
         bool isHorizonChanged = false;
         bool isVerticalChanged = false;
@@ -184,6 +190,38 @@ public class Player : MonoBehaviour {
             return;
         }
         GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
+    }
+    
+    public void PlayerSleep() {
+
+        float curGameTime = GameManager.instance.curGameTime; // 현재 게임시간
+        
+        int sleepHour = Mathf.FloorToInt(curGameTime / 3600) % 24;  // 플레이어가 잠에 든 시간
+        int sleepMin = Mathf.FloorToInt((curGameTime % 3600) / 60); // 플레이어가 잠에 든 분
+
+        int wakeUpHour = 7 + 24; // 다음날 오전 7시에 일어나도록
+        int wakeUpMin = 0;
+
+        float timeToNextMorning = ((wakeUpHour - sleepHour) * 3600) + ((wakeUpMin - sleepMin) * 60);
+        GameManager.instance.curGameTime += timeToNextMorning;
+        
+        GameManager.instance.curHealth = GameManager.instance.maxHealth;
+        GameManager.instance.curMana = GameManager.instance.maxMana;
+        PanelManager.instance.SleepConfirmOff();
+        StopCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
+        StartCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
+        
+        Invoke("PlayerDirFlip", 1.8f);
+    }
+
+    private void PlayerDirFlip() {
+        dirVec *= -1; // 플레이어 캐릭터가 침대에 들어갈때 방향과 반대 방향을 바라보도록
+        anim.SetInteger("dirX", (int)dirVec.x);
+        anim.SetInteger("dirY", (int)dirVec.y);
+        
+        if(dirVec.y < 0) {
+            anim.SetTrigger("start");
+        }
     }
 
     public void PlayerAttack() {
@@ -306,10 +344,12 @@ public class Player : MonoBehaviour {
         }
         
         if(!isDamaged && !isSlide && !isAttack) { // 몬스터한테 맞았을때는 대각선으로 이동해야 하니까 조건을 걸어줌  // 미끄러질때는 이동이 안되도록 조건을 걸어줌
+            anim.SetInteger("dirX", 0);
+            anim.SetInteger("dirY", 0);
             Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
             rigid.velocity = moveVec * moveSpeed;
         }
-
+        
         Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
         RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 1f, LayerMask.GetMask("Object", "NPC", "Animal"));
                                                                                                                // 네번째 파라미터는 스캔할 Layer

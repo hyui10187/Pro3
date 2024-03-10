@@ -16,8 +16,8 @@ public class ItemPotionEffect : ItemEffect {
             GameManager.instance.curHealth += recoveryHealthPoint;
             AlertManager.instance.HealthMessageOn();
         } else if(recoveryHealthPoint < 0) { // 초록물약이면 - 되는 체력 표기
-            GameManager.instance.healthManaMessageText.text = recoveryHealthPoint.ToString();
-            GameManager.instance.curHealth += recoveryHealthPoint;
+            GameManager.instance.healthManaMessageText.text = (-1 * GameManager.instance.curHealth).ToString();
+            GameManager.instance.curHealth -= GameManager.instance.curHealth;
             AlertManager.instance.HealthMessageOn();
         }
 

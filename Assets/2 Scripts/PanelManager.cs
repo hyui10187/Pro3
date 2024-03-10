@@ -22,7 +22,7 @@ public class PanelManager : MonoBehaviour {
 
         if(helpPanelPage == 1) { // 첫번째 페이지일 경우 왼쪽으로 가는 버튼을 비활성화 하기
             GameManager.instance.leftPageButton.interactable = false;
-        } else if(helpPanelPage == 9) { // 마지막 페이지일 경우 오른쪽으로 가는 버튼을 비활성화 하기
+        } else if(helpPanelPage == 11) { // 마지막 페이지일 경우 오른쪽으로 가는 버튼을 비활성화 하기
             GameManager.instance.rightPageButton.interactable = false;
         } else {
             GameManager.instance.leftPageButton.interactable = true;
@@ -160,6 +160,17 @@ public class PanelManager : MonoBehaviour {
         } else {
             GameManager.instance.questPanel.SetActive(false);
         }
+    }
+    
+    public void SleepConfirmOn() {
+        GameManager.instance.sleepConfirmPanel.SetActive(true);
+    }
+
+    public void SleepConfirmOff() {
+        GameManager.instance.sleepConfirmPanel.SetActive(false);
+        GameManager.instance.talkPanel.SetActive(false);
+        GameManager.instance.isAction = false;
+        GameManager.instance.expSlider.SetActive(true);
     }
     
     public void StatsUpButtonOn() {
@@ -359,14 +370,14 @@ public class PanelManager : MonoBehaviour {
         AlertManager.instance.SmallAlertMessageOn("", 13);
     }
 
-    public void ConfirmPanelOn() {
-        GameManager.instance.confirmPanel.SetActive(true);
+    public void GoToMainConfirmPanelOnOff() {
+        if(!GameManager.instance.goToMainConfirmPanel.activeSelf) {
+            GameManager.instance.goToMainConfirmPanel.SetActive(true);
+        } else {
+            GameManager.instance.goToMainConfirmPanel.SetActive(false);
+        }
     }
-    
-    public void ConfirmPanelOff() {
-        GameManager.instance.confirmPanel.SetActive(false);
-    }
-    
+
     public void PanelOn() {
 
         // UI - Panel
@@ -448,7 +459,7 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.smallAlertMessage.SetActive(false);
         GameManager.instance.bigAlertMessage.SetActive(false);
         GameManager.instance.healthManaMessage.SetActive(false);
-        GameManager.instance.confirmPanel.SetActive(false);
+        GameManager.instance.goToMainConfirmPanel.SetActive(false);
         
         // UI - MiddleRight
         GameManager.instance.inventoryPanel.SetActive(false);
