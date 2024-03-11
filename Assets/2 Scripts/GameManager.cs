@@ -21,12 +21,16 @@ public class GameManager : MonoBehaviour {
     public GameObject downStairPosParent;
     public GameObject upLadderPosParent;
     public GameObject downLadderPosParent;
+    public GameObject upHolePosParent;
+    public GameObject downHolePosParent;
     public GameObject doorInPosParent;
     public GameObject doorOutPosParent;
     public Transform[] upStairPos;
     public Transform[] downStairPos;
     public Transform[] upLadderPos;
     public Transform[] downLadderPos;
+    public Transform[] upHolePos;
+    public Transform[] downHolePos;
     public Transform[] doorInPos;
     public Transform[] doorOutPos;
 
@@ -178,6 +182,7 @@ public class GameManager : MonoBehaviour {
         downStairPos = downStairPosParent.GetComponentsInChildren<Transform>();
         upLadderPos = upLadderPosParent.GetComponentsInChildren<Transform>();
         downLadderPos = downLadderPosParent.GetComponentsInChildren<Transform>();
+        downHolePos = downHolePosParent.GetComponentsInChildren<Transform>();
         doorInPos = doorInPosParent.GetComponentsInChildren<Transform>();
         doorOutPos = doorOutPosParent.GetComponentsInChildren<Transform>();
     }
@@ -390,6 +395,7 @@ public class GameManager : MonoBehaviour {
         }
 
         if(curHealth <= 0) {
+            curHealth = 0;
             Player.instance.PlayerDead();
         }
     }
@@ -466,6 +472,7 @@ public class GameManager : MonoBehaviour {
         }
         
         player.transform.position = Vector3.zero;
+        maxHealth = 100;
         curHealth = maxHealth; // 체력 초기화
         curMana = 0;
         curGold = startGold;
@@ -476,6 +483,7 @@ public class GameManager : MonoBehaviour {
         curMoveSpeed = originMoveSpeed;
         questManager.questId = 10;
         questManager.questActionIndex = 0;
+        talkIndex = 0;
         currentQuestText.text = questManager.CheckQuest();
         isHouse = false; // 기본적으로 밖에서 시작하니까
 

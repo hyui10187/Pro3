@@ -211,7 +211,7 @@ public class Player : MonoBehaviour {
         StopCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
         StartCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
         
-        Invoke("PlayerDirFlip", 1.8f);
+        Invoke("PlayerDirFlip", 1.5f);
     }
 
     private void PlayerDirFlip() {
@@ -392,6 +392,9 @@ public class Player : MonoBehaviour {
         } else if(other.gameObject.CompareTag("Bullet")) { // 플레이어가 몬스터의 총알에 맞으면
             Bullet bullet = other.GetComponent<Bullet>();
             OnDamaged(Vector2.zero, bullet.damage); // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
+            
+        } else if(other.CompareTag("Thorn")) { // 플레이어가 가시에 닿았으면
+            OnDamaged(Vector2.zero, (int)GameManager.instance.curHealth); // 체력을 전부 닳도록 해주기
         }
 
         for(int i = 1; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
@@ -407,6 +410,12 @@ public class Player : MonoBehaviour {
                 transform.position = GameManager.instance.downLadderPos[i].position;
             } else if(other.gameObject.name == "UpLadder " + i) {
                 transform.position = GameManager.instance.upLadderPos[i].position;
+            }
+        }
+        
+        for(int i = 1; i < GameManager.instance.downHolePos.Length; i++) { // 사다리를 이용했을때 이동로직
+            if(other.gameObject.name == "DownHole " + i) {
+                transform.position = GameManager.instance.downHolePos[i].position;
             }
         }
 

@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf4e51441a5a434997f51d7442a5580, type: 3}
   m_Name: GreenPotion
   m_EditorClassIdentifier: 
-  recoveryHealthPoint: -100
+  recoveryHealthPoint: -1
   recoveryManaPoint: 0
+  increaseSpeedPoint: 0
