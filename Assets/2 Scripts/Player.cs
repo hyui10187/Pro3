@@ -186,7 +186,7 @@ public class Player : MonoBehaviour {
     }
 
     public void PlayerAction() {
-        if(scanObj == null || GameManager.instance.IsNPCPanelOn()) {
+        if(scanObj == null || GameManager.instance.IsNPCPanelOn() || isDead || isDamaged || !GameManager.instance.isLive) {
             return;
         }
         GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
@@ -226,7 +226,7 @@ public class Player : MonoBehaviour {
 
     public void PlayerAttack() {
 
-        if(isAttack || 0 < curTime || GameManager.instance.isAction || GameManager.instance.IsNPCPanelOn()) {
+        if(isAttack || 0 < curTime || GameManager.instance.isAction || GameManager.instance.IsNPCPanelOn() || isDead || !GameManager.instance.isLive) {
             return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있거나 상점 패널이 켜져있으면 돌려보내기
         }
         
@@ -374,27 +374,27 @@ public class Player : MonoBehaviour {
             transform.position = GameManager.instance.winterFieldPos.position; // 건물 밖의 위치로 이동시킴
             GameManager.instance.isHouse = false; // 집으로 들어갔다는 플래그 값을 내려줌
             
-        } else if(other.gameObject.CompareTag("Enemy")) { // 플레이어가 적한테 닿으면
+        } else if(other.gameObject.CompareTag("Monster")) { // 플레이어가 적한테 닿으면
 
             Monster monster = other.gameObject.GetComponent<Monster>();
             
             if(monster.isDead) {
                 return;
             }
-            OnDamaged(other.transform.position, monster.collisionDamage);
+            PlayerDamaged(other.transform.position, monster.collisionDamage);
             
         } else if(other.gameObject.CompareTag("Obstacle")) {
-            OnDamaged(other.transform.position, GameManager.instance.obstacleDamage);
+            PlayerDamaged(other.transform.position, GameManager.instance.obstacleDamage);
             
         } else if(other.gameObject.CompareTag("Ice")) { // 얼음
             Slide();
             
         } else if(other.gameObject.CompareTag("Bullet")) { // 플레이어가 몬스터의 총알에 맞으면
             Bullet bullet = other.GetComponent<Bullet>();
-            OnDamaged(Vector2.zero, bullet.damage); // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
+            PlayerDamaged(Vector2.zero, bullet.damage); // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
             
         } else if(other.CompareTag("Thorn")) { // 플레이어가 가시에 닿았으면
-            OnDamaged(Vector2.zero, (int)GameManager.instance.curHealth); // 체력을 전부 닳도록 해주기
+            PlayerDamaged(Vector2.zero, (int)GameManager.instance.curHealth); // 체력을 전부 닳도록 해주기
         }
 
         for(int i = 1; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
@@ -477,7 +477,7 @@ public class Player : MonoBehaviour {
         isSlide = false; // 플래그 내려주기
     }
 
-    public void OnDamaged(Vector2 targetPos, int damage) {
+    public void PlayerDamaged(Vector2 targetPos, int damage) {
 
         if(isDead) {
             return;
@@ -488,7 +488,7 @@ public class Player : MonoBehaviour {
             sprite.color = new Color(1, 1, 1, 0.4f);
 
             int dir = transform.position.x - targetPos.x > 0 ? 1 : -1;
-            rigid.AddForce(new Vector2(dir, 1) * 0.7f, ForceMode2D.Impulse); // 맞은 반대 방향으로 튕겨나가도록
+            rigid.AddForce(new Vector2(dir, 1) * 3f, ForceMode2D.Impulse); // 맞은 반대 방향으로 튕겨나가도록
             isDamaged = true;
         }
 
@@ -500,10 +500,15 @@ public class Player : MonoBehaviour {
             PlayerDead();
         }
         
-        Invoke("OffDamaged", 2f);
+        Invoke("aa", 0.5f);
+        Invoke("PlayerDamagedOff", 2f);
     }
 
-    private void OffDamaged() {
+    private void aa() {
+        rigid.velocity = Vector2.zero;
+    }
+    
+    private void PlayerDamagedOff() {
         
         if(isDead) {
             return;

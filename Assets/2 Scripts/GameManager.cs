@@ -105,6 +105,8 @@ public class GameManager : MonoBehaviour {
     public Text equipButtonText;
     public GameObject goToMainConfirmPanel;
     public GameObject sleepConfirmPanel;
+    public GameObject leaveAmountPanel;
+    public Text leaveAmountText;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -390,7 +392,7 @@ public class GameManager : MonoBehaviour {
 
             if(curHealth > 0 && frozenCoolTime > frozenTime) {
                 frozenCoolTime = 0;
-                Player.instance.OnDamaged(Vector2.zero, frozenDamage);
+                Player.instance.PlayerDamaged(Vector2.zero, frozenDamage);
             }
         }
 

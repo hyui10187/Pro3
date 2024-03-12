@@ -46,7 +46,7 @@ public class StorageManager : MonoBehaviour {
         }
     }
 
-    public bool AddItem(Item eatItem) { // 창고 슬롯에 아이템을 추가해주는 메소드
+    public bool AddItem(Item eatItem, int leaveAmount) { // 창고 슬롯에 아이템을 추가해주는 메소드
 
         if(eatItem == null) {
             return false;

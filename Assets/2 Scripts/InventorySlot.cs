@@ -16,9 +16,18 @@ public class InventorySlot : MonoBehaviour {
     public float clickTime; // 클릭중인 시간
     public float minClickTime; // 롱프레스 여부를 판단하기 위한 기준시간
     public bool isClick;
+    
+    public Image coolImage;
+    private float coolTime = 2;
+    private float curTime;
+    private bool isCoolEnded = true; // 아이템 사용 쿨타임이 끝났는지 여부
 
     private void Update() {
-        
+
+        if(!isCoolEnded) {
+            CheckCoolTime();   
+        }
+
         if(isClick) {
             clickTime += Time.deltaTime;
         } else {
@@ -48,6 +57,35 @@ public class InventorySlot : MonoBehaviour {
         }
     }
 
+    private void CheckCoolTime() {
+        curTime += Time.deltaTime;
+        if(curTime < coolTime) {
+            SetFillAmount(curTime);
+        } else {
+            EndCoolTime();
+        }
+    }
+
+    private void EndCoolTime() {
+        SetFillAmount(0); // 쿨타임 이미지의 값을 0으로 초기화해서 안보이도록 해주기
+        isCoolEnded = true;
+    }
+
+    private void UseItem() {
+        if(isCoolEnded) {
+            ResetCoolTime();
+        }
+    }
+
+    private void ResetCoolTime() {
+        curTime = 0;
+        isCoolEnded = false;
+    }
+    
+    private void SetFillAmount(float value) { // 쿨타임 이미지를 시계방향으로 회전하면서 채워주는 메소드
+        coolImage.fillAmount = value / coolTime;
+    }
+    
     public void ButtonDown() {
 
         if(item != null) {
@@ -68,22 +106,12 @@ public class InventorySlot : MonoBehaviour {
         } else { // 일반 클릭일 경우
             if(GameManager.instance.storagePanel.activeSelf) { // 창고 패널이 켜져있는 상태면
 
-                if(item.isEquipped) { // 장착중인 아이템을 창고에 맡기려고 할 경우
-                    AlertManager.instance.BigAlertMessageOn("", 14);
+                if(1 < item.itemCount) { // 아이템의 갯수가 2개 이상이면
+                    PanelManager.instance.LeaveAmountPanelOnOff(); // 맡기는 갯수 설정하는 패널 띄워주기
                     return;
                 }
                 
-                bool canEntrust = StorageManager.instance.AddItem(item); // 창고에 아이템을 넣어주기
-
-                if(canEntrust && item != null) {
-
-                    if(item.itemType == ItemType.Quest) {
-                        QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
-                    }
-
-                    AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
-                    Inventory.instance.EntrustItem(slotNum);
-                }
+                PanelManager.instance.LeaveButtonClick();
                 return;
             }
 
@@ -104,7 +132,11 @@ public class InventorySlot : MonoBehaviour {
                 Inventory.instance.RemoveItem(slotNum);
                 return;
             }
-        
+
+            if(!isCoolEnded) { // curTime이 0이 아니라면 현재 쿨타임이 진행중인 상황인 것이니 아이템이 먹어지지 않도록 돌려보내기
+                return;
+            }
+            
             bool isUse = false;
         
             if(item != null) {
@@ -112,6 +144,7 @@ public class InventorySlot : MonoBehaviour {
             }
 
             if(isUse) {
+                UseItem();
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 4); // 소비 메시지
                 Inventory.instance.RemoveItem(slotNum);
             }

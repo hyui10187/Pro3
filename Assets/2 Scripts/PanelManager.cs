@@ -12,6 +12,7 @@ public class PanelManager : MonoBehaviour {
     public int slotNum;
     public Item item;
     public int helpPanelPage;
+    public int leaveAmount;
     
     private void Awake() {
         instance = this;
@@ -19,6 +20,8 @@ public class PanelManager : MonoBehaviour {
     }
 
     private void Update() {
+
+        GameManager.instance.leaveAmountText.text = leaveAmount.ToString(); // 창고에 맡길 갯수를 업데이트 해주기
 
         if(helpPanelPage == 1) { // 첫번째 페이지일 경우 왼쪽으로 가는 버튼을 비활성화 하기
             GameManager.instance.leftPageButton.interactable = false;
@@ -30,7 +33,55 @@ public class PanelManager : MonoBehaviour {
         }
     }
 
+    public void LeaveAmountPanelOnOff() {
+        if(!GameManager.instance.leaveAmountPanel.activeSelf) {
+            GameManager.instance.leaveAmountPanel.SetActive(true);
+        } else {
+            GameManager.instance.leaveAmountPanel.SetActive(false);
+        }
+    }
+
+    public void LeaveButtonClick() {
+        if(item.isEquipped) { // 장착중인 아이템을 창고에 맡기려고 할 경우
+            AlertManager.instance.BigAlertMessageOn("", 14);
+            return;
+        }
+
+        if(leaveAmount > item.itemCount) {
+            AlertManager.instance.SmallAlertMessageOn("", 17);
+            return;
+        }
+        
+        bool canEntrust = StorageManager.instance.AddItem(item, leaveAmount); // 창고에 아이템을 넣어주기
+
+        if(canEntrust && item != null) {
+
+            if(item.itemType == ItemType.Quest) {
+                QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
+            }
+
+            AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
+            Inventory.instance.EntrustItem(slotNum);
+        }
+    }
+
+    public void AmountPlus() { // 창고에 맡길때 + 버튼을 클릭하는 메소드
+        leaveAmount++;
+    }
+
+    public void AmountMinus() { // 창고에 맡길때 - 버튼을 클릭하는 메소드
+        leaveAmount--;
+        if(leaveAmount < 0) { // - 버튼을 연속적으로 눌러도 최저 0까지만 내려가도록
+            leaveAmount = 0;
+        }
+    }
+
     public void MenuOnOff() {
+        
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
+        
         if(!GameManager.instance.menuPanel.activeSelf) {
             GameManager.instance.menuPanel.SetActive(true);
         } else {
@@ -47,6 +98,10 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void FPSOnOff() {
+        
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
         
         if(!GameManager.instance.fpsPanel.activeSelf) {
             GameManager.instance.fpsPanel.SetActive(true);
@@ -75,6 +130,10 @@ public class PanelManager : MonoBehaviour {
     
     public void VirtualOnOff() { // 가상 버튼을 켜거나 꺼주는 메소드
 
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
+        
         if(!GameManager.instance.virtualJoystick.activeSelf) {
             GameManager.instance.virtualJoystick.SetActive(true); // 가상 조이스틱 켜주기
             GameManager.instance.attackButton.SetActive(true); // 가상 공격버튼 켜주기
@@ -103,6 +162,10 @@ public class PanelManager : MonoBehaviour {
     
     public void HelpOnOff() { // 우측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
 
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
+        
         helpPanelPage = 1; // Help 패널의 페이지 번호는 1로 항상 초기화
         GetHelpPanelText();
         
@@ -131,6 +194,11 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void InventoryOnOff() {
+        
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
+        
         if(!GameManager.instance.inventoryPanel.activeSelf) {
             GameManager.instance.inventoryPanel.SetActive(true);
         } else {
@@ -139,6 +207,11 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void EquipmentOnOff() {
+        
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
+        
         if(!GameManager.instance.equipmentPanel.activeSelf) {
             GameManager.instance.equipmentPanel.SetActive(true);
         } else {
@@ -147,6 +220,11 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void StatsOnOff() {
+        
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
+        
         if(!GameManager.instance.statsPanel.activeSelf) {
             GameManager.instance.statsPanel.SetActive(true);
         } else {
@@ -155,6 +233,11 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void QuestOnOff() {
+        
+        if(Player.instance.isDead || !GameManager.instance.isLive) {
+            return;
+        }
+        
         if(!GameManager.instance.questPanel.activeSelf) {
             GameManager.instance.questPanel.SetActive(true);
         } else {
