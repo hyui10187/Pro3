@@ -612,6 +612,7 @@ public class GameManager : MonoBehaviour {
         equipmentStorePanel.SetActive(false);
         
         itemDescriptionPanel.SetActive(false);
+        leaveAmountPanel.SetActive(false);
         helpPanel.SetActive(false);
     }
     

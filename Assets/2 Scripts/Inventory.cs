@@ -109,9 +109,15 @@ public class Inventory : MonoBehaviour {
         onChangeItem.Invoke();
     }
     
-    public void EntrustItem(int index) {
-        possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
-        onChangeItem.Invoke();
+    public void EntrustItem(int index, int itemCount) {
+
+        if(itemCount == 0) {
+            possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
+            onChangeItem.Invoke();   
+        } else {
+            possessItems[index].itemCount -= itemCount;
+            onChangeItem.Invoke();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

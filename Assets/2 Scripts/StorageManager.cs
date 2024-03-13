@@ -55,6 +55,8 @@ public class StorageManager : MonoBehaviour {
         bool isAdded = false;
         int index = -1;
         
+        Debug.Log("possessItems.Count: " + possessItems.Count);
+        
         if(possessItems.Count < storageSlotCount) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
             if(possessItems.Count > 0) {
                 for(int i = 0; i < possessItems.Count; i++) {
@@ -65,14 +67,19 @@ public class StorageManager : MonoBehaviour {
                     }
                 }
                 
+                Debug.Log("isAdded: " + isAdded);
+                Debug.Log("index: " + index);
+                
                 if(isAdded) { // 기존에 가지고 있는 아이템일 경우
-                    possessItems[index].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
+                    possessItems[index].itemCount += leaveAmount; // 기존 아이템의 갯수만 1개 늘려줌
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
                     possessItems.Add(eatItem.Clone());
                 }
 
             } else {
+                
+                Debug.Log("아이템 추가되는 else");
                 possessItems.Add(eatItem.Clone()); // 새롭게 아이템을 추가해줌
             }
 

@@ -33,7 +33,7 @@ public class PanelManager : MonoBehaviour {
         }
     }
 
-    public void LeaveAmountPanelOnOff() {
+    public void LeaveAmountPanelOnOff() { // 창고에 맡기는 아이템 갯수 설정하는 패널
         if(!GameManager.instance.leaveAmountPanel.activeSelf) {
             GameManager.instance.leaveAmountPanel.SetActive(true);
         } else {
@@ -41,18 +41,49 @@ public class PanelManager : MonoBehaviour {
         }
     }
 
-    public void LeaveButtonClick() {
+    public void LeaveButtonClick() { // 맡기기 버튼을 클릭했을때 호출되는 메소드
         if(item.isEquipped) { // 장착중인 아이템을 창고에 맡기려고 할 경우
             AlertManager.instance.BigAlertMessageOn("", 14);
             return;
         }
 
-        if(leaveAmount > item.itemCount) {
-            AlertManager.instance.SmallAlertMessageOn("", 17);
+        bool canEntrust;
+        
+        switch(item.itemType) { // 갯수가 없는 장비 아이템을 맡기려고 할 경우 == 장비아이템은 itemCount 0개
+            
+            case ItemType.Necklace:
+            case ItemType.Armor:
+            case ItemType.Gloves:
+            case ItemType.Boots:
+            case ItemType.Helmet:
+            case ItemType.Key:
+            case ItemType.Weapon:
+                canEntrust = StorageManager.instance.AddItem(item, item.itemCount); // 창고에 아이템을 넣어주기
+
+                if(canEntrust && item != null) {
+
+                    if(item.itemType == ItemType.Quest) {
+                        QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
+                    }
+
+                    AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
+                    Debug.Log("item: " + item);
+                    Debug.Log("switch문...");
+                    Inventory.instance.EntrustItem(slotNum, item.itemCount);
+                    return;
+                }
+                break;
+        }
+
+        if(item.itemCount < leaveAmount) {
+            AlertManager.instance.BigAlertMessageOn("", 17);
+            return;
+        } else if(leaveAmount == 0) {
             return;
         }
         
-        bool canEntrust = StorageManager.instance.AddItem(item, leaveAmount); // 창고에 아이템을 넣어주기
+        Debug.Log("item: " + item);
+        canEntrust = StorageManager.instance.AddItem(item, leaveAmount); // 창고에 아이템을 넣어주기
 
         if(canEntrust && item != null) {
 
@@ -61,7 +92,8 @@ public class PanelManager : MonoBehaviour {
             }
 
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
-            Inventory.instance.EntrustItem(slotNum);
+            Inventory.instance.EntrustItem(slotNum, item.itemCount);
+            LeaveAmountPanelOnOff(); // 맡기고 나면 패널 꺼주기
         }
     }
 

@@ -500,11 +500,11 @@ public class Player : MonoBehaviour {
             PlayerDead();
         }
         
-        Invoke("aa", 0.5f);
+        Invoke("InitVelocity", 0.5f);
         Invoke("PlayerDamagedOff", 2f);
     }
 
-    private void aa() {
+    private void InitVelocity() {
         rigid.velocity = Vector2.zero;
     }
     
