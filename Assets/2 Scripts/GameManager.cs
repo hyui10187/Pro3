@@ -106,7 +106,11 @@ public class GameManager : MonoBehaviour {
     public GameObject goToMainConfirmPanel;
     public GameObject sleepConfirmPanel;
     public GameObject leaveAmountPanel;
+    public Text leaveText;
     public Text leaveAmountText;
+    public GameObject purchaseAmountPanel;
+    public Text purchaseText;
+    public Text purchaseAmountText;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -613,6 +617,8 @@ public class GameManager : MonoBehaviour {
         
         itemDescriptionPanel.SetActive(false);
         leaveAmountPanel.SetActive(false);
+        purchaseAmountPanel.SetActive(false);
+        
         helpPanel.SetActive(false);
     }
     

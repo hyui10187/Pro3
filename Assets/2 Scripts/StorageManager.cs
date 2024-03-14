@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class StorageManager : MonoBehaviour {
@@ -46,41 +47,38 @@ public class StorageManager : MonoBehaviour {
         }
     }
 
-    public bool AddItem(Item eatItem, int leaveAmount) { // 창고 슬롯에 아이템을 추가해주는 메소드
+    public bool AddItem(Item leaveItem, int leaveAmount) { // 창고 슬롯에 아이템을 추가해주는 메소드
 
-        if(eatItem == null) {
+        if(leaveItem == null) {
             return false;
         }
         
         bool isAdded = false;
         int index = -1;
-        
-        Debug.Log("possessItems.Count: " + possessItems.Count);
-        
+
         if(possessItems.Count < storageSlotCount) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
-            if(possessItems.Count > 0) {
+            if(0 < possessItems.Count) {
                 for(int i = 0; i < possessItems.Count; i++) {
-                    if(possessItems[i].itemName == eatItem.itemName) {
+                    if(possessItems[i].itemName == leaveItem.itemName) {
                         isAdded = true;
                         index = i;
                         break;
                     }
                 }
                 
-                Debug.Log("isAdded: " + isAdded);
-                Debug.Log("index: " + index);
-                
                 if(isAdded) { // 기존에 가지고 있는 아이템일 경우
                     possessItems[index].itemCount += leaveAmount; // 기존 아이템의 갯수만 1개 늘려줌
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
-                    possessItems.Add(eatItem.Clone());
+                    Item copyLeaveItem = leaveItem.Clone();
+                    copyLeaveItem.itemCount = leaveAmount;
+                    possessItems.Add(copyLeaveItem);
                 }
 
             } else {
-                
-                Debug.Log("아이템 추가되는 else");
-                possessItems.Add(eatItem.Clone()); // 새롭게 아이템을 추가해줌
+                Item copyLeaveItem = leaveItem.Clone();
+                copyLeaveItem.itemCount = leaveAmount;
+                possessItems.Add(copyLeaveItem); // 새롭게 아이템을 추가해줌
             }
 
             if(onChangeItem != null) {
@@ -91,7 +89,7 @@ public class StorageManager : MonoBehaviour {
             
         } else { // 현재 보유 슬롯과 현재 보유중인 아이템의 갯수가 같으면
             for(int i = 0; i < possessItems.Count; i++) {
-                if(possessItems[i].itemName == eatItem.itemName) {
+                if(possessItems[i].itemName == leaveItem.itemName) {
                     isAdded = true;
                     index = i;
                     break;

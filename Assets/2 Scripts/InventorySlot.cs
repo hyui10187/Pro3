@@ -107,11 +107,11 @@ public class InventorySlot : MonoBehaviour {
             if(GameManager.instance.storagePanel.activeSelf) { // 창고 패널이 켜져있는 상태면
 
                 if(1 < item.itemCount) { // 아이템의 갯수가 2개 이상이면
-                    PanelManager.instance.LeaveAmountPanelOnOff(); // 맡기는 갯수 설정하는 패널 띄워주기
+                    PanelManager.instance.LeaveAmountPanelOnOff(slotNum, item); // 맡기는 갯수 설정하는 패널 띄워주기
                     return;
                 }
                 
-                PanelManager.instance.LeaveButtonClick();
+                PanelManager.instance.LeaveButtonClick(slotNum, item);
                 return;
             }
 

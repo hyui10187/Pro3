@@ -9,20 +9,8 @@ public class StoreSlot : MonoBehaviour {
     
     public Item item;
 
-    public void ButtonDown() { // 마우스로 클릭했다가 뗄때 호출되는 메소드
-        if(GameManager.instance.curGold < item.itemPrice) {
-            AlertManager.instance.SmallAlertMessageOn("", 7); // 소지금 부족 메시지
-            return;
-        }
-        
-        bool canPurchase = Inventory.instance.AddItem(item); // 아이템을 구매할 수 있는지 = 플레이어의 인벤토리 슬롯이 비어있는지
-
-        if(canPurchase) {
-            GameManager.instance.curGold -= item.itemPrice;
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 1); // 구매 메시지
-        } else {
-            AlertManager.instance.SmallAlertMessageOn("", 8); // 인벤토리가 가득차서 구매 불가 메시지
-        }
+    public void ButtonDown() {
+        PanelManager.instance.PurchaseAmountPanelOnOff(item);
     }
 
 }
