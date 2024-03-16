@@ -81,6 +81,8 @@ public class TalkManager : MonoBehaviour {
         talkData.Add(7100, new string[] { "바닐라가 들어있는 항아리다." });
         talkData.Add(7200, new string[] { "정향이 들어있는 항아리다." });
         talkData.Add(7300, new string[] { "대니가 가져오라고 한 정향이 들어있는 항아리가 깨져있다.", "지나다니는 사람들이 다칠 수 있으니 우선 파편을 치워야겠다." });
+        talkData.Add(7400, new string[] { "거대한 나무다.", "강력한 도끼와 힘이 있어야 벨 수 있을것 같다." });
+        talkData.Add(7500, new string[] { "작은 나무다.", "도끼가 있으면 벨 수 있을것 같다." });
 
         // NPC 대사   // NPC 대사는 10000 단위   // 이동형 NPC는 30000 단위
         talkData.Add(10000, new string[] { "안녕!", "목을 축일것 좀 줄까?", "편하게 쉬다 가렴" });

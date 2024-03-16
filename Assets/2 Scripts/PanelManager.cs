@@ -14,6 +14,7 @@ public class PanelManager : MonoBehaviour {
     public int helpPanelPage;
     public int leaveAmount;
     public int purchaseAmount;
+    public int sellAmount;
     
     private void Awake() {
         instance = this;
@@ -53,6 +54,42 @@ public class PanelManager : MonoBehaviour {
         } else {
             GameManager.instance.purchaseAmountPanel.SetActive(false);
         }
+    }
+    
+    public void SellAmountPanelOnOff(int slotNum, Item sellItem) {
+        this.slotNum = slotNum;
+        item = sellItem;
+        
+        if(!GameManager.instance.sellAmountPanel.activeSelf) {
+            GameManager.instance.purchaseAmountPanel.SetActive(true);
+        } else {
+            GameManager.instance.purchaseAmountPanel.SetActive(false);
+        }
+    }
+    
+    public void SellAmountPanelOnOff() {
+        if(!GameManager.instance.sellAmountPanel.activeSelf) {
+            GameManager.instance.purchaseAmountPanel.SetActive(true);
+        } else {
+            GameManager.instance.purchaseAmountPanel.SetActive(false);
+        }
+    }
+
+    public void SellButtonClick() {
+        
+        if(item.isEquipped) { // 장착중인 아이템을 상점에 판매하려고 할 경우
+            AlertManager.instance.BigAlertMessageOn("", 14);
+            return;
+        }
+
+        if(item.itemType == ItemType.Quest) { // 퀘스트 아이템을 상점에 판매하려고 할 경우
+            AlertManager.instance.BigAlertMessageOn("", 16);
+            return;
+        }
+                
+        GameManager.instance.curGold += sellAmount * item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
+        AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
+        Inventory.instance.RemoveItem(slotNum, sellAmount);
     }
     
     public void PurchaseAmountPlus() { // 상점에서 구입할때 + 버튼을 클릭하는 메소드
@@ -135,7 +172,7 @@ public class PanelManager : MonoBehaviour {
         }
 
         if(item.itemCount < leaveAmount) {
-            AlertManager.instance.BigAlertMessageOn("", 17);
+            AlertManager.instance.LongAlertMessageOn("", 17);
             return;
         } else if(leaveAmount == 0) {
             return;

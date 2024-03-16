@@ -93,6 +93,18 @@ public class AlertManager : MonoBehaviour {
         GameManager.instance.bigAlertMessage.SetActive(false);
     }
     
+    public void LongAlertMessageOn(String itemName, int idx) { // 알림 문구가 긴것을 위한 긴 패널
+        Text acquisitionText = GameManager.instance.longAlertMessage.GetComponentInChildren<Text>();
+        acquisitionText.text = itemName + alertData[idx];
+        GameManager.instance.longAlertMessage.SetActive(true);
+        CancelInvoke("LongAlertMessageOff");
+        Invoke("LongAlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기
+    }
+
+    private void LongAlertMessageOff() {
+        GameManager.instance.longAlertMessage.SetActive(false);
+    }
+    
     public void HealthMessageOn() {
         Animator anim = GameManager.instance.healthManaMessageText.GetComponent<Animator>();
         GameManager.instance.healthManaMessage.SetActive(true); // 닳은 체력을 띄워주는 메시지 켜주기

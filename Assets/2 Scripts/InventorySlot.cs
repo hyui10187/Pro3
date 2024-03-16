@@ -117,19 +117,7 @@ public class InventorySlot : MonoBehaviour {
 
             if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
 
-                if(item.isEquipped) { // 장착중인 아이템을 상점에 판매하려고 할 경우
-                    AlertManager.instance.BigAlertMessageOn("", 14);
-                    return;
-                }
-
-                if(item.itemType == ItemType.Quest) { // 퀘스트 아이템을 상점에 판매하려고 할 경우
-                    AlertManager.instance.BigAlertMessageOn("", 16);
-                    return;
-                }
-                
-                GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
-                AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
-                Inventory.instance.RemoveItem(slotNum);
+                PanelManager.instance.SellAmountPanelOnOff(slotNum, item);
                 return;
             }
 

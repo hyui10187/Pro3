@@ -163,6 +163,17 @@ public class Inventory : MonoBehaviour {
         }
     }
 
+    public void RemoveItem(int index, int sellAmount) {
+        if(possessItems[index].itemCount > 1) {
+            possessItems[index].itemCount--;
+            
+        } else {
+            possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
+        }
+        
+        onChangeItem.Invoke();
+    }
+    
     public void RemoveItem(int index) {
         if(possessItems[index].itemCount > 1) {
             possessItems[index].itemCount--;

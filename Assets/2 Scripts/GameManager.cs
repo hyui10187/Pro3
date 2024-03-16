@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour {
     public GameObject saveMessage;
     public GameObject smallAlertMessage;
     public GameObject bigAlertMessage;
+    public GameObject longAlertMessage;
     public GameObject healthManaMessage;
     public Text healthManaMessageText;
     public GameObject itemDescriptionPanel;
@@ -111,6 +112,9 @@ public class GameManager : MonoBehaviour {
     public GameObject purchaseAmountPanel;
     public Text purchaseText;
     public Text purchaseAmountText;
+    public GameObject sellAmountPanel;
+    public Text sellText;
+    public Text sellAmountText;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
