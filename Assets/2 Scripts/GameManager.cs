@@ -609,7 +609,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void EscPanelOff() {
+    public void EscPanelOff() { // ESC 키를 눌렀을때 한번에 꺼줄 패널들
         equipmentPanel.SetActive(false);
         statsPanel.SetActive(false);
         inventoryPanel.SetActive(false);
