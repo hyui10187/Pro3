@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour {
     public Transform[] doorOutPos;
 
     [Header("UI - Panel")]
+    public GameObject npcNamePanel;
     public GameObject startPanel; // 게임 시작 패널
     public GameObject filterPanel;
     public GameObject menuPanel;
@@ -65,6 +66,7 @@ public class GameManager : MonoBehaviour {
     public GameObject inventoryButton;
     public GameObject virtualButton;
     public GameObject equipmentButton;
+    public GameObject acquisitionMessage;
 
     [Header("UI - MiddleLeft")]
     public GameObject storagePanel;

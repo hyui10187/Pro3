@@ -17,7 +17,7 @@ public class AlertManager : MonoBehaviour {
     }
 
     private void GenerateData() {
-        alertData.Add(0, "\n아이템을 획득하였습니다.");
+        alertData.Add(0, " 획득");
         alertData.Add(1, "\n아이템을 구매하였습니다.");
         alertData.Add(2, "\n아이템을 판매하였습니다.");
         alertData.Add(3, "\n아이템을 창고에 맡겼습니다.");
@@ -28,7 +28,7 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(8, "인벤토리가 가득차서\n아이템을 구매할 수 없습니다.");
         alertData.Add(9, "\n아이템을 삭제하였습니다.");
         alertData.Add(10, "\n아이템을 창고에서 찾았습니다.");
-        alertData.Add(11, "골드를 획득했습니다.");
+        alertData.Add(11, "골드 획득");
         alertData.Add(12, "레벨이 올랐습니다.");
         alertData.Add(13, "아직 지원하지 않는 기능입니다.");
         alertData.Add(14, "장착중인 아이템은 창고에 맡길 수 없습니다.\n먼저 장착을 해제해주세요.");
@@ -70,8 +70,8 @@ public class AlertManager : MonoBehaviour {
     }
     
     public void SmallAlertMessageOn(String itemName, int idx) {
-        Text acquisitionText = GameManager.instance.smallAlertMessage.GetComponentInChildren<Text>();
-        acquisitionText.text = itemName + alertData[idx];
+        Text smallText = GameManager.instance.smallAlertMessage.GetComponentInChildren<Text>();
+        smallText.text = itemName + alertData[idx];
         GameManager.instance.smallAlertMessage.SetActive(true);
         CancelInvoke("SmallAlertMessageOff");
         Invoke("SmallAlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기
@@ -81,9 +81,21 @@ public class AlertManager : MonoBehaviour {
         GameManager.instance.smallAlertMessage.SetActive(false);
     }
 
-    public void BigAlertMessageOn(String itemName, int idx) {
-        Text acquisitionText = GameManager.instance.bigAlertMessage.GetComponentInChildren<Text>();
+    public void AcquisitionMessageOn(String itemName, int idx) {
+        Text acquisitionText = GameManager.instance.acquisitionMessage.GetComponentInChildren<Text>();
         acquisitionText.text = itemName + alertData[idx];
+        GameManager.instance.acquisitionMessage.SetActive(true);
+        CancelInvoke("AcquisitionMessageOff");
+        Invoke("AcquisitionMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기
+    }
+
+    private void AcquisitionMessageOff() {
+        GameManager.instance.acquisitionMessage.SetActive(false);
+    }
+    
+    public void BigAlertMessageOn(String itemName, int idx) {
+        Text bigAlertText = GameManager.instance.bigAlertMessage.GetComponentInChildren<Text>();
+        bigAlertText.text = itemName + alertData[idx];
         GameManager.instance.bigAlertMessage.SetActive(true);
         CancelInvoke("BigAlertMessageOff");
         Invoke("BigAlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기

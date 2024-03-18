@@ -224,6 +224,14 @@ public class Player : MonoBehaviour {
         }
     }
 
+    public void PlayerScan() { // 플레이어가 NPC한테 가까이 다가갔을때 NPC 이름을 띄워주기 위한 메소드
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
+
+        foreach(Collider2D collision in collider2Ds) {
+            
+        }
+    }
+    
     public void PlayerAttack() {
 
         if(isAttack || 0 < curTime || GameManager.instance.isAction || GameManager.instance.IsNPCPanelOn() || isDead || !GameManager.instance.isLive) {

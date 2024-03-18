@@ -204,19 +204,19 @@ public class Inventory : MonoBehaviour {
 
             if(fieldItems.item.itemName == "SmallGold") {
                 GameManager.instance.curGold += 5;
-                AlertManager.instance.SmallAlertMessageOn("5 ", 11);
+                AlertManager.instance.AcquisitionMessageOn("5 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
                 
             } else if(fieldItems.item.itemName == "MiddleGold") {
                 GameManager.instance.curGold += 10;
-                AlertManager.instance.SmallAlertMessageOn("10 ", 11);
+                AlertManager.instance.AcquisitionMessageOn("10 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
                 
             } else if(fieldItems.item.itemName == "LargeGold") {
                 GameManager.instance.curGold += 15;
-                AlertManager.instance.SmallAlertMessageOn("15 ", 11);
+                AlertManager.instance.AcquisitionMessageOn("15 ", 11);
                 Destroy(fieldItems.gameObject);
                 return;
             }
@@ -235,7 +235,7 @@ public class Inventory : MonoBehaviour {
                     hasChestKey = true;
                 }
 
-                AlertManager.instance.SmallAlertMessageOn(fieldItems.item.itemName, 0); // 아이템을 획득하였다는 메시지를 띄워주기
+                AlertManager.instance.AcquisitionMessageOn(fieldItems.item.itemName, 0); // 아이템을 획득하였다는 메시지를 띄워주기
                 Destroy(fieldItems.gameObject);
                 //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
