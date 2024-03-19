@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI - Panel")]
     public GameObject npcNamePanel;
+    public Text npcNamePanelText;
     public GameObject startPanel; // 게임 시작 패널
     public GameObject filterPanel;
     public GameObject menuPanel;
@@ -124,8 +125,9 @@ public class GameManager : MonoBehaviour {
     
     [Header("UI - BottomLeft")]
     public GameObject virtualJoystick;
-    
+
     [Header("UI - BottomBottom")]
+    public GameObject talkInformMessage;
     public GameObject talkPanel; // 대화창
     public Text talkText; // 대화창의 대화 내용
     public GameObject expSlider;

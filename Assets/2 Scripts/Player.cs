@@ -40,6 +40,10 @@ public class Player : MonoBehaviour {
     public bool rightUp;
     public VirtualJoystick virtualJoystick;
 
+    [Header("SFX")]
+    public AudioSource audioSource;
+    public AudioClip attackSound;
+    
     public bool isFlipInit;
     
     private Rigidbody2D rigid;
@@ -53,6 +57,7 @@ public class Player : MonoBehaviour {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
     }
     
     private void Update() {
@@ -66,6 +71,7 @@ public class Player : MonoBehaviour {
         
         JoystickTouch();
         PlayerMove();
+        PlayerScan();
         
         if(Input.GetButtonDown("Jump")) { // 플레이어가 스페이스 바를 눌렀으면
             PlayerAction();
@@ -225,10 +231,24 @@ public class Player : MonoBehaviour {
     }
 
     public void PlayerScan() { // 플레이어가 NPC한테 가까이 다가갔을때 NPC 이름을 띄워주기 위한 메소드
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position, boxSize * 2, 0);
 
         foreach(Collider2D collision in collider2Ds) {
-            
+            ObjData objData = collision.GetComponent<ObjData>();
+            if(objData != null && objData.isNpc) {
+                GameManager.instance.npcNamePanel.transform.position = Camera.main.WorldToScreenPoint(collision.transform.position + new Vector3(0, 1, 0));
+                GameManager.instance.npcNamePanelText.text = collision.gameObject.name;
+                GameManager.instance.npcNamePanel.SetActive(true);
+
+                if(!GameManager.instance.talkPanel.activeSelf) {
+                    GameManager.instance.talkInformMessage.SetActive(true);   
+                } else {
+                    GameManager.instance.talkInformMessage.SetActive(false);
+                }
+            } else {
+                GameManager.instance.npcNamePanel.SetActive(false);
+                GameManager.instance.talkInformMessage.SetActive(false);
+            }
         }
     }
     
@@ -245,6 +265,7 @@ public class Player : MonoBehaviour {
 
         anim.SetTrigger("attack");
         anim.SetBool("isAttack", true);
+        audioSource.PlayOneShot(attackSound);
         curTime = coolTime; // 쿨타임을 초기화 해줌
         isAttack = true;
 

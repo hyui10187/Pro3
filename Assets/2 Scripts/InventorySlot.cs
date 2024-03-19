@@ -40,7 +40,6 @@ public class InventorySlot : MonoBehaviour {
 
             } else if(0 < Input.touchCount) { // 모바일에서 터치 중이라면
                 Vector3 touchPosition = Input.GetTouch(0).position;
-                touchPosition.z = -Camera.main.transform.position.z; // 카메라가 위치한 z 좌표로 설정
                 GameManager.instance.longPressBar.transform.position = Camera.main.ScreenToWorldPoint(touchPosition + Vector3.up * 20);
             }
             
