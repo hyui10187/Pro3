@@ -227,6 +227,7 @@ public class GameManager : MonoBehaviour {
         
         if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
             timePanel.SetActive(true); // 시계 패널을 켜주기
+            SoundManager.instance.PlayClockSound();
         }
         
         ObjData objData = scanObject.GetComponent<ObjData>();
@@ -273,6 +274,7 @@ public class GameManager : MonoBehaviour {
             
             if(scanObject.CompareTag("Heal")) {
                 FadeOutAndInEffect();
+                SoundManager.instance.PlayHealSound();
                 curHealth = maxHealth;
                 return;
             } else if(scanObject.CompareTag("Bed")) {
@@ -372,7 +374,8 @@ public class GameManager : MonoBehaviour {
             curHealth = maxHealth;
             curMana = maxMana;
             statsPoint++;
-
+            SoundManager.instance.PlayLevelUpSound();
+            
             PanelManager.instance.RedrawStatsPanel();
             PanelManager.instance.StatsOnOff(); // 레벨업 하면 자동으로 스탯창 켜주기
             PanelManager.instance.StatsUpButtonOn(); // 스탯 포인트를 올릴 수 있는 버튼도 켜주기

@@ -21,10 +21,7 @@ public class Inventory : MonoBehaviour {
     public bool isDoorOpen;
     public bool isChestOpen;
     public bool isInventorySlotClick;
-    
-    public AudioSource audioSource;
-    public AudioClip acquisitionSound;
-    
+
     public int CurSlotCnt {
         get => curSlotCnt;
         set {
@@ -35,7 +32,6 @@ public class Inventory : MonoBehaviour {
     
     private void Awake() {
         instance = this;
-        audioSource = GetComponent<AudioSource>();
     }
 
     public bool AddItem(Item eatItem) {
@@ -229,7 +225,7 @@ public class Inventory : MonoBehaviour {
             
             if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
 
-                audioSource.PlayOneShot(acquisitionSound);
+                SoundManager.instance.PlayAcquisitionSound();
                 
                 if(fieldItems.item.itemType == ItemType.Quest) { // 퀘스트 아이템을 먹을 경우 퀘스트 인덱스 올려주기
                     QuestManager.instance.CheckQuest(0);

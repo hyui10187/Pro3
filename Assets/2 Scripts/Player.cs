@@ -40,10 +40,6 @@ public class Player : MonoBehaviour {
     public bool rightUp;
     public VirtualJoystick virtualJoystick;
 
-    [Header("SFX")]
-    public AudioSource audioSource;
-    public AudioClip attackSound;
-    
     public bool isFlipInit;
     
     private Rigidbody2D rigid;
@@ -57,7 +53,6 @@ public class Player : MonoBehaviour {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        audioSource = GetComponent<AudioSource>();
     }
     
     private void Update() {
@@ -210,7 +205,7 @@ public class Player : MonoBehaviour {
 
         float timeToNextMorning = ((wakeUpHour - sleepHour) * 3600) + ((wakeUpMin - sleepMin) * 60);
         GameManager.instance.curGameTime += timeToNextMorning;
-        
+        SoundManager.instance.PlayHealSound();
         GameManager.instance.curHealth = GameManager.instance.maxHealth;
         GameManager.instance.curMana = GameManager.instance.maxMana;
         PanelManager.instance.SleepConfirmOff();
@@ -259,13 +254,14 @@ public class Player : MonoBehaviour {
         }
         
         if(!Inventory.instance.equipWeapon) { // 무기를 가지고 있지 않으면
+            SoundManager.instance.PlayAlertSound();
             AlertManager.instance.SmallAlertMessageOn("", 6); // 공격불가 알림메시지 띄워주기
             return;
         }
 
         anim.SetTrigger("attack");
         anim.SetBool("isAttack", true);
-        audioSource.PlayOneShot(attackSound);
+        SoundManager.instance.PlayAttackSound();
         curTime = coolTime; // 쿨타임을 초기화 해줌
         isAttack = true;
 
@@ -396,6 +392,7 @@ public class Player : MonoBehaviour {
         }
         
         if(other.gameObject.CompareTag("HouseEnter")) { // 플레이어가 집으로 들어가면
+            SoundManager.instance.PlayDoorSound();
             transform.position = GameManager.instance.housePos.position; // 건물 안의 위치로 이동시킴
             GameManager.instance.isHouse = true; // 집으로 들어갔다는 플래그 값을 올려줌
 
@@ -428,16 +425,20 @@ public class Player : MonoBehaviour {
 
         for(int i = 1; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
             if(other.gameObject.name == "DownStair " + i) {
+                SoundManager.instance.PlayStairSound();
                 transform.position = GameManager.instance.downStairPos[i].position;
             } else if(other.gameObject.name == "UpStair " + i) {
+                SoundManager.instance.PlayStairSound();
                 transform.position = GameManager.instance.upStairPos[i].position;
             }
         }
 
         for(int i = 1; i < GameManager.instance.downLadderPos.Length; i++) { // 사다리를 이용했을때 이동로직
             if(other.gameObject.name == "DownLadder " + i) {
+                SoundManager.instance.PlayStairSound();
                 transform.position = GameManager.instance.downLadderPos[i].position;
             } else if(other.gameObject.name == "UpLadder " + i) {
+                SoundManager.instance.PlayStairSound();
                 transform.position = GameManager.instance.upLadderPos[i].position;
             }
         }
@@ -478,6 +479,7 @@ public class Player : MonoBehaviour {
         
         for(int i = 1; i < GameManager.instance.doorInPos.Length; i++) { // 문을 이용했을때 이동로직
             if(other.gameObject.name == "DoorIn " + i) {
+                SoundManager.instance.PlayDoorSound();
                 transform.position = GameManager.instance.doorInPos[i].position;
             } else if(other.gameObject.name == "DoorOut " + i) {
                 transform.position = GameManager.instance.doorOutPos[i].position;
@@ -554,7 +556,8 @@ public class Player : MonoBehaviour {
         if(isDead) {
             return;
         }
-        
+
+        SoundManager.instance.PlayDeadSound();
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
         GameManager.instance.expSlider.SetActive(false);
