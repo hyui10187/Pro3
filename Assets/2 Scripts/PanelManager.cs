@@ -86,9 +86,12 @@ public class PanelManager : MonoBehaviour {
             AlertManager.instance.BigAlertMessageOn("", 16);
             return;
         }
+        
+        ItemName itemName = item.itemName;
+        string itemNameStr = itemName.ToString();
                 
         GameManager.instance.curGold += sellAmount * item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
-        AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
+        AlertManager.instance.SmallAlertMessageOn(itemNameStr, 2); // 아이템을 판매하였다는 메시지를 띄워주기
         Inventory.instance.RemoveItem(slotNum, sellAmount);
     }
     
@@ -115,10 +118,14 @@ public class PanelManager : MonoBehaviour {
         }
         
         bool canPurchase = Inventory.instance.AddItem(item, purchaseAmount);
-
+        
         if(canPurchase && item != null) {
+            
+            ItemName itemName = item.itemName;
+            string itemNameStr = itemName.ToString();
+            
             GameManager.instance.curGold -= purchaseAmount * item.itemPrice; // 구매한 금액만큼 소지금에서 까주기
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 1); // 구매했다는 메시지 띄워주기
+            AlertManager.instance.SmallAlertMessageOn(itemNameStr, 1); // 구매했다는 메시지 띄워주기
             PurchaseAmountPanelOnOff(); // 구매하고 나면 패널 꺼주기
             purchaseAmount = 0; // 갯수 0으로 초기화 해주기
         } else if(!canPurchase) {
@@ -164,8 +171,11 @@ public class PanelManager : MonoBehaviour {
                 if(item.itemType == ItemType.Quest) {
                     QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
                 }
+                
+                ItemName itemName = item.itemName;
+                string itemNameStr = itemName.ToString();
 
-                AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
+                AlertManager.instance.SmallAlertMessageOn(itemNameStr, 3); // 창고에 맡기는 메시지
                 Inventory.instance.EntrustItem(slotNum, item.itemCount, leaveAmount);
                 return;
             }
@@ -185,8 +195,11 @@ public class PanelManager : MonoBehaviour {
             if(item.itemType == ItemType.Quest) {
                 QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
             }
+            
+            ItemName itemName = item.itemName;
+            string itemNameStr = itemName.ToString();
 
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
+            AlertManager.instance.SmallAlertMessageOn(itemNameStr, 3); // 창고에 맡기는 메시지
             Inventory.instance.EntrustItem(slotNum, item.itemCount, leaveAmount);
             LeaveAmountPanelOnOff(); // 맡기고 나면 패널 꺼주기
             leaveAmount = 0;
@@ -213,8 +226,11 @@ public class PanelManager : MonoBehaviour {
                 if(item.itemType == ItemType.Quest) {
                     QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
                 }
+                
+                ItemName itemName = item.itemName;
+                string itemNameStr = itemName.ToString();
 
-                AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
+                AlertManager.instance.SmallAlertMessageOn(itemNameStr, 3); // 창고에 맡기는 메시지
                 Inventory.instance.EntrustItem(slotNum, item.itemCount, leaveAmount);
                 return;
             }
@@ -234,8 +250,11 @@ public class PanelManager : MonoBehaviour {
             if(item.itemType == ItemType.Quest) {
                 QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
             }
+            
+            ItemName itemName = item.itemName;
+            string itemNameStr = itemName.ToString();
 
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
+            AlertManager.instance.SmallAlertMessageOn(itemNameStr, 3); // 창고에 맡기는 메시지
             Inventory.instance.EntrustItem(slotNum, item.itemCount,leaveAmount);
             LeaveAmountPanelOnOff(); // 맡기고 나면 패널 꺼주기
             leaveAmount = 0;
@@ -547,7 +566,11 @@ public class PanelManager : MonoBehaviour {
             switch(item.itemType) {
                 
                 case ItemType.Weapon:
-                    Inventory.instance.equipWeapon = true;
+                    if(item.itemName == ItemName.Sword) {
+                        Inventory.instance.equipSword = true;
+                    } else if(item.itemName == ItemName.Bow) {
+                        Inventory.instance.equipBow = true;
+                    }
                     GameManager.instance.itemAttackPower = item.itemAttackPower;
                     break;
                 
@@ -573,7 +596,11 @@ public class PanelManager : MonoBehaviour {
             switch(item.itemType) {
                 
                 case ItemType.Weapon:
-                    Inventory.instance.equipWeapon = false;
+                    if(item.itemName == ItemName.Sword) {
+                        Inventory.instance.equipSword = true;
+                    } else if(item.itemName == ItemName.Bow) {
+                        Inventory.instance.equipBow = true;
+                    }
                     GameManager.instance.itemAttackPower = 0;
                     break;
                 
@@ -596,12 +623,15 @@ public class PanelManager : MonoBehaviour {
                 isUse = item.Use();   
             }
 
+            ItemName itemName = item.itemName;
+            string itemNameStr = itemName.ToString();
+            
             if(isUse && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
-                AlertManager.instance.SmallAlertMessageOn(item.itemName, 4);
+                AlertManager.instance.SmallAlertMessageOn(itemNameStr, 4);
                 Inventory.instance.RemoveItem(slotNum);
 
             } else if(isUse && item.itemCount == 1) { // 아이템이 1개만 있을 경우
-                AlertManager.instance.SmallAlertMessageOn(item.itemName, 4);
+                AlertManager.instance.SmallAlertMessageOn(itemNameStr, 4);
                 Inventory.instance.RemoveItem(slotNum);
                 ItemDescriptionOnOff(-1, null); // 아이템 설명 패널을 꺼주기
             }
@@ -615,12 +645,15 @@ public class PanelManager : MonoBehaviour {
             return;
         }
         
+        ItemName itemName = item.itemName;
+        string itemNameStr = itemName.ToString();
+        
         if(slotNum != -1 && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
+            AlertManager.instance.SmallAlertMessageOn(itemNameStr, 9);
             Inventory.instance.RemoveItem(slotNum);
             
         } else if(slotNum != -1 && item.itemCount == 1) { // 아이템이 1개만 있을 경우
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
+            AlertManager.instance.SmallAlertMessageOn(itemNameStr, 9);
             Inventory.instance.RemoveItem(slotNum);
             ItemDescriptionOnOff(-1, null);
         }

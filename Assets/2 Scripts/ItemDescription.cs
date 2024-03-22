@@ -37,7 +37,7 @@ public class ItemDescription : MonoBehaviour {
         descriptionData.Add("나무방패", "나무로 만든 방패다.");
     }
     
-    public string GetDescription(String itemName) {
+    public string GetDescription(string itemName) {
         string itemDescription = descriptionData[itemName];
         
         return itemDescription;

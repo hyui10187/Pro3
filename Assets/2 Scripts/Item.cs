@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ItemType { Helmet, Necklace, Armor, Weapon, Shield, Gloves, Ring, Boots, Consumables, Quest, Material, Gold, Key }
+
+public enum ItemName { Ring, Sword, Necklace, Bow, SmallGold, MiddleGold, LargeGold, GroceryStoreKey, ChestKey }
+
 [System.Serializable]
 public class Item {
 
     public ItemType itemType;
-    public string itemName;
+    public ItemName itemName;
     public Sprite itemImage;
     public int itemCount;
     public int itemPrice;

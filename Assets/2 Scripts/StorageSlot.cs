@@ -38,7 +38,10 @@ public class StorageSlot : MonoBehaviour {
                 QuestManager.instance.questActionIndex++;
             }
 
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 10);
+            ItemName itemName = item.itemName;
+            string itemNameStr = itemName.ToString();
+
+            AlertManager.instance.SmallAlertMessageOn(itemNameStr, 10);
             StorageManager.instance.RemoveStorageItem(slotNum);
         }
     }

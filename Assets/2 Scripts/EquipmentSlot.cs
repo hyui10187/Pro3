@@ -7,10 +7,10 @@ using UnityEngine.UI;
 public class EquipmentSlot : MonoBehaviour {
     
     public static EquipmentSlot instance;
-
+    
     public ItemType itemType;
     public Image itemImage;
-    public string itemName;
+    public ItemName itemName;
 
     private void Awake() {
         instance = this;
@@ -25,7 +25,13 @@ public class EquipmentSlot : MonoBehaviour {
                 switch(itemType) {
                     
                     case ItemType.Weapon: // 무기를 해제했으면 equipSword 플래그값 내려주기
-                        Inventory.instance.equipWeapon = false;
+                        
+                        if(itemName == ItemName.Sword) {
+                            Inventory.instance.equipSword = false;
+                        } else if(itemName == ItemName.Bow) {
+                            Inventory.instance.equipBow = false;
+                        }
+                        
                         GameManager.instance.itemAttackPower = 0;
                         break;
 
@@ -42,10 +48,9 @@ public class EquipmentSlot : MonoBehaviour {
 
     public void RemoveSlot() {
         itemImage.gameObject.SetActive(false); // 슬롯의 아이템 이미지 꺼주기
-        itemName = null; // 아이템 이름 지워주기
     }
 
-    public void RedrawSlot(Item item) {
+    public void RedrawSlot(Item item) { // 장비창의 슬롯을 다시 그려주는 메소드
         itemImage.sprite = item.itemImage;
         itemImage.gameObject.SetActive(true);
         itemName = item.itemName;

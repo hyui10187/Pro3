@@ -50,7 +50,11 @@ public class InventorySlot : MonoBehaviour {
         if(minClickTime < clickTime && !GameManager.instance.itemDescriptionPanel.activeSelf) { // 롱프레스를 1초 이상 했을 경우
             GameManager.instance.longPressBarBackground.SetActive(false);
             GameManager.instance.longPressBarFillArea.SetActive(false); // 롱프레스바를 꺼주기
-            string itemDescription = ItemDescription.instance.GetDescription(item.itemName);
+
+            ItemName itemName = item.itemName;
+            string itemNameStr = itemName.ToString();
+            
+            string itemDescription = ItemDescription.instance.GetDescription(itemNameStr);
             GameManager.instance.itemDescriptionText.text = item.itemName + "\n\n" + itemDescription;
             PanelManager.instance.ItemDescriptionOnOff(slotNum, item); // 아이템 설명창 띄워주기
         }
@@ -131,8 +135,12 @@ public class InventorySlot : MonoBehaviour {
             }
 
             if(isUse) {
+
+                ItemName itemName = item.itemName;
+                string itemNameStr = itemName.ToString();
+                
                 UseItem();
-                AlertManager.instance.SmallAlertMessageOn(item.itemName, 4); // 소비 메시지
+                AlertManager.instance.SmallAlertMessageOn(itemNameStr, 4); // 소비 메시지
                 Inventory.instance.RemoveItem(slotNum);
             }
         }

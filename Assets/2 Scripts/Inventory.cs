@@ -14,7 +14,8 @@ public class Inventory : MonoBehaviour {
 
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
-    public bool equipWeapon;
+    public bool equipSword;
+    public bool equipBow;
     public bool hasCandy;
     public bool hasStoreKey;
     public bool hasChestKey;
@@ -200,45 +201,45 @@ public class Inventory : MonoBehaviour {
         
         if(other.CompareTag("Item") || other.CompareTag("QuestItem")) { // 닿은 물체의 태그가 Item이거나 QuestItem 이라면
             
-            ItemScript fieldItems = other.GetComponent<ItemScript>();
+            ItemScript ItemScript = other.GetComponent<ItemScript>();
 
-            if(fieldItems.item.itemName == "SmallGold") {
+            if(ItemScript.item.itemName == ItemName.SmallGold) {
                 GameManager.instance.curGold += 5;
                 AlertManager.instance.AcquisitionMessageOn("5 ", 11);
-                Destroy(fieldItems.gameObject);
+                Destroy(ItemScript.gameObject);
                 return;
                 
-            } else if(fieldItems.item.itemName == "MiddleGold") {
+            } else if(ItemScript.item.itemName == ItemName.MiddleGold) {
                 GameManager.instance.curGold += 10;
                 AlertManager.instance.AcquisitionMessageOn("10 ", 11);
-                Destroy(fieldItems.gameObject);
+                Destroy(ItemScript.gameObject);
                 return;
                 
-            } else if(fieldItems.item.itemName == "LargeGold") {
+            } else if(ItemScript.item.itemName == ItemName.LargeGold) {
                 GameManager.instance.curGold += 15;
                 AlertManager.instance.AcquisitionMessageOn("15 ", 11);
-                Destroy(fieldItems.gameObject);
+                Destroy(ItemScript.gameObject);
                 return;
             }
             
-            bool canEat = AddItem(fieldItems.GetItem()); // 아이템을 먹을 수 있는지 판단하는 플래그값
+            bool canEat = AddItem(ItemScript.GetItem()); // 아이템을 먹을 수 있는지 판단하는 플래그값
             
             if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
 
                 SoundManager.instance.PlayAcquisitionSound();
                 
-                if(fieldItems.item.itemType == ItemType.Quest) { // 퀘스트 아이템을 먹을 경우 퀘스트 인덱스 올려주기
+                if(ItemScript.item.itemType == ItemType.Quest) { // 퀘스트 아이템을 먹을 경우 퀘스트 인덱스 올려주기
                     QuestManager.instance.CheckQuest(0);
                 }
                 
-                if(fieldItems.item.itemName == "상점 열쇠") {
+                if(ItemScript.item.itemName == ItemName.GroceryStoreKey) {
                     hasStoreKey = true;
-                } else if(fieldItems.item.itemName == "상자 열쇠") {
+                } else if(ItemScript.item.itemName == ItemName.ChestKey) {
                     hasChestKey = true;
                 }
 
-                AlertManager.instance.AcquisitionMessageOn(fieldItems.item.itemName, 0); // 아이템을 획득하였다는 메시지를 띄워주기
-                Destroy(fieldItems.gameObject);
+                AlertManager.instance.AcquisitionMessageOn(ItemScript.gameObject.name, 0); // 아이템을 획득하였다는 메시지를 띄워주기
+                Destroy(ItemScript.gameObject);
                 //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
             } else { // 인벤토리가 꽉 차있다면
