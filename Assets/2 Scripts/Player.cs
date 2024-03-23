@@ -253,40 +253,45 @@ public class Player : MonoBehaviour {
             return; // 플레이어가 이미 공격 중이거나 공격 쿨타임이 남아있거나 창고 패널이 켜져있거나 상점 패널이 켜져있으면 돌려보내기
         }
         
-        if(!Inventory.instance.equipSword || !Inventory.instance.equipBow) { // 무기를 장착하고 있지 않으면
+        if(!Inventory.instance.equipSword && !Inventory.instance.equipBow) { // 무기를 장착하고 있지 않으면
             SoundManager.instance.PlayAlertSound();
-            AlertManager.instance.SmallAlertMessageOn("", 6); // 공격불가 알림메시지 띄워주기
+            AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 6); // 공격불가 알림메시지 띄워주기
             return;
         }
 
-        anim.SetTrigger("attack");
-        anim.SetBool("isAttack", true);
-        SoundManager.instance.PlayAttackSound();
-        curTime = coolTime; // 쿨타임을 초기화 해줌
-        isAttack = true;
+        if(Inventory.instance.equipSword) {
+            anim.SetTrigger("attack");
+            anim.SetBool("isAttack", true);
+            SoundManager.instance.PlayAttackSound();
+            curTime = coolTime; // 쿨타임을 초기화 해줌
+            isAttack = true;
 
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position + dirVec, boxSize, 0);
 
-        foreach(Collider2D collision in collider2Ds) {
+            foreach(Collider2D collision in collider2Ds) {
 
-            if(collision.CompareTag("Monster")) { // 플레이어의 공격에 맞은게 Monster 라면 
-                Monster monster = collision.gameObject.GetComponent<Monster>();
-                monster.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
-                monster.Damaged(transform.position); // Enemy의 피격 메소드 실행
-            }
+                if(collision.CompareTag("Monster")) { // 플레이어의 공격에 맞은게 Monster 라면 
+                    Monster monster = collision.gameObject.GetComponent<Monster>();
+                    monster.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
+                    monster.Damaged(transform.position); // Enemy의 피격 메소드 실행
+                }
 
-            if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 라면
-                DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                desObject.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
-                desObject.Damaged();
-            }
+                if(collision.CompareTag("Tree")) { // 플레이어의 공격에 맞은게 Tree 라면
+                    DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                    desObject.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
+                    desObject.Damaged();
+                }
 
-            if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
-                DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
-                desObject.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
-                desObject.Damaged();
-            }
+                if(collision.CompareTag("Stump")) { // 플레이어의 공격에 맞은게 Stump 라면
+                    DestroyableObject desObject = collision.GetComponent<DestroyableObject>();
+                    desObject.curHealth -= GameManager.instance.itemAttackPower + GameManager.instance.playerAttackPower;
+                    desObject.Damaged();
+                }
+            }   
+        } else if(Inventory.instance.equipBow) {
+            RangedWeapon.instance.Fire(dirVec);
         }
+
     }
     
     public void AttackEnd() {
@@ -415,9 +420,9 @@ public class Player : MonoBehaviour {
         } else if(other.gameObject.CompareTag("Ice")) { // 얼음
             Slide();
             
-        } else if(other.gameObject.CompareTag("Bullet")) { // 플레이어가 몬스터의 총알에 맞으면
-            Bullet bullet = other.GetComponent<Bullet>();
-            PlayerDamaged(Vector2.zero, bullet.damage); // 몬스터의 공격에 맞았으면 그만큼 체력을 깎아주기
+        } else if(other.gameObject.CompareTag("Fireball")) { // 플레이어가 몬스터의 파이어볼에 맞으면
+            Fireball fireball = other.GetComponent<Fireball>();
+            PlayerDamaged(Vector2.zero, fireball.damage); // 파이어볼의 공격력만큼 체력을 깎아주기
             
         } else if(other.CompareTag("Thorn")) { // 플레이어가 가시에 닿았으면
             PlayerDamaged(Vector2.zero, (int)GameManager.instance.curHealth); // 체력을 전부 닳도록 해주기
@@ -562,6 +567,7 @@ public class Player : MonoBehaviour {
         rigid.velocity = Vector2.zero;
         GameManager.instance.expSlider.SetActive(false);
         GameManager.instance.inventoryPanel.SetActive(false);
+        GameManager.instance.itemDescriptionPanel.SetActive(false);
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 플래그 올려주기
         

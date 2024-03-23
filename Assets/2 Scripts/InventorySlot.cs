@@ -18,9 +18,9 @@ public class InventorySlot : MonoBehaviour {
     public bool isClick;
     
     public Image coolImage;
-    private float coolTime = 2;
-    private float curTime;
-    private bool isCoolEnded = true; // 아이템 사용 쿨타임이 끝났는지 여부
+    public float coolTime = 2;
+    public float curTime;
+    public bool isCoolEnded = true; // 아이템 사용 쿨타임이 끝났는지 여부
 
     private void Update() {
 
@@ -51,10 +51,7 @@ public class InventorySlot : MonoBehaviour {
             GameManager.instance.longPressBarBackground.SetActive(false);
             GameManager.instance.longPressBarFillArea.SetActive(false); // 롱프레스바를 꺼주기
 
-            ItemName itemName = item.itemName;
-            string itemNameStr = itemName.ToString();
-            
-            string itemDescription = ItemDescription.instance.GetDescription(itemNameStr);
+            string itemDescription = ItemDescription.instance.GetDescription(item.itemName);
             GameManager.instance.itemDescriptionText.text = item.itemName + "\n\n" + itemDescription;
             PanelManager.instance.ItemDescriptionOnOff(slotNum, item); // 아이템 설명창 띄워주기
         }
@@ -74,7 +71,7 @@ public class InventorySlot : MonoBehaviour {
         isCoolEnded = true;
     }
 
-    private void UseItem() {
+    public void UseItem() {
         if(isCoolEnded) {
             ResetCoolTime();
         }
@@ -124,7 +121,7 @@ public class InventorySlot : MonoBehaviour {
                 return;
             }
 
-            if(!isCoolEnded) { // curTime이 0이 아니라면 현재 쿨타임이 진행중인 상황인 것이니 아이템이 먹어지지 않도록 돌려보내기
+            if(!isCoolEnded) { // 쿨타임이 끝나지 않았으면 아이템이 먹어지지 않도록 돌려보내기
                 return;
             }
             
@@ -135,12 +132,10 @@ public class InventorySlot : MonoBehaviour {
             }
 
             if(isUse) {
-
-                ItemName itemName = item.itemName;
-                string itemNameStr = itemName.ToString();
-                
-                UseItem();
-                AlertManager.instance.SmallAlertMessageOn(itemNameStr, 4); // 소비 메시지
+                if(1 < item.itemCount) {
+                    UseItem();   
+                }
+                AlertManager.instance.SmallAlertMessageOn(item.itemName, 4); // 소비 메시지
                 Inventory.instance.RemoveItem(slotNum);
             }
         }

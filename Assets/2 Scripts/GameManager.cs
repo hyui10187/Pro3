@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour {
                 canEatQuestItem = true;
                 
             } else { // 인벤토리가 꽉 차 있을 경우
-                AlertManager.instance.SmallAlertMessageOn("", 5);
+                AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 5);
                 canEatQuestItem = false;
             }
 

@@ -69,9 +69,14 @@ public class AlertManager : MonoBehaviour {
         GameManager.instance.levelUpMessage.SetActive(false);
     }
     
-    public void SmallAlertMessageOn(String itemName, int idx) {
+    public void SmallAlertMessageOn(ItemName itemName, int idx) {
         Text smallText = GameManager.instance.smallAlertMessage.GetComponentInChildren<Text>();
-        smallText.text = itemName + alertData[idx];
+
+        if(itemName == ItemName.공백) {
+            smallText.text = "" + alertData[idx];    
+        } else {
+            smallText.text = itemName + alertData[idx];    
+        }
         GameManager.instance.smallAlertMessage.SetActive(true);
         CancelInvoke("SmallAlertMessageOff");
         Invoke("SmallAlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기

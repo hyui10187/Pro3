@@ -26,9 +26,9 @@ public class EquipmentSlot : MonoBehaviour {
                     
                     case ItemType.Weapon: // 무기를 해제했으면 equipSword 플래그값 내려주기
                         
-                        if(itemName == ItemName.Sword) {
+                        if(itemName == ItemName.소드) {
                             Inventory.instance.equipSword = false;
-                        } else if(itemName == ItemName.Bow) {
+                        } else if(itemName == ItemName.활) {
                             Inventory.instance.equipBow = false;
                         }
                         
