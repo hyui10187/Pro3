@@ -12,10 +12,8 @@ public class PanelManager : MonoBehaviour {
     public int slotNum;
     public Item item;
     public int helpPanelPage;
-    public int leaveAmount;
-    public int purchaseAmount;
-    public int sellAmount;
-    
+    public int amount;
+
     private void Awake() {
         instance = this;
         slotNum = -1;
@@ -23,8 +21,9 @@ public class PanelManager : MonoBehaviour {
 
     private void Update() {
 
-        GameManager.instance.leaveAmountText.text = leaveAmount.ToString(); // 창고에 맡길 갯수를 업데이트 해주기
-        GameManager.instance.purchaseAmountText.text = purchaseAmount.ToString(); // 창고에 맡길 갯수를 업데이트 해주기
+        GameManager.instance.leaveAmountText.text = amount.ToString(); // 창고에 맡길 갯수를 업데이트 해주기
+        GameManager.instance.purchaseAmountText.text = amount.ToString(); // 상점에서 구매할 갯수를 업데이트 해주기
+        GameManager.instance.sellAmountText.text = amount.ToString(); // 상점에 판매할 갯수를 업데이트 해주기
         
         if(helpPanelPage == 1) { // 첫번째 페이지일 경우 왼쪽으로 가는 버튼을 비활성화 하기
             GameManager.instance.leftPageButton.interactable = false;
@@ -36,7 +35,7 @@ public class PanelManager : MonoBehaviour {
         }
     }
 
-    public void PurchaseAmountPanelOnOff(Item purchaseItem) {
+    public void PurchaseAmountPanelOnOff(Item purchaseItem) { // 구매 수량을 선택하는 패널
         item = purchaseItem;
 
         GameManager.instance.purchaseText.text = purchaseItem.itemName + " 아이템을\n얼마나 구매하시겠습니까?";
@@ -56,70 +55,97 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void SellAmountPanelOnOff(int slotNum, Item sellItem) {
+    public void SellAmountPanelOnOff(int slotNum, Item sellItem) { // 판매 수량을 선택하는 패널
         this.slotNum = slotNum;
         item = sellItem;
         
+        GameManager.instance.sellText.text = sellItem.itemName + " 아이템을\n얼마나 판매하시겠습니까?";
+        
         if(!GameManager.instance.sellAmountPanel.activeSelf) {
-            GameManager.instance.purchaseAmountPanel.SetActive(true);
+            GameManager.instance.sellAmountPanel.SetActive(true);
         } else {
-            GameManager.instance.purchaseAmountPanel.SetActive(false);
+            GameManager.instance.sellAmountPanel.SetActive(false);
         }
     }
     
     public void SellAmountPanelOnOff() {
         if(!GameManager.instance.sellAmountPanel.activeSelf) {
-            GameManager.instance.purchaseAmountPanel.SetActive(true);
+            GameManager.instance.sellAmountPanel.SetActive(true);
         } else {
-            GameManager.instance.purchaseAmountPanel.SetActive(false);
+            GameManager.instance.sellAmountPanel.SetActive(false);
         }
     }
 
     public void SellButtonClick() {
-        
+        SellLogic();
+    }
+    
+    public void SellButtonClick(int slotNum, Item sellItem) {
+
+        this.slotNum = slotNum;
+        item = sellItem;
+        amount = -1;
+
+        SellLogic();
+    }
+
+    private void SellLogic() {
         if(item.isEquipped) { // 장착중인 아이템을 상점에 판매하려고 할 경우
-            AlertManager.instance.BigAlertMessageOn("", 14);
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 14);
             return;
         }
 
         if(item.itemType == ItemType.Quest) { // 퀘스트 아이템을 상점에 판매하려고 할 경우
-            AlertManager.instance.BigAlertMessageOn("", 16);
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 16);
             return;
         }
-        GameManager.instance.curGold += sellAmount * item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
+
+        if(item.itemCount < 2 && amount == -1) {
+            GameManager.instance.curGold += (amount * item.itemPrice); // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
+            AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
+            Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, item.itemCount);
+            amount = 0;
+            return;
+        }
+        
+        if(item.itemCount < amount) {
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 19);
+            return;
+        } else if(amount == 0) {
+            return;
+        }
+
+        GameManager.instance.curGold += (amount * item.itemPrice); // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
         AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
-        Inventory.instance.RemoveItem(slotNum, sellAmount);
-    }
-    
-    public void PurchaseAmountPlus() { // 상점에서 구입할때 + 버튼을 클릭하는 메소드
-        purchaseAmount++;
+        Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, amount);
+        
+        GameManager.instance.sellAmountPanel.SetActive(false);
+        amount = 0;
     }
 
-    public void PurchaseAmountMinus() { // 상점에서 구입할때 - 버튼을 클릭하는 메소드
-        purchaseAmount--;
-        if(purchaseAmount < 0) { // - 버튼을 연속적으로 눌러도 최저 0까지만 내려가도록
-            purchaseAmount = 0;
-        }
-    }
-    
     public void PurchaseButtonClick() { // 구매 버튼 클릭 메소드
 
-        if(purchaseAmount == 0) { // 0개를 구매하려고 할 경우 되돌려 보내기
+        if(amount == 0) { // 0개를 구매하려고 할 경우 되돌려 보내기
             return;
         }
 
-        if(GameManager.instance.curGold < purchaseAmount * item.itemPrice) { // 구매하려는 갯수보다 돈이 적으면
+        if(GameManager.instance.curGold < amount * item.itemPrice) { // 구매하려는 갯수보다 돈이 적으면
             AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 7); // 소지금 부족 메시지 띄워주기
             return;
         }
         
-        bool canPurchase = Inventory.instance.AddItem(item, purchaseAmount);
+        bool canPurchase = Inventory.instance.AddItem(item, amount);
         
         if(canPurchase && item != null) {
-            GameManager.instance.curGold -= purchaseAmount * item.itemPrice; // 구매한 금액만큼 소지금에서 까주기
+            GameManager.instance.curGold -= amount * item.itemPrice; // 구매한 금액만큼 소지금에서 까주기
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 1); // 구매했다는 메시지 띄워주기
+
+            if(item.itemName == ItemName.화살) { // 상점에서 구매한게 화살일 경우
+                Inventory.instance.arrowCnt += amount; // 소지한 화살의 갯수를 구매한 갯수만큼 늘려주기
+            }
+            
             PurchaseAmountPanelOnOff(); // 구매하고 나면 패널 꺼주기
-            purchaseAmount = 0; // 갯수 0으로 초기화 해주기
+            amount = 0; // 갯수 0으로 초기화 해주기
         } else if(!canPurchase) {
             AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 8); // 인벤토리가 가득차서 구매 불가 메시지
         }
@@ -148,55 +174,18 @@ public class PanelManager : MonoBehaviour {
     }
 
     public void LeaveButtonClick() {
-        if(item.isEquipped) { // 장착중인 아이템을 창고에 맡기려고 할 경우
-            AlertManager.instance.BigAlertMessageOn("", 14); // 알림 메시지 띄워주기
-            return;
-        }
-
-        bool canEntrust;
-
-        if(item.itemCount < 2) { // 아이템의 갯수가 2개보다 적으면 = 소비 아이템이 1개 있거나 장비 아이템이거나
-            canEntrust = StorageManager.instance.AddItem(item, item.itemCount); // 창고에 아이템을 넣어주기
-
-            if(canEntrust && item != null) {
-
-                if(item.itemType == ItemType.Quest) {
-                    QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
-                }
-                AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
-                Inventory.instance.EntrustItem(slotNum, item.itemCount, leaveAmount);
-                return;
-            }
-        }
-
-        if(item.itemCount < leaveAmount) {
-            AlertManager.instance.LongAlertMessageOn("", 17);
-            return;
-        } else if(leaveAmount == 0) {
-            return;
-        }
-        
-        canEntrust = StorageManager.instance.AddItem(item, leaveAmount); // 창고에 아이템을 넣어주기
-
-        if(canEntrust && item != null) {
-
-            if(item.itemType == ItemType.Quest) {
-                QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
-            }
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
-            Inventory.instance.EntrustItem(slotNum, item.itemCount, leaveAmount);
-            LeaveAmountPanelOnOff(); // 맡기고 나면 패널 꺼주기
-            leaveAmount = 0;
-        }
+        LeaveLogic();
     }
 
     public void LeaveButtonClick(int slotNum, Item leaveItem) { // 맡기기 버튼을 클릭했을때 호출되는 메소드
-
         this.slotNum = slotNum;
         item = leaveItem; // 파라미터로 받아온 새로운 아이템으로 기존의 전역변수 아이템을 갱신해주기
+        LeaveLogic();
+    }
 
+    private void LeaveLogic() {
         if(item.isEquipped) { // 장착중인 아이템을 창고에 맡기려고 할 경우
-            AlertManager.instance.BigAlertMessageOn("", 14); // 알림 메시지 띄워주기
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 14); // 알림 메시지 띄워주기
             return;
         }
 
@@ -211,19 +200,19 @@ public class PanelManager : MonoBehaviour {
                     QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
                 }
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
-                Inventory.instance.EntrustItem(slotNum, item.itemCount, leaveAmount);
+                Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, amount);
                 return;
             }
         }
 
-        if(item.itemCount < leaveAmount) {
-            AlertManager.instance.BigAlertMessageOn("", 17);
+        if(item.itemCount < amount) {
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 17);
             return;
-        } else if(leaveAmount == 0) {
+        } else if(amount == 0) {
             return;
         }
         
-        canEntrust = StorageManager.instance.AddItem(item, leaveAmount); // 창고에 아이템을 넣어주기
+        canEntrust = StorageManager.instance.AddItem(item, amount); // 창고에 아이템을 넣어주기
 
         if(canEntrust && item != null) {
 
@@ -231,20 +220,20 @@ public class PanelManager : MonoBehaviour {
                 QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
             }
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
-            Inventory.instance.EntrustItem(slotNum, item.itemCount,leaveAmount);
+            Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount,amount);
             LeaveAmountPanelOnOff(); // 맡기고 나면 패널 꺼주기
-            leaveAmount = 0;
+            amount = 0;
         }
     }
 
-    public void LeaveAmountPlus() { // 창고에 맡길때 + 버튼을 클릭하는 메소드
-        leaveAmount++;
+    public void AmountPlus() { // + 버튼을 클릭했을때 호출되는 메소드
+        amount++;
     }
 
-    public void LeaveAmountMinus() { // 창고에 맡길때 - 버튼을 클릭하는 메소드
-        leaveAmount--;
-        if(leaveAmount < 0) { // - 버튼을 연속적으로 눌러도 최저 0까지만 내려가도록
-            leaveAmount = 0;
+    public void AmountMinus() { // - 버튼을 클릭했을때 호출되는 메소드
+        amount--;
+        if(amount < 0) { // - 버튼을 연속적으로 눌러도 최저 0까지만 내려가도록
+            amount = 0;
         }
     }
 
@@ -515,7 +504,7 @@ public class PanelManager : MonoBehaviour {
             if(InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 이미 장착중일 경우
                 GameManager.instance.equipButtonText.text = "해제"; // 가운데 버튼의 문구를 해제로 바꿔주기
             } else {
-                GameManager.instance.equipButtonText.text = "장착";
+                GameManager.instance.equipButtonText.text = "장착"; // 기본적으로는 장착 이라는 문구로
             }
             GameManager.instance.itemDescriptionPanel.SetActive(true);
 
@@ -540,18 +529,25 @@ public class PanelManager : MonoBehaviour {
             }
 
             switch(item.itemType) {
-                
                 case ItemType.Weapon:
                     if(item.itemName == ItemName.소드) {
                         Inventory.instance.equipSword = true;
+                        Inventory.instance.equipBow = false;
+                        EquipImageOff();
                     } else if(item.itemName == ItemName.활) {
                         Inventory.instance.equipBow = true;
+                        Inventory.instance.equipSword = false;
+                        EquipImageOff();
                     }
                     GameManager.instance.itemAttackPower = item.itemAttackPower;
                     break;
                 
                 case ItemType.Ring:
-                    GameManager.instance.maxMana += 10;
+                    GameManager.instance.maxMana += 10; // 마나 10 올려주기
+                    break;
+                
+                case ItemType.Necklace:
+                    GameManager.instance.dexPoint += 1; // 민첩 1 올려주기
                     break;
             }
 
@@ -581,13 +577,43 @@ public class PanelManager : MonoBehaviour {
                     break;
                 
                 case ItemType.Ring:
-                    GameManager.instance.maxMana -= 10;
+                    GameManager.instance.maxMana -= 10; // 마나 10 빼주기
+                    break;
+                
+                case ItemType.Necklace:
+                    GameManager.instance.dexPoint -= 1; // 민첩 1 빼주기
                     break;
             }
             
             RedrawStatsPanel();
             ItemDescriptionOff();
         }
+    }
+
+    public void EquipImageOff() {
+
+        int num = -1;
+        
+        if(Inventory.instance.equipSword) { // 새롭게 소드를 장착했다면
+            for(int i = 0; i < Inventory.instance.possessItems.Count; i++) {
+                if(InventoryManager.instance.inventorySlots[i].item.itemName == ItemName.활) {
+                    num = i;
+                }
+            }
+        } else if(Inventory.instance.equipBow) { // 새롭게 활을 장착했다면
+            for(int i = 0; i < Inventory.instance.possessItems.Count; i++) {
+                if(InventoryManager.instance.inventorySlots[i].item.itemName == ItemName.소드) {
+                    num = i;
+                }
+            }
+        }
+
+        if(num == -1) {
+            return;
+        }
+        
+        Inventory.instance.possessItems[num].isEquipped = false;
+        InventoryManager.instance.inventorySlots[num].equipImage.SetActive(false);
     }
     
     public void ConsumptionButtonClick() { // 아이템 설명 패널에서 사용 버튼을 클릭했을 경우 호출할 메소드
@@ -618,14 +644,14 @@ public class PanelManager : MonoBehaviour {
     public void DeleteButtonClick() { // 아이템 설명 패널에서 삭제 버튼을 클릭했을 경우 호출할 메소드
 
         if(item.isEquipped) { // 장착중인 아이템을 삭제하려고 할 경우
-            AlertManager.instance.BigAlertMessageOn("", 15);
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 15);
             return;
         }
         if(slotNum != -1 && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             
-        } else if(slotNum != -1 && item.itemCount == 1) { // 아이템이 1개만 있을 경우
+        } else if(slotNum != -1 && item.itemCount == 1 || slotNum != -1 && item.itemCount == 0) { // 아이템이 1개만 있거나 0개 있을 경우(장비 아이템)
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             ItemDescriptionOnOff(-1, null);

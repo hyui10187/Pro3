@@ -168,6 +168,7 @@ public class GameManager : MonoBehaviour {
     public bool isLive; // 게임이 진행중인지 체크하는 플래그
     public bool isAction; // 대화를 하는중인지 체크하기 위한 플래그값
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
+    public bool isHealing;
     public bool canEatQuestItem = true; // 퀘스트 아이템을 먹을 수 있는지 플래그값
 
     [Header("Etc")]
@@ -218,7 +219,7 @@ public class GameManager : MonoBehaviour {
 
     public void Action(GameObject scanObj) {
         
-        if(Player.instance.isDead) {
+        if(Player.instance.isDead || isHealing) {
             return;
         }
         
@@ -269,6 +270,7 @@ public class GameManager : MonoBehaviour {
         if(talkData == null) { // 더이상 다음 대화가 없다면
             isAction = false; // isAction을 false로 줘서 대화창 끄기
             timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
+            SoundManager.instance.StopClockSound();
             talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
             currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
             
@@ -348,13 +350,14 @@ public class GameManager : MonoBehaviour {
             expSlider.SetActive(true);
             return;
         }
-        
+
         if(isNpc) { // 대화를 한게 NPC일 경우에는 NPC의 이름도 같이 보여주기
             talkText.text = npcName + " : " + talkData;
         } else {
             talkText.text = talkData; // Talk Panel에 가져온 Talk 대사를 뿌려주기
         }
 
+        SoundManager.instance.TalkSound();
         isAction = true;
         talkIndex++;
     }
@@ -569,6 +572,7 @@ public class GameManager : MonoBehaviour {
 
     public IEnumerator FilterPanelFadeOutAndIn() {
         isAction = true;
+        isHealing = true;
         filterPanel.SetActive(true);
         
         Image filterPanelImage = filterPanel.GetComponent<Image>();
@@ -592,6 +596,7 @@ public class GameManager : MonoBehaviour {
         isAction = false;
         filterPanel.SetActive(false);
         expSlider.SetActive(true);
+        isHealing = false;
     }
     
     private void GlobalLightOn() {
@@ -629,6 +634,7 @@ public class GameManager : MonoBehaviour {
         itemDescriptionPanel.SetActive(false);
         leaveAmountPanel.SetActive(false);
         purchaseAmountPanel.SetActive(false);
+        sellAmountPanel.SetActive(false);
         
         helpPanel.SetActive(false);
     }

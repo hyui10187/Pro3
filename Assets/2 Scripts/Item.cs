@@ -7,7 +7,7 @@ public enum ItemType { Helmet, Necklace, Armor, Weapon, Shield, Gloves, Ring, Bo
 public enum ItemName {
     반지, 소드, 목걸이, 활, 골드소, 골드중, 골드대, 상점열쇠, 상자열쇠, 빨강물약, 파랑물약, 초록물약, 노랑물약, 보라물약, 
     목재, 돌멩이, 사탕, 은화, 가죽갑옷, 가죽장갑, 가죽모자, 가죽신발, 나무방패,
-    붉은과일, 푸른과일, 보라과일, 공백
+    붉은과일, 푸른과일, 보라과일, 공백, 화살
 }
 
 [System.Serializable]

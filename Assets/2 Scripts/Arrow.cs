@@ -21,7 +21,12 @@ public class Arrow : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
 
-        if(other.CompareTag("Monster") || other.CompareTag("Wall")) { // 화살이 몬스터한테 닿거나 벽에 닿으면
+        if(other.CompareTag("Monster")) { // 화살이 몬스터한테 닿거나 벽에 닿으면
+            Destroy(gameObject); // 화살 삭제
+            Monster monster = other.GetComponent<Monster>();
+            monster.curHealth -= damage;
+            monster.Damaged(Player.instance.transform.position);
+        } else if(other.CompareTag("Wall")) {
             Destroy(gameObject); // 화살 삭제
         }
     }

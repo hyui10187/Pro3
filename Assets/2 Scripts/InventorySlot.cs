@@ -104,7 +104,7 @@ public class InventorySlot : MonoBehaviour {
             return;
 
         } else { // 일반 클릭일 경우
-            if(GameManager.instance.storagePanel.activeSelf) { // 창고 패널이 켜져있는 상태면
+            if(GameManager.instance.storagePanel.activeSelf && item != null) { // 창고 패널이 켜져있는 상태면
 
                 if(1 < item.itemCount) { // 아이템의 갯수가 2개 이상이면
                     PanelManager.instance.LeaveAmountPanelOnOff(slotNum, item); // 맡기는 갯수 설정하는 패널 띄워주기
@@ -117,7 +117,12 @@ public class InventorySlot : MonoBehaviour {
 
             if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
 
-                PanelManager.instance.SellAmountPanelOnOff(slotNum, item);
+                if(1 < item.itemCount) {
+                    PanelManager.instance.SellAmountPanelOnOff(slotNum, item);
+                    return;   
+                }
+
+                PanelManager.instance.SellButtonClick(slotNum, item);
                 return;
             }
 
@@ -142,6 +147,11 @@ public class InventorySlot : MonoBehaviour {
     }
 
     public void UpdateSlot() {
+
+        if(item == null) {
+            return;
+        }
+        
         itemImage.sprite = item.itemImage;
         itemImage.gameObject.SetActive(true); // 슬롯의 아이템 이미지 켜주기
         equipImage.SetActive(item.isEquipped); // 장착 되었는지 여부 켜주거나 꺼주거나

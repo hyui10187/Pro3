@@ -53,7 +53,6 @@ public class Monster : MonoBehaviour {
     }
 
     private IEnumerator KnockBackEnd() { // 몬스터가 맞아서 밀려난 이후 다시 원래 자리를 찾는 메소드
-
         yield return wait;
         rigid.velocity = Vector2.zero;
     }

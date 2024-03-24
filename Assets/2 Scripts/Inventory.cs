@@ -14,6 +14,8 @@ public class Inventory : MonoBehaviour {
 
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
+    public int arrowCnt; // 화살의 갯수
+
     public bool equipSword;
     public bool equipBow;
     public bool hasCandy;
@@ -164,21 +166,9 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    public void RemoveItem(int index, int sellAmount) {
-        if(possessItems[index].itemCount > 1) {
-            possessItems[index].itemCount--;
-            
-        } else {
-            possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
-        }
-        
-        onChangeItem.Invoke();
-    }
-    
     public void RemoveItem(int index) {
-        if(possessItems[index].itemCount > 1) {
+        if(1 < possessItems[index].itemCount) {
             possessItems[index].itemCount--;
-            
         } else {
             possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
         }
@@ -186,13 +176,13 @@ public class Inventory : MonoBehaviour {
         onChangeItem.Invoke();
     }
     
-    public void EntrustItem(int index, int itemCount, int leaveAmount) {
+    public void EntrustOrSellItem(int index, int itemCount, int amount) {
 
-        if(itemCount < 2 || itemCount == leaveAmount) { // 소모 아이템이 1개 있거나 장비 아이템이거나 아이템 갯수를 전부 맡길 경우
+        if(itemCount < 2 || itemCount == amount) { // 소모 아이템이 1개 있거나 장비 아이템이거나 아이템 갯수를 전부 맡길 경우
             possessItems.RemoveAt(index); // 인벤토리의 보유 아이템을 삭제해주기
             onChangeItem.Invoke();   
         } else {
-            possessItems[index].itemCount -= leaveAmount;
+            possessItems[index].itemCount -= amount;
             onChangeItem.Invoke();
         }
     }
@@ -238,6 +228,10 @@ public class Inventory : MonoBehaviour {
                     hasChestKey = true;
                 }
 
+                if(itemScript.item.itemName == ItemName.화살) {
+                    arrowCnt += itemScript.item.itemCount;
+                }
+
                 ItemName itemName = itemScript.item.itemName;
                 string itemNameStr = itemName.ToString();
                 
@@ -250,5 +244,5 @@ public class Inventory : MonoBehaviour {
             }
         }
     }
-    
+
 }

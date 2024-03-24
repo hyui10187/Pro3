@@ -40,6 +40,8 @@ public class Player : MonoBehaviour {
     public bool rightUp;
     public VirtualJoystick virtualJoystick;
 
+    public RangedWeapon rangedWeapon;
+
     public bool isFlipInit;
     
     private Rigidbody2D rigid;
@@ -259,7 +261,7 @@ public class Player : MonoBehaviour {
             return;
         }
 
-        if(Inventory.instance.equipSword) {
+        if(Inventory.instance.equipSword) { // 소드를 장착하고 공격할 경우
             anim.SetTrigger("attack");
             anim.SetBool("isAttack", true);
             SoundManager.instance.PlayAttackSound();
@@ -288,8 +290,8 @@ public class Player : MonoBehaviour {
                     desObject.Damaged();
                 }
             }   
-        } else if(Inventory.instance.equipBow) {
-            RangedWeapon.instance.Fire(dirVec);
+        } else if(Inventory.instance.equipBow) { // 활을 장착하고 공격할 경우
+            rangedWeapon.Fire(dirVec);
         }
 
     }
@@ -395,13 +397,14 @@ public class Player : MonoBehaviour {
         if(isDead) {
             return;
         }
-        
+
         if(other.gameObject.CompareTag("HouseEnter")) { // 플레이어가 집으로 들어가면
             SoundManager.instance.PlayDoorSound();
             transform.position = GameManager.instance.housePos.position; // 건물 안의 위치로 이동시킴
             GameManager.instance.isHouse = true; // 집으로 들어갔다는 플래그 값을 올려줌
 
         } else if(other.gameObject.CompareTag("FieldEnter")) { // 플레이어가 필드로 나가면
+            SoundManager.instance.PlayStairSound();
             transform.position = GameManager.instance.winterFieldPos.position; // 건물 밖의 위치로 이동시킴
             GameManager.instance.isHouse = false; // 집으로 들어갔다는 플래그 값을 내려줌
             
@@ -490,7 +493,24 @@ public class Player : MonoBehaviour {
                 transform.position = GameManager.instance.doorOutPos[i].position;
             }
         }
+        
+        if(other.CompareTag("FireplaceSound")) {
+            SoundManager.instance.PlayFireplaceSound();
+        }
+        
+        if(other.CompareTag("WaterSound")) {
+            SoundManager.instance.PlayWaterSound();
+        }
+    }
 
+    private void OnTriggerExit2D(Collider2D other) {
+        if(other.CompareTag("FireplaceSound")) {
+            SoundManager.instance.StopFireplaceSound();
+        }
+        
+        if(other.CompareTag("WaterSound")) {
+            SoundManager.instance.StopWaterSound();
+        }
     }
 
     private void Slide() {
@@ -508,7 +528,6 @@ public class Player : MonoBehaviour {
     }
     
     private IEnumerator SlideEnd() {
-
         yield return new WaitForSeconds(1f); // 미끄러지고 2초 뒤에
         isSlide = false; // 플래그 내려주기
     }

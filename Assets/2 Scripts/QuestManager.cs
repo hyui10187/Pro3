@@ -18,6 +18,7 @@ public class QuestManager : MonoBehaviour {
     public GameObject questPanelButton;
     public GameObject offButton;
     public GameObject onButton;
+    public GameObject exclamationPanel;
 
     [Header("Quest Item")]
     public GameObject coin;
@@ -28,7 +29,9 @@ public class QuestManager : MonoBehaviour {
     public GameObject chestKey;
     public GameObject candy;
     public GameObject questPot;
-
+    
+    public Transform[] npcTransforms;
+    
     private Dictionary<int, QuestData> questList;
     private Dictionary<int, string> questText;
 
@@ -103,13 +106,27 @@ public class QuestManager : MonoBehaviour {
         GameManager.instance.questText.text = questText[questId];
     }
 
+    private void ControlExclamationPanel() {
+        exclamationPanel.transform.position = npcTransforms[questActionIndex].position + Vector3.up;
+    }
+
     public void ControlObject() {
 
         switch(questId) {
-
+            
+            case 10: // 카밀과 대화하기
+                if(questActionIndex == 0) {
+                    ControlExclamationPanel();
+                    exclamationPanel.SetActive(true);
+                } else { // 카밀과 대화가 끝나면 루나 머리위로 느낌표를 옮겨주기
+                    ControlExclamationPanel();
+                }
+                break;
+            
             case 20: // 루나와 대화하기
                 if(questActionIndex == 1 && coin != null) { // 루나와 대화가 끝나고 나면
                     coin.SetActive(true); // 동전 켜주기
+                    exclamationPanel.transform.position = coin.transform.position + Vector3.up;
                 }
                 break;
                 
@@ -117,8 +134,11 @@ public class QuestManager : MonoBehaviour {
                 if(questActionIndex == 0 && coin != null) { // 게임을 저장하고 로드했을 경우를 대비하여
                     coin.SetActive(true); // 동전 켜주기
                 }
+
+                if(questActionIndex == 1) {
+                    ControlExclamationPanel();
+                }
                 if(questActionIndex == 2) { // 코인, 루나와 대화를 마치고 나면
-                
                     int num = Inventory.instance.possessItems.Count;
                     
                     for(int i = 0; i < num; i++) { // 퀘스트 아이템인 은화를 인벤토리에서 제거하기
@@ -129,12 +149,14 @@ public class QuestManager : MonoBehaviour {
                     }
                     
                     GameManager.instance.curExp += 50;
+                    ControlExclamationPanel();
                     ring.SetActive(true); // 루나 앞에 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
             
             case 40: // 촌장의 근심거리 듣기
                 if(questActionIndex == 1) { // 촌장과 대화가 끝나면
+                    exclamationPanel.SetActive(false);
                     SpawnManager.instance.GenerateEnemy(); // 몬스터를 전부 켜주기
                     GameManager.instance.monsterPanel.SetActive(true); // 몬스터 패널을 켜주기
                     sword.SetActive(true); // 촌장 앞에 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
@@ -142,6 +164,9 @@ public class QuestManager : MonoBehaviour {
                 break;
 
             case 60: // 촌장의 보답
+                if(questActionIndex == 0) {
+                    exclamationPanel.transform.position = npcTransforms[3].position + Vector3.up;
+                }
                 if(questActionIndex == 1) {
                     storeKey.SetActive(true); // 촌장 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
                     GameManager.instance.monsterPanel.SetActive(false); // 몬스터 패널을 꺼주기
@@ -151,6 +176,8 @@ public class QuestManager : MonoBehaviour {
             case 80: // 콜린의 선물받기
                 if(questActionIndex == 1) {
                     chestKey.SetActive(true); // 콜린 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
+                } else {
+                    exclamationPanel.transform.position = npcTransforms[4].position + Vector3.up;
                 }
                 break;
             

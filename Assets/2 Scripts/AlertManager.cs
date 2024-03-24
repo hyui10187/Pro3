@@ -35,6 +35,8 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(15, "장착중인 아이템은 삭제하실 수 없습니다.\n먼저 장착을 해제해주세요.");
         alertData.Add(16, "퀘스트 아이템은 판매하실 수 없습니다.");
         alertData.Add(17, "소지한 아이템의 갯수보다 많이 맡기실 수 없습니다.");
+        alertData.Add(18, "화살을 소지하지 않아서 공격할 수 없습니다.");
+        alertData.Add(19, "소지한 아이템의 갯수보다\n많이 판매하실 수 없습니다.");
         
         alertData.Add(21, "[도움말]\n- 집 밖에 있을 경우에는 추위로 인해\n체력이 지속적으로 감소합니다.\n\n- 인벤토리창에서 아이템을 길게 누를 경우\n아이템에 대한 설명창을 볼 수 있습니다.\n\n- 화면 왼쪽 상단에 표시된 퀘스트를 따라\n게임을 진행하세요.");
         alertData.Add(22, "[도움말]\n- 벽난로와 상호작용을 하면 체력을\n회복할 수 있습니다.\n\n- 침대에서 잠을 자게 되면 체력과 마나를\n모두 회복할 수 있습니다.\n\n- 집 밖에 있는 덤불이나 나무 밑동을\n공격하면 재료 아이템을 얻을 수 있습니다.");
@@ -98,12 +100,18 @@ public class AlertManager : MonoBehaviour {
         GameManager.instance.acquisitionMessage.SetActive(false);
     }
     
-    public void BigAlertMessageOn(String itemName, int idx) {
+    public void BigAlertMessageOn(ItemName itemName, int idx) {
         Text bigAlertText = GameManager.instance.bigAlertMessage.GetComponentInChildren<Text>();
-        bigAlertText.text = itemName + alertData[idx];
+        
+        if(itemName == ItemName.공백) {
+            bigAlertText.text = "" + alertData[idx];    
+        } else {
+            bigAlertText.text = itemName + alertData[idx];    
+        }
+        
         GameManager.instance.bigAlertMessage.SetActive(true);
         CancelInvoke("BigAlertMessageOff");
-        Invoke("BigAlertMessageOff", 2f); // 2초 뒤에 아이템을 획득했다는 알림 꺼주기
+        Invoke("BigAlertMessageOff", 2f);
     }
 
     private void BigAlertMessageOff() {
