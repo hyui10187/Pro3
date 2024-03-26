@@ -179,7 +179,11 @@ public class GameManager : MonoBehaviour {
     public int frozenDamage;
     public int obstacleDamage;
     public GameObject scanObject; // 스캔한 게임 오브젝트
-    
+
+    public int objId;
+    public bool isNpc;
+    public string npcName;
+
     private void Awake() {
         instance = this;
         InitPos();
@@ -222,6 +226,10 @@ public class GameManager : MonoBehaviour {
         if(Player.instance.isDead || isHealing) {
             return;
         }
+
+        if(!isAction) {
+            SoundManager.instance.TalkSound();
+        }
         
         expSlider.SetActive(false);
         scanObject = scanObj;
@@ -263,91 +271,15 @@ public class GameManager : MonoBehaviour {
 
     private void Talk(int objId, bool isNpc, string npcName) {
 
+        this.objId = objId;
+        this.isNpc = isNpc;
+        this.npcName = npcName;
+        
         int questIdPlusQuestActionIndex = questManager.QuestIdPlusQuestActionIndex();
         string talkData = talkManager.GetTalk(objId, questIdPlusQuestActionIndex, isNpc, talkIndex); // 대상의 ID와 QuestTalkIndex를 더한 값을 첫번째 파라미터로 던져준다
-
-        // End Talk
+        
         if(talkData == null) { // 더이상 다음 대화가 없다면
-            isAction = false; // isAction을 false로 줘서 대화창 끄기
-            timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
-            SoundManager.instance.StopClockSound();
-            talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
-            currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
-            
-            if(scanObject.CompareTag("Heal")) {
-                FadeOutAndInEffect();
-                SoundManager.instance.PlayHealSound();
-                curHealth = maxHealth;
-                return;
-            } else if(scanObject.CompareTag("Bed")) {
-                isAction = true;
-                PanelManager.instance.SleepConfirmOn();
-                return;
-            }
-
-            if(scanObject.CompareTag("QuestItem") && QuestManager.instance.coin != null) {
-                scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 은화를 Trigger로 만들어주기
-                scanObject.SetActive(false); // 퀘스트 아이템인 은화를 꺼주기
-                scanObject.transform.position = player.transform.position; // 퀘스트 아이템인 은화를 플레이어의 위치로 옮겨줌
-                scanObject.SetActive(true); // 퀘스트 아이템인 은화를 다시 켜줘서 바로 먹어지도록 하기
-            }
-            
-            if(scanObject.CompareTag("Stone")) {
-                ItemManager.instance.DropMaterial(player.transform.position, 1); // 돌멩이 재료 아이템과 대화가 끝나면 해당 아이템을 플레이어의 위치에 생성
-                scanObject.SetActive(false); // 기존에 대화한 돌멩이 오브젝트는 꺼주기
-            }
-
-            if(isNpc && objId == 30000) { // 이동형 NPC 베르톨트
-                NPC npc = scanObject.GetComponent<NPC>();
-                npc.isCollision = false;
-                npc.CancelInvoke();
-                npc.Think();
-            } else if(isNpc && objId == 130000) { // 이동형 NPC 생쥐
-                Animal animal = scanObject.GetComponent<Animal>();
-                animal.isCollision = false;
-                animal.CancelInvoke();
-                animal.Think();
-            } else if(isNpc && objId == 160000) { // 기능형 NPC 카리나(창고)
-                PanelManager.instance.StorageOnOff();
-                inventoryPanel.SetActive(true);
-            } else if(isNpc && objId == 170000) { // 기능형 NPC 린샹(잡화상점)
-                PanelManager.instance.GroceryStoreOnOff();
-                inventoryPanel.SetActive(true);
-            } else if(isNpc && objId == 210000) { // 기능형 NPC 밀로(장비상점)
-                PanelManager.instance.EquipmentStoreOnOff();
-                inventoryPanel.SetActive(true);
-            }
-
-            if(objId == 6200) { // 열쇠로 문을 여는 대사가 끝나면
-                scanObject.gameObject.SetActive(false);
-                Inventory.instance.isDoorOpen = true;
-
-            } else if(objId == 6300) { // 열쇠로 상자를 여는 대사가 끝나면
-                scanObject.gameObject.SetActive(false);
-                Transform parentTransform = scanObject.transform.parent;
-                Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
-
-                foreach(Transform childTransform in childTransforms) {
-                    if(childTransform.gameObject.name == "Candy") {
-                        childTransform.gameObject.SetActive(true);
-                        Inventory.instance.isChestOpen = true;
-                    }
-                }
-            } else if(objId == 6400) { // 열려있는 상자에서 사탕을 발견하는 대사가 끝나면
-                scanObject.gameObject.SetActive(false);
-                Transform parentTransform = scanObject.transform.parent;
-                Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
-                questManager.candy.SetActive(true);
-
-                foreach(Transform childTransform in childTransforms) {
-                    if(childTransform.gameObject.name == "Opened") {
-                        childTransform.gameObject.SetActive(true);
-                        questManager.candy.SetActive(true);
-                    }
-                }
-            }
-
-            expSlider.SetActive(true);
+            EndTalk();
             return;
         }
 
@@ -356,13 +288,97 @@ public class GameManager : MonoBehaviour {
         } else {
             talkText.text = talkData; // Talk Panel에 가져온 Talk 대사를 뿌려주기
         }
-
-        SoundManager.instance.TalkSound();
+        
         isAction = true;
         talkIndex++;
     }
 
-    public void FadeOutAndInEffect() {
+    public void SkipTalk() {
+        EndTalk();
+        talkPanel.SetActive(false);
+    }
+    
+    private void EndTalk() {
+        isAction = false; // isAction을 false로 줘서 대화창 끄기
+        timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
+        SoundManager.instance.StopClockSound();
+        talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
+        currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
+        
+        if(scanObject.CompareTag("Heal")) {
+            FadeOutAndInEffect();
+            SoundManager.instance.PlayHealSound();
+            curHealth = maxHealth;
+            return;
+        } else if(scanObject.CompareTag("Bed")) {
+            isAction = true;
+            PanelManager.instance.SleepConfirmOn();
+            return;
+        }
+
+        if(scanObject.CompareTag("QuestItem") && QuestManager.instance.coin != null) {
+            scanObject.GetComponent<BoxCollider2D>().isTrigger = true; // 퀘스트 아이템인 은화를 Trigger로 만들어주기
+            scanObject.SetActive(false); // 퀘스트 아이템인 은화를 꺼주기
+            scanObject.transform.position = player.transform.position; // 퀘스트 아이템인 은화를 플레이어의 위치로 옮겨줌
+            scanObject.SetActive(true); // 퀘스트 아이템인 은화를 다시 켜줘서 바로 먹어지도록 하기
+        }
+        
+        if(scanObject.CompareTag("Stone")) {
+            ItemManager.instance.DropMaterial(player.transform.position, 1); // 돌멩이 재료 아이템과 대화가 끝나면 해당 아이템을 플레이어의 위치에 생성
+            scanObject.SetActive(false); // 기존에 대화한 돌멩이 오브젝트는 꺼주기
+        }
+
+        if(isNpc && objId == 30000) { // 이동형 NPC 베르톨트
+            NPC npc = scanObject.GetComponent<NPC>();
+            npc.isCollision = false;
+            npc.CancelInvoke();
+            npc.Think();
+        } else if(isNpc && objId == 130000) { // 이동형 NPC 생쥐
+            Animal animal = scanObject.GetComponent<Animal>();
+            animal.isCollision = false;
+            animal.CancelInvoke();
+            animal.Think();
+        } else if(isNpc && objId == 160000) { // 기능형 NPC 카리나(창고)
+            PanelManager.instance.StorageOnOff();
+        } else if(isNpc && objId == 170000) { // 기능형 NPC 린샹(잡화상점)
+            PanelManager.instance.GroceryStoreOnOff();
+        } else if(isNpc && objId == 210000) { // 기능형 NPC 밀로(장비상점)
+            PanelManager.instance.EquipmentStoreOnOff();
+        }
+
+        if(objId == 6200) { // 열쇠로 문을 여는 대사가 끝나면
+            scanObject.gameObject.SetActive(false);
+            Inventory.instance.isDoorOpen = true;
+
+        } else if(objId == 6300) { // 열쇠로 상자를 여는 대사가 끝나면
+            scanObject.gameObject.SetActive(false);
+            Transform parentTransform = scanObject.transform.parent;
+            Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
+
+            foreach(Transform childTransform in childTransforms) {
+                if(childTransform.gameObject.name == "Candy") {
+                    childTransform.gameObject.SetActive(true);
+                    Inventory.instance.isChestOpen = true;
+                }
+            }
+        } else if(objId == 6400) { // 열려있는 상자에서 사탕을 발견하는 대사가 끝나면
+            scanObject.gameObject.SetActive(false);
+            Transform parentTransform = scanObject.transform.parent;
+            Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
+            questManager.candy.SetActive(true);
+
+            foreach(Transform childTransform in childTransforms) {
+                if(childTransform.gameObject.name == "Opened") {
+                    childTransform.gameObject.SetActive(true);
+                    questManager.candy.SetActive(true);
+                }
+            }
+        }
+
+        expSlider.SetActive(true);
+    }
+
+    private void FadeOutAndInEffect() {
         StopCoroutine("FilterPanelFadeOutAndIn");
         StartCoroutine("FilterPanelFadeOutAndIn");
     }

@@ -81,11 +81,8 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void SellButtonClick(int slotNum, Item sellItem) {
-
         this.slotNum = slotNum;
         item = sellItem;
-        amount = -1;
-
         SellLogic();
     }
 
@@ -100,11 +97,10 @@ public class PanelManager : MonoBehaviour {
             return;
         }
 
-        if(item.itemCount < 2 && amount == -1) {
-            GameManager.instance.curGold += (amount * item.itemPrice); // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
+        if(item.itemCount < 2 && amount == 0) {
+            GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
             Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, item.itemCount);
-            amount = 0;
             return;
         }
         
@@ -249,15 +245,7 @@ public class PanelManager : MonoBehaviour {
             GameManager.instance.menuPanel.SetActive(false);
         }
     }
-    
-    public void StorageOnOff() {
-        if(!GameManager.instance.storagePanel.activeSelf) {
-            GameManager.instance.storagePanel.SetActive(true);
-        } else {
-            GameManager.instance.storagePanel.SetActive(false);
-        }
-    }
-    
+
     public void FPSOnOff() {
         
         if(Player.instance.isDead || !GameManager.instance.isLive) {
@@ -273,19 +261,33 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
+    public void StorageOnOff() {
+        if(!GameManager.instance.storagePanel.activeSelf) {
+            GameManager.instance.storagePanel.SetActive(true);
+            GameManager.instance.inventoryPanel.SetActive(true);
+        } else {
+            GameManager.instance.storagePanel.SetActive(false);
+            GameManager.instance.inventoryPanel.SetActive(false);
+        }
+    }
+    
     public void GroceryStoreOnOff() { // 잡화상점 패널을 켜고 끄는 메소드
         if(!GameManager.instance.groceryStorePanel.activeSelf) {
             GameManager.instance.groceryStorePanel.SetActive(true);
+            GameManager.instance.inventoryPanel.SetActive(true);
         } else {
             GameManager.instance.groceryStorePanel.SetActive(false);
+            GameManager.instance.inventoryPanel.SetActive(false);
         }
     }
     
     public void EquipmentStoreOnOff() { // 장비상점 패널을 켜고 끄는 메소드
         if(!GameManager.instance.equipmentStorePanel.activeSelf) {
             GameManager.instance.equipmentStorePanel.SetActive(true);
+            GameManager.instance.inventoryPanel.SetActive(true);
         } else {
             GameManager.instance.equipmentStorePanel.SetActive(false);
+            GameManager.instance.inventoryPanel.SetActive(false);
         }
     }
     
