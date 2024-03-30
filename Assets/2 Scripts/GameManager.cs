@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour {
     public GameObject sellAmountPanel;
     public Text sellText;
     public Text sellAmountText;
+    public GameObject turnTablePanel;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -297,7 +298,7 @@ public class GameManager : MonoBehaviour {
         EndTalk();
         talkPanel.SetActive(false);
     }
-    
+
     private void EndTalk() {
         isAction = false; // isAction을 false로 줘서 대화창 끄기
         timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리

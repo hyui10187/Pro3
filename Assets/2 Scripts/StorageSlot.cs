@@ -33,7 +33,6 @@ public class StorageSlot : MonoBehaviour {
         bool canWithdraw = Inventory.instance.AddItem(item); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
         
         if(canWithdraw) {
-            
             if(item.itemType == ItemType.Quest) {
                 QuestManager.instance.questActionIndex++;
             }

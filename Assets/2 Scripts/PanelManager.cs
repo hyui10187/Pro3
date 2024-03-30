@@ -35,6 +35,14 @@ public class PanelManager : MonoBehaviour {
         }
     }
 
+    public void TurnTablePanelOnOff() {
+        if(!GameManager.instance.turnTablePanel.activeSelf) {
+            GameManager.instance.turnTablePanel.SetActive(true);
+        } else {
+            GameManager.instance.turnTablePanel.SetActive(false);
+        }
+    }
+    
     public void PurchaseAmountPanelOnOff(Item purchaseItem) { // 구매 수량을 선택하는 패널
         item = purchaseItem;
 
