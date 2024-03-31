@@ -20,8 +20,8 @@ public class PanelManager : MonoBehaviour {
     }
 
     private void Update() {
-
-        GameManager.instance.leaveAmountText.text = amount.ToString(); // 창고에 맡길 갯수를 업데이트 해주기
+        GameManager.instance.entrustAmountText.text = amount.ToString(); // 창고에 맡길 갯수를 업데이트 해주기
+        GameManager.instance.withdrawAmountText.text = amount.ToString(); // 창고에 맡길 갯수를 업데이트 해주기
         GameManager.instance.purchaseAmountText.text = amount.ToString(); // 상점에서 구매할 갯수를 업데이트 해주기
         GameManager.instance.sellAmountText.text = amount.ToString(); // 상점에 판매할 갯수를 업데이트 해주기
         
@@ -40,11 +40,40 @@ public class PanelManager : MonoBehaviour {
             GameManager.instance.turnTablePanel.SetActive(true);
         } else {
             GameManager.instance.turnTablePanel.SetActive(false);
+            TurnTableManager.instance.StopTurnTable(); // 턴테이블 패널이 꺼지면 음반도 멈춰주기
         }
     }
     
+    public void SellConfirmPanelOn(int slotNum, Item sellItem) {
+
+        Text confirmText = GameManager.instance.sellConfirmPanel.GetComponentInChildren<Text>();
+        confirmText.text = sellItem.itemName + " 아이템을\n정말로 판매하시겠습니까?";
+        
+        GameManager.instance.sellConfirmPanel.SetActive(true);
+        this.slotNum = slotNum;
+        item = sellItem;
+    }
+
+    public void SellConfirmPanelOff() {
+        GameManager.instance.sellConfirmPanel.SetActive(false);
+    }
+    
+    public void PurchasePanelOn(Item purchaseItem) {
+        Text confirmText = GameManager.instance.purchaseConfirmPanel.GetComponentInChildren<Text>();
+        confirmText.text = purchaseItem.itemName + " 아이템을\n구매하시겠습니까?";
+        
+        GameManager.instance.purchaseConfirmPanel.SetActive(true);
+        item = purchaseItem;
+        amount = 1;
+    }
+
+    public void PurchasePanelOff() {
+        GameManager.instance.purchaseConfirmPanel.SetActive(false);
+    }
+
     public void PurchaseAmountPanelOnOff(Item purchaseItem) { // 구매 수량을 선택하는 패널
         item = purchaseItem;
+        amount = 0;
 
         GameManager.instance.purchaseText.text = purchaseItem.itemName + " 아이템을\n얼마나 구매하시겠습니까?";
         
@@ -56,17 +85,23 @@ public class PanelManager : MonoBehaviour {
     }
 
     public void PurchaseAmountPanelOnOff() {
+        amount = 0;
+        
         if(!GameManager.instance.purchaseAmountPanel.activeSelf) {
             GameManager.instance.purchaseAmountPanel.SetActive(true);
         } else {
             GameManager.instance.purchaseAmountPanel.SetActive(false);
         }
     }
+
+    private void PurchaseAmountPanelOff() {
+        GameManager.instance.purchaseAmountPanel.SetActive(false);
+    }
     
     public void SellAmountPanelOnOff(int slotNum, Item sellItem) { // 판매 수량을 선택하는 패널
         this.slotNum = slotNum;
         item = sellItem;
-        
+        amount = 0;
         GameManager.instance.sellText.text = sellItem.itemName + " 아이템을\n얼마나 판매하시겠습니까?";
         
         if(!GameManager.instance.sellAmountPanel.activeSelf) {
@@ -77,24 +112,63 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void SellAmountPanelOnOff() {
+        amount = 0;
         if(!GameManager.instance.sellAmountPanel.activeSelf) {
             GameManager.instance.sellAmountPanel.SetActive(true);
         } else {
             GameManager.instance.sellAmountPanel.SetActive(false);
         }
     }
+    
+    public void WithdrawAmountPanelOnOff(Item withdrawItem) {
+        item = withdrawItem;
+        amount = 0;
+        GameManager.instance.withdrawText.text = withdrawItem.itemName + " 아이템을\n얼마나 찾으시겠습니까?";
+        
+        if(!GameManager.instance.withdrawAmountPanel.activeSelf) {
+            GameManager.instance.withdrawAmountPanel.SetActive(true);
+        } else {
+            GameManager.instance.withdrawAmountPanel.SetActive(false);
+        }
+    }
+
+    public void WithdrawAmountPanelOff() {
+        GameManager.instance.withdrawAmountPanel.SetActive(false);
+    }
+
+    public void WithdrawButtonClick() {
+        WithdrawLogic();
+    }
+    
+    public void WithdrawButtonClick(Item withdrawItem) {
+        item = withdrawItem;
+        WithdrawLogic();
+    }
+
+    private void WithdrawLogic() {
+        bool canWithdraw = Inventory.instance.AddItem(item, amount); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
+        
+        if(canWithdraw) {
+            if(item.itemType == ItemType.Quest) {
+                QuestManager.instance.questActionIndex++;
+            } else if(item.itemType == ItemType.Record) {
+                Inventory.instance.recordCnt++;
+            }
+            AlertManager.instance.SmallAlertMessageOn(item.itemName, 10);
+            StorageManager.instance.RemoveStorageItem(slotNum);
+        } else {
+            AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 20);
+        }
+    }
 
     public void SellButtonClick() {
         SellLogic();
     }
-    
-    public void SellButtonClick(int slotNum, Item sellItem) {
-        this.slotNum = slotNum;
-        item = sellItem;
-        SellLogic();
-    }
 
     private void SellLogic() {
+        
+        SellConfirmPanelOff();
+        
         if(item.isEquipped) { // 장착중인 아이템을 상점에 판매하려고 할 경우
             AlertManager.instance.BigAlertMessageOn(ItemName.공백, 14);
             return;
@@ -102,6 +176,15 @@ public class PanelManager : MonoBehaviour {
 
         if(item.itemType == ItemType.Quest) { // 퀘스트 아이템을 상점에 판매하려고 할 경우
             AlertManager.instance.BigAlertMessageOn(ItemName.공백, 16);
+            return;
+        }
+
+        if(item.itemType == ItemType.Record) { // 퀘스트 아이템을 상점에 판매했을 경우
+            GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
+            AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
+            Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, item.itemCount);
+            Inventory.instance.recordCnt--;
+            TurnTableManager.instance.changeTurnTablePanel.Invoke();
             return;
         }
 
@@ -148,7 +231,8 @@ public class PanelManager : MonoBehaviour {
                 Inventory.instance.arrowCnt += amount; // 소지한 화살의 갯수를 구매한 갯수만큼 늘려주기
             }
             
-            PurchaseAmountPanelOnOff(); // 구매하고 나면 패널 꺼주기
+            PurchaseAmountPanelOff(); // 구매하고 나면 패널 꺼주기
+            PurchasePanelOff();
             amount = 0; // 갯수 0으로 초기화 해주기
         } else if(!canPurchase) {
             AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 8); // 인벤토리가 가득차서 구매 불가 메시지
@@ -156,28 +240,28 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void LeaveAmountPanelOnOff(int slotNum, Item leaveItem) { // 창고에 맡기는 아이템 갯수 설정하는 패널
-
         this.slotNum = slotNum;
         item = leaveItem; // 파라미터로 받아온 아이템으로 전역변수 item을 갱신해주기
+        amount = 0;
+        GameManager.instance.entrustText.text = leaveItem.itemName + " 아이템을\n얼마나 맡기시겠습니까?";
 
-        GameManager.instance.leaveText.text = leaveItem.itemName + " 아이템을\n얼마나 맡기시겠습니까?";
-
-        if(!GameManager.instance.leaveAmountPanel.activeSelf) {
-            GameManager.instance.leaveAmountPanel.SetActive(true);
+        if(!GameManager.instance.entrustAmountPanel.activeSelf) {
+            GameManager.instance.entrustAmountPanel.SetActive(true);
         } else {
-            GameManager.instance.leaveAmountPanel.SetActive(false);
+            GameManager.instance.entrustAmountPanel.SetActive(false);
         }
     }
     
     public void LeaveAmountPanelOnOff() { // 창고에 맡기는 아이템 갯수 설정하는 패널
-        if(!GameManager.instance.leaveAmountPanel.activeSelf) {
-            GameManager.instance.leaveAmountPanel.SetActive(true);
+        amount = 0;
+        if(!GameManager.instance.entrustAmountPanel.activeSelf) {
+            GameManager.instance.entrustAmountPanel.SetActive(true);
         } else {
-            GameManager.instance.leaveAmountPanel.SetActive(false);
+            GameManager.instance.entrustAmountPanel.SetActive(false);
         }
     }
 
-    public void LeaveButtonClick() {
+    public void LeaveButtonClick() { // 맡기기 버튼을 클릭했을때 호출되는 메소드
         LeaveLogic();
     }
 
@@ -203,8 +287,15 @@ public class PanelManager : MonoBehaviour {
                 if(item.itemType == ItemType.Quest) {
                     QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
                 }
+
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
                 Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, amount);
+                
+                if(item.itemType == ItemType.Record) {
+                    Inventory.instance.recordCnt--; // 창고에 음반 아이템을 맡길 경우 보유중인 음반 갯수 1개 줄여주기
+                    TurnTableManager.instance.changeTurnTablePanel.Invoke(); // 턴테이블 슬롯 다시 그려주기
+                }
+                
                 return;
             }
         }
@@ -225,7 +316,7 @@ public class PanelManager : MonoBehaviour {
             }
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
             Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount,amount);
-            LeaveAmountPanelOnOff(); // 맡기고 나면 패널 꺼주기
+            GameManager.instance.entrustAmountPanel.SetActive(false); // 맡기고 나면 패널 꺼주기
             amount = 0;
         }
     }
@@ -269,33 +360,36 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void StorageOnOff() {
+    public void StorageOnOff() { // 창고 패널
         if(!GameManager.instance.storagePanel.activeSelf) {
             GameManager.instance.storagePanel.SetActive(true);
             GameManager.instance.inventoryPanel.SetActive(true);
         } else {
             GameManager.instance.storagePanel.SetActive(false);
             GameManager.instance.inventoryPanel.SetActive(false);
+            GameManager.instance.DetailPanelOff();
         }
     }
     
-    public void GroceryStoreOnOff() { // 잡화상점 패널을 켜고 끄는 메소드
+    public void GroceryStoreOnOff() { // 잡화상점 패널
         if(!GameManager.instance.groceryStorePanel.activeSelf) {
             GameManager.instance.groceryStorePanel.SetActive(true);
             GameManager.instance.inventoryPanel.SetActive(true);
         } else {
             GameManager.instance.groceryStorePanel.SetActive(false);
             GameManager.instance.inventoryPanel.SetActive(false);
+            GameManager.instance.DetailPanelOff();
         }
     }
     
-    public void EquipmentStoreOnOff() { // 장비상점 패널을 켜고 끄는 메소드
+    public void EquipmentStoreOnOff() { // 장비상점 패널
         if(!GameManager.instance.equipmentStorePanel.activeSelf) {
             GameManager.instance.equipmentStorePanel.SetActive(true);
             GameManager.instance.inventoryPanel.SetActive(true);
         } else {
             GameManager.instance.equipmentStorePanel.SetActive(false);
             GameManager.instance.inventoryPanel.SetActive(false);
+            GameManager.instance.DetailPanelOff();
         }
     }
     

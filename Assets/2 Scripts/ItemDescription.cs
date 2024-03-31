@@ -40,6 +40,9 @@ public class ItemDescription : MonoBehaviour {
         descriptionData.Add(ItemName.붉은과일, "사용시 HP를 10 회복시킴");
         descriptionData.Add(ItemName.푸른과일, "사용시 MP를 10 회복시킴");
         descriptionData.Add(ItemName.보라과일, "사용시 즉시 사망함");
+        descriptionData.Add(ItemName.강아지왈츠, "쇼팽이 작곡한 아름다운 왈츠다.");
+        descriptionData.Add(ItemName.결혼행진곡, "멘델스존이 작곡한 힘찬 행진곡이다.");
+        descriptionData.Add(ItemName.사계, "비발디가 작곡한 사계 중 봄이다.");
     }
     
     public string GetDescription(ItemName itemName) {

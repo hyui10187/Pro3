@@ -115,14 +115,25 @@ public class InventorySlot : MonoBehaviour {
                 return;
             }
 
-            if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 상점 패널이 켜져있는 상태라면
+            if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 잡화상점 패널이 켜져있는 상태라면
 
                 if(1 < item.itemCount) {
                     PanelManager.instance.SellAmountPanelOnOff(slotNum, item);
                     return;   
                 }
 
-                PanelManager.instance.SellButtonClick(slotNum, item);
+                PanelManager.instance.SellConfirmPanelOn(slotNum, item);
+                return;
+            }
+            
+            if(GameManager.instance.equipmentStorePanel.activeSelf && item != null) { // 장비상점 패널이 켜져있는 상태라면
+
+                if(1 < item.itemCount) {
+                    PanelManager.instance.SellAmountPanelOnOff(slotNum, item);
+                    return;   
+                }
+
+                PanelManager.instance.SellConfirmPanelOn(slotNum, item);
                 return;
             }
 

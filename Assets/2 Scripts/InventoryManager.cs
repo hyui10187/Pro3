@@ -8,10 +8,10 @@ public class InventoryManager : MonoBehaviour {
 
     public static InventoryManager instance;
     
+    public Transform inventorySlotHolder;
     public InventorySlot[] inventorySlots;
-    public Transform slotHolder;
+    public GameObject inventorySlotPrefab;
     public int maxSlotNum; // 확장할 수 있는 최대 슬롯갯수
-    public GameObject slotPrefab;
 
     private Inventory inventory;
     
@@ -28,14 +28,13 @@ public class InventoryManager : MonoBehaviour {
     private void MakeSlots() {
 
         for(int i = 0; i < maxSlotNum; i++) {
-            Instantiate(slotPrefab, slotHolder);
+            Instantiate(inventorySlotPrefab, inventorySlotHolder);
         }
 
-        inventorySlots = slotHolder.GetComponentsInChildren<InventorySlot>();
+        inventorySlots = inventorySlotHolder.GetComponentsInChildren<InventorySlot>();
     }
     
     private void RedrawSlotUI() { // 인벤토리 UI를 다시 그려주는 메소드
-
         for(int i = 0; i < inventorySlots.Length; i++) {
             inventorySlots[i].RemoveSlot(); // 처음에는 for 루프를 돌면서 모든 아이템 슬롯을 다 꺼주고
         }

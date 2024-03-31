@@ -8,7 +8,7 @@ public enum ItemName {
     반지, 소드, 목걸이, 활, 골드소, 골드중, 골드대, 상점열쇠, 상자열쇠, 빨강물약, 파랑물약, 초록물약, 노랑물약, 보라물약, 
     목재, 돌멩이, 사탕, 은화, 가죽갑옷, 가죽장갑, 가죽모자, 가죽신발, 나무방패,
     붉은과일, 푸른과일, 보라과일, 공백, 화살,
-    강아지왈츠
+    강아지왈츠, 결혼행진곡, 사계
 }
 
 [System.Serializable]
@@ -21,6 +21,7 @@ public class Item {
     public int itemPrice;
     public int itemAttackPower;
     public bool isEquipped;
+    public int recordNum;
     public List<ItemEffect> itemEffects;
 
     public bool Use() {
@@ -42,6 +43,7 @@ public class Item {
         copyItem.itemCount = itemCount;
         copyItem.itemPrice = itemPrice;
         copyItem.itemAttackPower = itemAttackPower;
+        copyItem.recordNum = recordNum;
         copyItem.itemEffects = itemEffects;
         
         return copyItem;

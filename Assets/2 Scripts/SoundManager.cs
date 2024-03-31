@@ -22,6 +22,7 @@ public class SoundManager : MonoBehaviour {
     public AudioClip stairSound;
     public AudioClip fireplaceSound;
     public AudioClip waterSound;
+    public AudioClip clickSound;
 
     private void Awake() {
         instance = this;
@@ -31,32 +32,36 @@ public class SoundManager : MonoBehaviour {
         audioSourceB.playOnAwake = false;
     }
     
+    public void ClickSound() {
+        audioSourceA.PlayOneShot(clickSound);
+    }
+    
     public void TalkSound() {
-        audioSourceB.PlayOneShot(talkSound);
+        audioSourceA.PlayOneShot(talkSound);
     }
     
     public void PlayWaterSound() {
-        audioSourceA.clip = waterSound;
-        audioSourceA.Play();
-        audioSourceA.loop = true;
+        audioSourceB.clip = waterSound;
+        audioSourceB.Play();
+        audioSourceB.loop = true;
     }
 
     public void StopWaterSound() {
-        audioSourceA.Stop();
-        audioSourceA.clip = null;
-        audioSourceA.loop = false;
+        audioSourceB.Stop();
+        audioSourceB.clip = null;
+        audioSourceB.loop = false;
     }
     
     public void PlayFireplaceSound() {
-        audioSourceA.clip = fireplaceSound;
-        audioSourceA.Play();
-        audioSourceA.loop = true;
+        audioSourceB.clip = fireplaceSound;
+        audioSourceB.Play();
+        audioSourceB.loop = true;
     }
 
     public void StopFireplaceSound() {
-        audioSourceA.Stop();
-        audioSourceA.clip = null;
-        audioSourceA.loop = false;
+        audioSourceB.Stop();
+        audioSourceB.clip = null;
+        audioSourceB.loop = false;
     }
 
     public void PlayAttackSound() {

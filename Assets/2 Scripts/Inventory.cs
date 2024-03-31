@@ -14,7 +14,8 @@ public class Inventory : MonoBehaviour {
 
     public List<Item> possessItems;
     public int curSlotCnt; // 슬롯의 갯수
-    public int arrowCnt; // 화살의 갯수
+    public int arrowCnt; // 보유중인 화살의 갯수
+    public int recordCnt; // 보유중인 음반의 갯수
 
     public bool equipSword;
     public bool equipBow;
@@ -111,7 +112,7 @@ public class Inventory : MonoBehaviour {
         int index = -1;
 
         if(possessItems.Count < CurSlotCnt) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
-            if(possessItems.Count > 0) {
+            if(0 < possessItems.Count) { // 보유중인 아이템이 있을 경우
                 for(int i = 0; i < possessItems.Count; i++) {
                     if(possessItems[i].itemName == purchaseItem.itemName) {
                         isAdded = true;
@@ -129,13 +130,17 @@ public class Inventory : MonoBehaviour {
                     
                 } else { // 기존에 가지고 있지 않은 아이템일 경우
                     Item copyPurchaseItem = purchaseItem.Clone();
-                    copyPurchaseItem.itemCount = purchaseCount; // 구입한 갯수만큼 아이템을 생성하여 인벤토리에 넣어주기
+                    if(purchaseItem.itemCount != 0) { // 장비 아이템이 아닐 경우
+                        copyPurchaseItem.itemCount = purchaseCount; // 구입한 갯수만큼 아이템을 생성하여 인벤토리에 넣어주기    
+                    }
                     possessItems.Add(copyPurchaseItem);
                 }
 
-            } else {
+            } else { // 보유중인 아이템이 없을 경우
                 Item copyPurchaseItem = purchaseItem.Clone();
-                copyPurchaseItem.itemCount = purchaseCount;
+                if(purchaseItem.itemCount != 0) { // 장비 아이템이 아닐 경우
+                    copyPurchaseItem.itemCount = purchaseCount; // 구입한 갯수만큼 아이템을 생성하여 인벤토리에 넣어주기    
+                }
                 possessItems.Add(copyPurchaseItem);
             }
 
@@ -230,6 +235,11 @@ public class Inventory : MonoBehaviour {
 
                 if(itemScript.item.itemName == ItemName.화살) {
                     arrowCnt += itemScript.item.itemCount;
+                }
+                
+                if(itemScript.item.itemType == ItemType.Record) { // 먹은 아이템의 타입이 음반이라면
+                    recordCnt++; // 보유중인 레코드의 갯수 1개 올려주기
+                    TurnTableManager.instance.changeTurnTablePanel.Invoke();
                 }
 
                 ItemName itemName = itemScript.item.itemName;

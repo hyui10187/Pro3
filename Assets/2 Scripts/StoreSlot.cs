@@ -9,8 +9,12 @@ public class StoreSlot : MonoBehaviour {
     
     public Item item;
 
-    public void ButtonDown() {
+    public void GroceryStoreSlotClick() {
         PanelManager.instance.PurchaseAmountPanelOnOff(item);
     }
 
+    public void EquipmentStoreSlotClick() {
+        PanelManager.instance.PurchasePanelOn(item);
+    }
+    
 }

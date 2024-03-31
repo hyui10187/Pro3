@@ -30,15 +30,13 @@ public class StorageSlot : MonoBehaviour {
     }
 
     public void ButtonDown() {
-        bool canWithdraw = Inventory.instance.AddItem(item); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
-        
-        if(canWithdraw) {
-            if(item.itemType == ItemType.Quest) {
-                QuestManager.instance.questActionIndex++;
-            }
-            AlertManager.instance.SmallAlertMessageOn(item.itemName, 10);
-            StorageManager.instance.RemoveStorageItem(slotNum);
+
+        if(1 < item.itemCount) {
+            PanelManager.instance.WithdrawAmountPanelOnOff(item);
+            return;
         }
+        
+        PanelManager.instance.WithdrawButtonClick(item);
     }
 
 }

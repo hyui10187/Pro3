@@ -109,9 +109,12 @@ public class GameManager : MonoBehaviour {
     public Text equipButtonText;
     public GameObject goToMainConfirmPanel;
     public GameObject sleepConfirmPanel;
-    public GameObject leaveAmountPanel;
-    public Text leaveText;
-    public Text leaveAmountText;
+    public GameObject entrustAmountPanel;
+    public Text entrustText;
+    public Text entrustAmountText;
+    public GameObject withdrawAmountPanel;
+    public Text withdrawText;
+    public Text withdrawAmountText;
     public GameObject purchaseAmountPanel;
     public Text purchaseText;
     public Text purchaseAmountText;
@@ -119,6 +122,8 @@ public class GameManager : MonoBehaviour {
     public Text sellText;
     public Text sellAmountText;
     public GameObject turnTablePanel;
+    public GameObject sellConfirmPanel;
+    public GameObject purchaseConfirmPanel;
 
     [Header("UI - MiddleRight")]
     public GameObject inventoryPanel;
@@ -224,7 +229,7 @@ public class GameManager : MonoBehaviour {
 
     public void Action(GameObject scanObj) {
         
-        if(Player.instance.isDead || isHealing) {
+        if(Player.instance.isDead || isHealing || turnTablePanel.activeSelf) {
             return;
         }
 
@@ -347,6 +352,10 @@ public class GameManager : MonoBehaviour {
             PanelManager.instance.EquipmentStoreOnOff();
         }
 
+        if(objId == 5100) { // 턴테이블에 말하는 대사가 끝나면
+            PanelManager.instance.TurnTablePanelOnOff();
+        }
+
         if(objId == 6200) { // 열쇠로 문을 여는 대사가 끝나면
             scanObject.gameObject.SetActive(false);
             Inventory.instance.isDoorOpen = true;
@@ -438,6 +447,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void SaveButtonClick() {
+        SoundManager.instance.ClickSound();
         SaveData();
         menuPanel.SetActive(false);
         AlertManager.instance.SaveMessageOn();
@@ -459,6 +469,8 @@ public class GameManager : MonoBehaviour {
     }
 
     public void LoadGameButtonClick() {
+        
+        SoundManager.instance.ClickSound();
 
         if(!PlayerPrefs.HasKey("PlayerX")) { // 한번도 저장한 적이 없으면
             NewGameButtonClick(); // 새로운 게임을 시작
@@ -484,6 +496,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void GoToMainMenuButtonClick() { // 메인메뉴로 나가는 메소드
+        SoundManager.instance.ClickSound();
         isLive = false;
         PanelManager.instance.PanelOff(); // 모든 패널 꺼주기
         StopCoroutine("FilterPanelFadeOut");
@@ -492,6 +505,8 @@ public class GameManager : MonoBehaviour {
 
     public void NewGameButtonClick() { // New Game 버튼을 클릭했을때 실행하는 메소드
 
+        SoundManager.instance.ClickSound();
+        
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {
                 Transform targetObject = ItemManager.instance.fieldItemParent.transform.GetChild(i);
@@ -623,7 +638,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public bool IsNPCPanelOn() {
-        if(storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf) {
+        if(storagePanel.activeSelf || turnTablePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf) {
             return true;
         } else {
             return false;
@@ -631,7 +646,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public bool IsPanelOn() {
-        if(equipmentPanel.activeSelf || statsPanel.activeSelf || questPanel.activeSelf || inventoryPanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf || helpPanel.activeSelf) {
+        if(equipmentPanel.activeSelf || statsPanel.activeSelf || questPanel.activeSelf || inventoryPanel.activeSelf || turnTablePanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf || helpPanel.activeSelf) {
             return true;
         } else {
             return false;
@@ -642,6 +657,7 @@ public class GameManager : MonoBehaviour {
         equipmentPanel.SetActive(false);
         statsPanel.SetActive(false);
         inventoryPanel.SetActive(false);
+        turnTablePanel.SetActive(false);
         questPanel.SetActive(false);
         
         storagePanel.SetActive(false);
@@ -649,11 +665,24 @@ public class GameManager : MonoBehaviour {
         equipmentStorePanel.SetActive(false);
         
         itemDescriptionPanel.SetActive(false);
-        leaveAmountPanel.SetActive(false);
+        entrustAmountPanel.SetActive(false);
         purchaseAmountPanel.SetActive(false);
         sellAmountPanel.SetActive(false);
+        sellConfirmPanel.SetActive(false);
+        purchaseConfirmPanel.SetActive(false);
         
         helpPanel.SetActive(false);
+
+        TurnTableManager.instance.StopTurnTable();
+    }
+
+    public void DetailPanelOff() {
+        itemDescriptionPanel.SetActive(false);
+        entrustAmountPanel.SetActive(false);
+        purchaseAmountPanel.SetActive(false);
+        sellAmountPanel.SetActive(false);
+        sellConfirmPanel.SetActive(false);
+        purchaseConfirmPanel.SetActive(false);
     }
     
 }
