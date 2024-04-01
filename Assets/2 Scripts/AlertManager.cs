@@ -50,6 +50,8 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(29, "[모바일 조작키]\n- 미니맵 버튼 : 지도를 펼쳐서 현재\n위치를 확인합니다.\n\n- 말풍선 버튼 : NPC 혹은 사물과 상호\n작용을 합니다.");
         alertData.Add(30, "[PC 조작키]\n- ESC 키 : 메뉴창을 켜거나 끄거나\n혹은 열려있는 모든 창을 닫습니다.\n\n- 스페이스 바 키 : NPC 혹은 사물과 상호\n작용을 합니다.\n\n- E 키 : 장비창을 열거나 닫습니다.");
         alertData.Add(31, "[PC 조작키]\n- I 키 : 인벤토리 창을 열거나 닫습니다.\n\n- A 키 : 장착중인 무기로 적을 공격합니다.\n\n- S 키 : 스탯창을 열거나 닫습니다.\n\n- Q 키 : 퀘스트창을 열거나 닫습니다.");
+        
+        alertData.Add(41, "창고에 보관중인 아이템의 갯수보다\n많이 찾으실 수 없습니다.");
     }
     
     public void SaveMessageOn() {

@@ -98,38 +98,25 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.purchaseAmountPanel.SetActive(false);
     }
     
-    public void SellAmountPanelOnOff(int slotNum, Item sellItem) { // 판매 수량을 선택하는 패널
+    public void SellAmountPanelOn(int slotNum, Item sellItem) { // 판매 수량을 선택하는 패널
         this.slotNum = slotNum;
         item = sellItem;
         amount = 0;
         GameManager.instance.sellText.text = sellItem.itemName + " 아이템을\n얼마나 판매하시겠습니까?";
-        
-        if(!GameManager.instance.sellAmountPanel.activeSelf) {
-            GameManager.instance.sellAmountPanel.SetActive(true);
-        } else {
-            GameManager.instance.sellAmountPanel.SetActive(false);
-        }
+        GameManager.instance.sellAmountPanel.SetActive(true);
     }
     
-    public void SellAmountPanelOnOff() {
+    public void SellAmountPanelOff() {
         amount = 0;
-        if(!GameManager.instance.sellAmountPanel.activeSelf) {
-            GameManager.instance.sellAmountPanel.SetActive(true);
-        } else {
-            GameManager.instance.sellAmountPanel.SetActive(false);
-        }
+        GameManager.instance.sellAmountPanel.SetActive(false);
     }
     
-    public void WithdrawAmountPanelOnOff(Item withdrawItem) {
+    public void WithdrawAmountPanelOn(int slotNum, Item withdrawItem) {
+        this.slotNum = slotNum;
         item = withdrawItem;
         amount = 0;
         GameManager.instance.withdrawText.text = withdrawItem.itemName + " 아이템을\n얼마나 찾으시겠습니까?";
-        
-        if(!GameManager.instance.withdrawAmountPanel.activeSelf) {
-            GameManager.instance.withdrawAmountPanel.SetActive(true);
-        } else {
-            GameManager.instance.withdrawAmountPanel.SetActive(false);
-        }
+        GameManager.instance.withdrawAmountPanel.SetActive(true);
     }
 
     public void WithdrawAmountPanelOff() {
@@ -140,12 +127,22 @@ public class PanelManager : MonoBehaviour {
         WithdrawLogic();
     }
     
-    public void WithdrawButtonClick(Item withdrawItem) {
+    public void WithdrawButtonClick(int slotNum, Item withdrawItem) {
+        amount = 1;
+        this.slotNum = slotNum;
         item = withdrawItem;
         WithdrawLogic();
     }
 
     private void WithdrawLogic() {
+        
+        if(item.itemCount < amount) {
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 41);
+            return;
+        } else if(amount == 0) {
+            return;
+        }
+        
         bool canWithdraw = Inventory.instance.AddItem(item, amount); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
         
         if(canWithdraw) {
@@ -154,11 +151,12 @@ public class PanelManager : MonoBehaviour {
             } else if(item.itemType == ItemType.Record) {
                 Inventory.instance.recordCnt++;
             }
+            StorageManager.instance.WithdrawItem(slotNum, item.itemCount, amount);
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 10);
-            StorageManager.instance.RemoveStorageItem(slotNum);
         } else {
             AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 20);
         }
+        GameManager.instance.withdrawAmountPanel.SetActive(false);
     }
 
     public void SellButtonClick() {
@@ -239,39 +237,30 @@ public class PanelManager : MonoBehaviour {
         }
     }
     
-    public void LeaveAmountPanelOnOff(int slotNum, Item leaveItem) { // 창고에 맡기는 아이템 갯수 설정하는 패널
+    public void EntrustAmountPanelOn(int slotNum, Item entrustItem) { // 창고에 맡기는 아이템 갯수 설정하는 패널
         this.slotNum = slotNum;
-        item = leaveItem; // 파라미터로 받아온 아이템으로 전역변수 item을 갱신해주기
+        item = entrustItem; // 파라미터로 받아온 아이템으로 전역변수 item을 갱신해주기
         amount = 0;
-        GameManager.instance.entrustText.text = leaveItem.itemName + " 아이템을\n얼마나 맡기시겠습니까?";
-
-        if(!GameManager.instance.entrustAmountPanel.activeSelf) {
-            GameManager.instance.entrustAmountPanel.SetActive(true);
-        } else {
-            GameManager.instance.entrustAmountPanel.SetActive(false);
-        }
+        GameManager.instance.entrustText.text = entrustItem.itemName + " 아이템을\n얼마나 맡기시겠습니까?";
+        GameManager.instance.entrustAmountPanel.SetActive(true);
     }
     
-    public void LeaveAmountPanelOnOff() { // 창고에 맡기는 아이템 갯수 설정하는 패널
+    public void EntrustAmountPanelOff() { // 창고에 맡기는 아이템 갯수 설정하는 패널
         amount = 0;
-        if(!GameManager.instance.entrustAmountPanel.activeSelf) {
-            GameManager.instance.entrustAmountPanel.SetActive(true);
-        } else {
-            GameManager.instance.entrustAmountPanel.SetActive(false);
-        }
+        GameManager.instance.entrustAmountPanel.SetActive(false);
     }
 
-    public void LeaveButtonClick() { // 맡기기 버튼을 클릭했을때 호출되는 메소드
-        LeaveLogic();
+    public void EntrustButtonClick() { // 맡기기 버튼을 클릭했을때 호출되는 메소드
+        EntrustLogic();
     }
 
-    public void LeaveButtonClick(int slotNum, Item leaveItem) { // 맡기기 버튼을 클릭했을때 호출되는 메소드
+    public void EntrustButtonClick(int slotNum, Item entrustItem) { // 맡기기 버튼을 클릭했을때 호출되는 메소드
         this.slotNum = slotNum;
-        item = leaveItem; // 파라미터로 받아온 새로운 아이템으로 기존의 전역변수 아이템을 갱신해주기
-        LeaveLogic();
+        item = entrustItem; // 파라미터로 받아온 새로운 아이템으로 기존의 전역변수 아이템을 갱신해주기
+        EntrustLogic();
     }
 
-    private void LeaveLogic() {
+    private void EntrustLogic() {
         if(item.isEquipped) { // 장착중인 아이템을 창고에 맡기려고 할 경우
             AlertManager.instance.BigAlertMessageOn(ItemName.공백, 14); // 알림 메시지 띄워주기
             return;

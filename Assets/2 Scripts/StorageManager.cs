@@ -46,6 +46,17 @@ public class StorageManager : MonoBehaviour {
             storageSlots[i].UpdateSlot();
         }
     }
+    
+    public void WithdrawItem(int index, int itemCount, int amount) {
+
+        if(itemCount < 2 || itemCount == amount) { // 소모 아이템이 1개 있거나 장비 아이템이거나 아이템 갯수를 전부 찾을 경우
+            possessItems.RemoveAt(index); // 창고에 보관중인 아이템을 삭제해주기
+            onChangeItem.Invoke();   
+        } else {
+            possessItems[index].itemCount -= amount;
+            onChangeItem.Invoke();
+        }
+    }
 
     public bool AddItem(Item leaveItem, int leaveAmount) { // 창고 슬롯에 아이템을 추가해주는 메소드
 
