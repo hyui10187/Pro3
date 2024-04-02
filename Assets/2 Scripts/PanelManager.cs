@@ -45,10 +45,11 @@ public class PanelManager : MonoBehaviour {
     }
     
     public void SellConfirmPanelOn(int slotNum, Item sellItem) {
-
         Text confirmText = GameManager.instance.sellConfirmPanel.GetComponentInChildren<Text>();
         confirmText.text = sellItem.itemName + " 아이템을\n정말로 판매하시겠습니까?";
-        
+        PurchaseAmountPanelOff();
+        PurchaseConfirmPanelOff();
+        SellAmountPanelOff();
         GameManager.instance.sellConfirmPanel.SetActive(true);
         this.slotNum = slotNum;
         item = sellItem;
@@ -58,43 +59,29 @@ public class PanelManager : MonoBehaviour {
         GameManager.instance.sellConfirmPanel.SetActive(false);
     }
     
-    public void PurchasePanelOn(Item purchaseItem) {
+    public void PurchaseConfirmPanelOn(Item purchaseItem) {
         Text confirmText = GameManager.instance.purchaseConfirmPanel.GetComponentInChildren<Text>();
         confirmText.text = purchaseItem.itemName + " 아이템을\n구매하시겠습니까?";
-        
+        SellAmountPanelOff();
         GameManager.instance.purchaseConfirmPanel.SetActive(true);
         item = purchaseItem;
         amount = 1;
     }
 
-    public void PurchasePanelOff() {
+    public void PurchaseConfirmPanelOff() {
         GameManager.instance.purchaseConfirmPanel.SetActive(false);
     }
 
-    public void PurchaseAmountPanelOnOff(Item purchaseItem) { // 구매 수량을 선택하는 패널
+    public void PurchaseAmountPanelOn(Item purchaseItem) { // 구매 수량을 선택하는 패널
         item = purchaseItem;
         amount = 0;
-
         GameManager.instance.purchaseText.text = purchaseItem.itemName + " 아이템을\n얼마나 구매하시겠습니까?";
-        
-        if(!GameManager.instance.purchaseAmountPanel.activeSelf) {
-            GameManager.instance.purchaseAmountPanel.SetActive(true);
-        } else {
-            GameManager.instance.purchaseAmountPanel.SetActive(false);
-        }
+        SellAmountPanelOff();
+        SellConfirmPanelOff();
+        GameManager.instance.purchaseAmountPanel.SetActive(true);
     }
 
-    public void PurchaseAmountPanelOnOff() {
-        amount = 0;
-        
-        if(!GameManager.instance.purchaseAmountPanel.activeSelf) {
-            GameManager.instance.purchaseAmountPanel.SetActive(true);
-        } else {
-            GameManager.instance.purchaseAmountPanel.SetActive(false);
-        }
-    }
-
-    private void PurchaseAmountPanelOff() {
+    public void PurchaseAmountPanelOff() {
         GameManager.instance.purchaseAmountPanel.SetActive(false);
     }
     
@@ -103,6 +90,8 @@ public class PanelManager : MonoBehaviour {
         item = sellItem;
         amount = 0;
         GameManager.instance.sellText.text = sellItem.itemName + " 아이템을\n얼마나 판매하시겠습니까?";
+        GameManager.instance.purchaseAmountPanel.SetActive(false);
+        GameManager.instance.purchaseConfirmPanel.SetActive(false);
         GameManager.instance.sellAmountPanel.SetActive(true);
     }
     
@@ -116,6 +105,7 @@ public class PanelManager : MonoBehaviour {
         item = withdrawItem;
         amount = 0;
         GameManager.instance.withdrawText.text = withdrawItem.itemName + " 아이템을\n얼마나 찾으시겠습니까?";
+        EntrustAmountPanelOff();
         GameManager.instance.withdrawAmountPanel.SetActive(true);
     }
 
@@ -151,6 +141,8 @@ public class PanelManager : MonoBehaviour {
             } else if(item.itemType == ItemType.Record) {
                 Inventory.instance.recordCnt++;
             }
+            WithdrawAmountPanelOff();
+            EntrustAmountPanelOff();
             StorageManager.instance.WithdrawItem(slotNum, item.itemCount, amount);
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 10);
         } else {
@@ -230,7 +222,7 @@ public class PanelManager : MonoBehaviour {
             }
             
             PurchaseAmountPanelOff(); // 구매하고 나면 패널 꺼주기
-            PurchasePanelOff();
+            PurchaseConfirmPanelOff();
             amount = 0; // 갯수 0으로 초기화 해주기
         } else if(!canPurchase) {
             AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 8); // 인벤토리가 가득차서 구매 불가 메시지
@@ -242,6 +234,7 @@ public class PanelManager : MonoBehaviour {
         item = entrustItem; // 파라미터로 받아온 아이템으로 전역변수 item을 갱신해주기
         amount = 0;
         GameManager.instance.entrustText.text = entrustItem.itemName + " 아이템을\n얼마나 맡기시겠습니까?";
+        WithdrawAmountPanelOff();
         GameManager.instance.entrustAmountPanel.SetActive(true);
     }
     
@@ -277,6 +270,8 @@ public class PanelManager : MonoBehaviour {
                     QuestManager.instance.questActionIndex--; // 창고에 퀘스트 아이템을 맡길 경우 퀘스트 인덱스 하나 내려주기
                 }
 
+                EntrustAmountPanelOff();
+                WithdrawAmountPanelOff();
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 3); // 창고에 맡기는 메시지
                 Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, amount);
                 

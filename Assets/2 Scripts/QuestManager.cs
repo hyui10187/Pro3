@@ -46,15 +46,15 @@ public class QuestManager : MonoBehaviour {
     private void GenerateQuestList() {
         questList.Add(10, new QuestData("카밀과 대화하기", new int[] { 10000 })); // 카밀
         questList.Add(20, new QuestData("루나와 대화하기", new int[] { 20000 })); // 루나
-        questList.Add(30, new QuestData("루나의 은화 찾아주기", new int[] { 0, 20000 })); // 루나
+        questList.Add(30, new QuestData("루나의 은화 찾아주기", new int[] { 0, 20000 })); // 은화, 루나
         questList.Add(40, new QuestData("촌장의 근심거리 듣기", new int[] { 110000 })); // 촌장
-        questList.Add(50, new QuestData("몬스터 처치하기", new int[] { 0 }));
-        questList.Add(60, new QuestData("촌장의 보답", new int[] { 110000 }));
-        questList.Add(70, new QuestData("조니의 근황 듣기", new int[] { 180000 }));
-        questList.Add(80, new QuestData("콜린의 선물 받기", new int[] { 80000 }));
-        questList.Add(90, new QuestData("써니에게 사탕주기", new int[] { 0, 120000 }));
-        questList.Add(100, new QuestData("대니의 부탁 들어주기", new int[] { 140000, 7300 }));
-        questList.Add(110, new QuestData("대니에게 알려주기", new int[] { 140000 }));
+        questList.Add(50, new QuestData("몬스터 처치하기", new int[] { 0 })); // 몬스터
+        questList.Add(60, new QuestData("촌장의 보답", new int[] { 110000 })); // 촌장
+        questList.Add(70, new QuestData("조니의 근황 듣기", new int[] { 180000 })); // 조니
+        questList.Add(80, new QuestData("콜린의 선물 받기", new int[] { 80000 })); // 콜린
+        questList.Add(90, new QuestData("써니에게 사탕주기", new int[] { 0, 120000 })); // 상자, 써니
+        questList.Add(100, new QuestData("대니의 부탁 들어주기", new int[] { 140000, 7300 })); // 대니, 항아리
+        questList.Add(110, new QuestData("대니에게 알려주기", new int[] { 140000 })); // 대니
         questList.Add(120, new QuestData("퀘스트", new int[] { 0 }));
     }
 
@@ -163,21 +163,24 @@ public class QuestManager : MonoBehaviour {
                 }
                 break;
 
-            case 60: // 촌장의 보답
-                if(questActionIndex == 0) {
+            case 50: // 촌장의 근심거리 듣기
+                if(questActionIndex == 1) { // 촌장과 대화가 끝나면
+                    exclamationPanel.SetActive(true);
                     exclamationPanel.transform.position = npcTransforms[3].position + Vector3.up;
                 }
+                break;
+            
+            case 60: // 촌장의 보답
                 if(questActionIndex == 1) {
                     storeKey.SetActive(true); // 촌장 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
                     GameManager.instance.monsterPanel.SetActive(false); // 몬스터 패널을 꺼주기
+                    exclamationPanel.transform.position = npcTransforms[4].position + Vector3.up;
                 }
                 break;
             
             case 80: // 콜린의 선물받기
                 if(questActionIndex == 1) {
                     chestKey.SetActive(true); // 콜린 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
-                } else {
-                    exclamationPanel.transform.position = npcTransforms[4].position + Vector3.up;
                 }
                 break;
             

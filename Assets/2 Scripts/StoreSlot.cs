@@ -10,11 +10,11 @@ public class StoreSlot : MonoBehaviour {
     public Item item;
 
     public void GroceryStoreSlotClick() {
-        PanelManager.instance.PurchaseAmountPanelOnOff(item);
+        PanelManager.instance.PurchaseAmountPanelOn(item);
     }
 
     public void EquipmentStoreSlotClick() {
-        PanelManager.instance.PurchasePanelOn(item);
+        PanelManager.instance.PurchaseConfirmPanelOn(item);
     }
     
 }
