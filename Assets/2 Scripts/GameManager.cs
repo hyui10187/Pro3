@@ -376,6 +376,7 @@ public class GameManager : MonoBehaviour {
             Transform parentTransform = scanObject.transform.parent;
             Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
             questManager.candy.SetActive(true);
+            questManager.CheckQuest(0);
 
             foreach(Transform childTransform in childTransforms) {
                 if(childTransform.gameObject.name == "Opened") {
