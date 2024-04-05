@@ -52,8 +52,8 @@ public class QuestManager : MonoBehaviour {
         questList.Add(60, new QuestData("촌장의 보답", new int[] { 110000 })); // 촌장
         questList.Add(70, new QuestData("조니의 근황 듣기", new int[] { 180000 })); // 조니
         questList.Add(80, new QuestData("콜린의 선물 받기", new int[] { 80000 })); // 콜린
-        questList.Add(90, new QuestData("상자에서 사탕 얻기", new int[] { 0 })); // 몬스터
-        questList.Add(100, new QuestData("써니에게 사탕주기", new int[] { 120000 })); // 상자, 써니
+        questList.Add(90, new QuestData("상자에서 사탕 얻기", new int[] { 0 })); // 상자
+        questList.Add(100, new QuestData("써니에게 사탕주기", new int[] { 120000 })); // 써니
         questList.Add(110, new QuestData("대니의 부탁 들어주기", new int[] { 140000, 7300 })); // 대니, 항아리
         questList.Add(120, new QuestData("대니에게 알려주기", new int[] { 140000 })); // 대니
         questList.Add(130, new QuestData("퀘스트", new int[] { 0 }));
@@ -68,7 +68,7 @@ public class QuestManager : MonoBehaviour {
         questText.Add(60, " 마을을 위협하는 몬스터들\n을 모두 쓰러뜨렸어. 쉽지\n않은 전투였지만 보람이 있\n네. 촌장님이 보답을 하고 싶\n다고 하니 촌장님을 찾아가\n보자.");
         questText.Add(70, " 촌장님이 잠겨있는 문을 열\n수 있는 열쇠를 주셨어. 아무\n나 들어갈 수 없는 공간이라\n록 허락해 주셨다는 것은 어\n느정도 신임을 얻었다는 것\n이겠지. 그곳에 있는 촌장님\n의 조카인 조니의 근황도 물\n어보자.");
         questText.Add(80, " 여관의 숙박을 담당하는 콜\n린이 나에게 보답을 하고 싶\n다고 하네. 내가 콜린에게\n뭔가 해준것은 없는데 무슨\n보답을 해주려는 것일까?\n우선 콜린을 찾아가보자.");
-        questText.Add(90, " 여관의 숙박을 담당하는 콜\n린이 나에게 보답을 하고 싶\n다고 하네. 내가 콜린에게\n뭔가 해준것은 없는데 무슨\n보답을 해주려는 것일까?\n우선 콜린을 찾아가보자.");
+        questText.Add(90, "  콜린이 나에게 상자를 열 수\n있는 열쇠를 줬어. 아까 조니\n의 근황을 들으러 상점에 방\n문했을때 옆에 상자가 있었\n던것 같아. 혹시 그 상자를\n여는 열쇠일지도 몰라. 한번\n확인해 봐야겠어.");
         questText.Add(100, " 복도처럼 생긴 방에 있는\n꼬마 여자아이 써니는 사탕\n을 먹고 싶다고 했었지. 콜\n린이 준 열쇠로 상자를 열다\n보면 사탕을 발견할 수도 있\n지 않을까? 써니가 그토록\n사탕을 먹고 싶어하니 하나\n선물로 주는 것도 좋을것\n같네.");
         questText.Add(110, " 마을의 주방장인 대니가 나\n에게 부탁을 할것이 있다고\n하네. 예전에 봤을때는 재료\n준비로 인해 엄청 바빠보였\n는데 요리에 관한 부탁을\n하려는 것일까? 우선 대니를\n찾아가보자.");
         questText.Add(120, " 대니의 부탁으로 카리나 옆\n에 있는 항아리에 담긴 정향\n을 가지러 갔어. 그런데 항아\n리가 깨져있잖아? 우선 지나\n다니는 사람들이 다치지 않\n도록 조각을 치우긴 했어.\n대니에게 이 사실을 말하주\n러 가야겠어.");
@@ -201,8 +201,8 @@ public class QuestManager : MonoBehaviour {
             
             case 100: // 써니에게 사탕주기
                 if(questActionIndex == 1) {
+                    exclamationPanel.transform.position = npcTransforms[7].position + Vector3.up; // 대니 머리 위로 느낌표 옮기기
                     int num = Inventory.instance.possessItems.Count;
-                    
                     for(int i = 0; i < num; i++) { // 퀘스트 아이템인 사탕을 인벤토리에서 제거하기
                         if(Inventory.instance.possessItems[i].itemType == ItemType.Quest) {
                             Inventory.instance.RemoveItem(i);
@@ -216,14 +216,22 @@ public class QuestManager : MonoBehaviour {
             
             case 110: // 대니의 부탁 들어주기
                 if(questActionIndex == 1) {
+                    exclamationPanel.transform.position = questPot.transform.position + Vector3.up; // 항아리 위로 느낌표 올리기
                     questPot.transform.GetChild(0).gameObject.SetActive(false); // 멀쩡한 항아리 꺼주기
                     questPot.transform.GetChild(1).gameObject.SetActive(true); // 깨진 항아리 켜주기
                 } else if(questActionIndex == 2) {
                     questPot.SetActive(false); // 깨진 항아리와 대화가 끝나면 꺼주기
+                    exclamationPanel.transform.position = npcTransforms[7].position + Vector3.up; // 대니 머리 위로 느낌표 옮기기
                 }
                 break;
             
-            case 120:
+            case 120: // 대니에게 알려주기
+                if(questActionIndex == 1) {
+                    exclamationPanel.SetActive(false); // 느낌표 꺼주기
+                }
+                break;
+            
+            case 130: // 퀘스트
                 break;
         }
     }
