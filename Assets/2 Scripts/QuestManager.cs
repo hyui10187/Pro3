@@ -104,6 +104,7 @@ public class QuestManager : MonoBehaviour {
     private void NextQuest() {
         questId += 10;
         questActionIndex = 0;
+        SoundManager.instance.PlayQuestSound();
         GameManager.instance.questTitle.text = questList[questId].questName;
         GameManager.instance.questText.text = questText[questId];
     }

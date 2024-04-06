@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MarksAssets.VibrationWebGL;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
@@ -537,6 +538,8 @@ public class Player : MonoBehaviour {
         if(isDead) {
             return;
         }
+        
+        
 
         if(targetPos != Vector2.zero) {
             gameObject.layer = 10; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해주기

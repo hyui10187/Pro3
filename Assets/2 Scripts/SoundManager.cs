@@ -23,6 +23,12 @@ public class SoundManager : MonoBehaviour {
     public AudioClip fireplaceSound;
     public AudioClip waterSound;
     public AudioClip clickSound;
+    public AudioClip buySound;
+    public AudioClip plusSound;
+    public AudioClip consumeSound;
+    public AudioClip equipSound;
+    public AudioClip questSound;
+    public AudioClip panelSound;
 
     private void Awake() {
         instance = this;
@@ -31,12 +37,36 @@ public class SoundManager : MonoBehaviour {
         audioSourceA.playOnAwake = false;
         audioSourceB.playOnAwake = false;
     }
+
+    public void PlayPanelSound() {
+        audioSourceA.PlayOneShot(panelSound);
+    }
+
+    public void PlayQuestSound() {
+        audioSourceA.PlayOneShot(questSound);
+    }
     
-    public void ClickSound() {
+    public void PlayEquipSound() {
+        audioSourceA.PlayOneShot(equipSound);
+    }
+
+    public void PlayConsumeSound() {
+        audioSourceA.PlayOneShot(consumeSound);
+    }
+
+    public void PlayPlusSound() {
+        audioSourceA.PlayOneShot(plusSound);
+    }
+
+    public void PlayBuySound() {
+        audioSourceA.PlayOneShot(buySound);
+    }
+    
+    public void PlayClickSound() {
         audioSourceA.PlayOneShot(clickSound);
     }
     
-    public void TalkSound() {
+    public void PlayTalkSound() {
         audioSourceA.PlayOneShot(talkSound);
     }
     

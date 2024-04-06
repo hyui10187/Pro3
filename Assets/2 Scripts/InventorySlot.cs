@@ -107,10 +107,12 @@ public class InventorySlot : MonoBehaviour {
             if(GameManager.instance.storagePanel.activeSelf && item != null) { // 창고 패널이 켜져있는 상태면
 
                 if(1 < item.itemCount) { // 아이템의 갯수가 2개 이상이면
+                    SoundManager.instance.PlayPlusSound();
                     PanelManager.instance.EntrustAmountPanelOn(slotNum, item); // 맡기는 갯수 설정하는 패널 띄워주기
                     return;
                 }
                 
+                SoundManager.instance.PlayPlusSound();
                 PanelManager.instance.EntrustButtonClick(slotNum, item);
                 return;
             }
@@ -118,10 +120,12 @@ public class InventorySlot : MonoBehaviour {
             if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 잡화상점 패널이 켜져있는 상태라면
 
                 if(1 < item.itemCount) {
+                    SoundManager.instance.PlayPlusSound();
                     PanelManager.instance.SellAmountPanelOn(slotNum, item);
                     return;   
                 }
-
+                
+                SoundManager.instance.PlayPlusSound();
                 PanelManager.instance.SellConfirmPanelOn(slotNum, item);
                 return;
             }
@@ -129,10 +133,12 @@ public class InventorySlot : MonoBehaviour {
             if(GameManager.instance.equipmentStorePanel.activeSelf && item != null) { // 장비상점 패널이 켜져있는 상태라면
 
                 if(1 < item.itemCount) {
+                    SoundManager.instance.PlayPlusSound();
                     PanelManager.instance.SellAmountPanelOn(slotNum, item);
                     return;   
                 }
-
+                
+                SoundManager.instance.PlayPlusSound();
                 PanelManager.instance.SellConfirmPanelOn(slotNum, item);
                 return;
             }
@@ -152,6 +158,7 @@ public class InventorySlot : MonoBehaviour {
                     UseItem();   
                 }
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 4); // 소비 메시지
+                SoundManager.instance.PlayConsumeSound();
                 Inventory.instance.RemoveItem(slotNum);
             }
         }

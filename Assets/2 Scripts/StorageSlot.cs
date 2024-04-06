@@ -32,10 +32,12 @@ public class StorageSlot : MonoBehaviour {
     public void ButtonDown() {
 
         if(1 < item.itemCount) {
+            SoundManager.instance.PlayPlusSound();
             PanelManager.instance.WithdrawAmountPanelOn(slotNum, item);
             return;
         }
         
+        SoundManager.instance.PlayPlusSound();
         PanelManager.instance.WithdrawButtonClick(slotNum, item);
     }
 

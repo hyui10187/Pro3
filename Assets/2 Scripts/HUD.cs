@@ -83,8 +83,7 @@ public class HUD : MonoBehaviour {
                 break;
             
             case InfoType.LongPressBar:
-
-                if(Inventory.instance.isInventorySlotClick) {
+                if(PanelManager.instance.isStoreSlotClick || Inventory.instance.isInventorySlotClick) {
                     slider.value += Time.deltaTime;
                 } else {
                     slider.value = 0;

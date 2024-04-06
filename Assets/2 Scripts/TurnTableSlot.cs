@@ -9,7 +9,7 @@ public class TurnTableSlot : MonoBehaviour {
 
     public void PlayTurnTable() {
         TurnTableManager.instance.PlayTurnTable(recordNum);
-        SoundManager.instance.ClickSound();
+        SoundManager.instance.PlayClickSound();
     }
     
 }

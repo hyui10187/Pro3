@@ -106,6 +106,7 @@ public class GameManager : MonoBehaviour {
     public Text itemDescriptionText;
     public Button consumptionButton;
     public Button equipButton;
+    public Button deleteButton;
     public Text equipButtonText;
     public GameObject goToMainConfirmPanel;
     public GameObject sleepConfirmPanel;
@@ -234,7 +235,7 @@ public class GameManager : MonoBehaviour {
         }
 
         if(!isAction) {
-            SoundManager.instance.TalkSound();
+            SoundManager.instance.PlayTalkSound();
         }
         
         expSlider.SetActive(false);
@@ -448,7 +449,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void SaveButtonClick() {
-        SoundManager.instance.ClickSound();
+        SoundManager.instance.PlayClickSound();
         SaveData();
         menuPanel.SetActive(false);
         AlertManager.instance.SaveMessageOn();
@@ -471,7 +472,7 @@ public class GameManager : MonoBehaviour {
 
     public void LoadGameButtonClick() {
         
-        SoundManager.instance.ClickSound();
+        SoundManager.instance.PlayClickSound();
 
         if(!PlayerPrefs.HasKey("PlayerX")) { // 한번도 저장한 적이 없으면
             NewGameButtonClick(); // 새로운 게임을 시작
@@ -497,7 +498,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void GoToMainMenuButtonClick() { // 메인메뉴로 나가는 메소드
-        SoundManager.instance.ClickSound();
+        SoundManager.instance.PlayClickSound();
         isLive = false;
         PanelManager.instance.PanelOff(); // 모든 패널 꺼주기
         StopCoroutine("FilterPanelFadeOut");
@@ -506,7 +507,7 @@ public class GameManager : MonoBehaviour {
 
     public void NewGameButtonClick() { // New Game 버튼을 클릭했을때 실행하는 메소드
 
-        SoundManager.instance.ClickSound();
+        SoundManager.instance.PlayClickSound();
         
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {

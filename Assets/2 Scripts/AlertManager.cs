@@ -8,15 +8,33 @@ public class AlertManager : MonoBehaviour {
 
     public static AlertManager instance;
 
-    public Dictionary<int, string> alertData;
+    private Dictionary<int, string> alertData;
+    public Dictionary<int, string> helpPanelData;
     
     private void Awake() {
         alertData = new Dictionary<int, string>();
-        GenerateData();
+        helpPanelData = new Dictionary<int, string>();
+        GenerateAlertData();
+        GenerateHelpPanelData();
         instance = this;
     }
 
-    private void GenerateData() {
+    private void GenerateHelpPanelData() {
+        helpPanelData.Add(1, "[도움말]\n- 집 밖에 있을 경우에는 추위로 인해\n체력이 지속적으로 감소합니다.\n\n- 인벤토리창에서 아이템을 길게 누를 경우\n아이템에 대한 설명창을 볼 수 있습니다.\n\n- 화면 왼쪽 상단에 표시된 퀘스트를 따라\n게임을 진행하세요.");
+        helpPanelData.Add(2, "[도움말]\n- 벽난로와 상호작용을 하면 체력을\n회복할 수 있습니다.\n\n- 침대에서 잠을 자게 되면 체력과 마나를\n모두 회복할 수 있습니다.\n\n- 집 밖에 있는 덤불이나 나무 밑동을\n공격하면 재료 아이템을 얻을 수 있습니다.");
+        helpPanelData.Add(3, "[도움말]\n- 광장 혹은 방에 있는 괘종시계와 상호\n작용을 하면 현재 시간을 알 수 있습니다.\n\n- 집 안에는 위험한 공간도 있으니 주의\n하세요.\n\n- 물약중에는 먹으면 즉사하는 것도\n있으니 아이템 설명을 잘 읽어보세요.");
+        helpPanelData.Add(4, "[도움말]\n- 방에 있는 턴테이블에서 보유하고 있는\n음반을 재생할 수 있습니다.\n\n- 잡화상점과 장비상점에서 필요한 물품을\n구매할 수 있습니다.\n\n- 인벤토리가 부족할 경우 창고에 물품을\n보관할 수 있습니다.");
+        helpPanelData.Add(5, "[미니맵]\n- 초록색 : 플레이어 캐릭터입니다.\n\n- 보라색 : 상호작용 할 수 있는 사물입니다.\n\n- 하얀색 : 기능을 가진 NPC 혹은 사물\n입니다.\n\n- 분홍색 : 이동할 수 있는 포인트입니다.");
+        helpPanelData.Add(6, "[미니맵]\n- 파란색 : 획득할 수 있는 아이템입니다.\n\n- 빨간색 : 플레이어에게 피해를 끼칠 수\n있는 몬스터 혹은 장애물입니다.\n\n- 노란색 : 대화할 수 있는 NPC 입니다.");
+        helpPanelData.Add(7, "[모바일 조작키]\n- HP MP 버튼 : 캐릭터의 스탯창을\n열거나 닫습니다.\n\n- 퀘스트 버튼 : 퀘스트창을 열거나 닫습\n니다.\n\n- 퀘스트 화살표 버튼 : 진행중인 퀘스트를\n펼치거나 접습니다.");
+        helpPanelData.Add(8, "[모바일 조작키]\n- FPS 버튼 : 현재 게임의 프레임 수를\n보여줍니다.\n\n- 톱니바퀴 버튼 : 메뉴창을 열거나 닫습\n니다.\n\n- 상자 버튼 : 인벤토리창을 열거나 닫습\n니다.");
+        helpPanelData.Add(9, "[모바일 조작키]\n- 조이스틱 버튼 : 모바일용 가상키를\n켜거나 끕니다.\n\n- 갑옷 버튼 : 장비창을 열거나 닫습니다.\n\n- 무기 버튼 : 장착중인 무기로 적을\n공격을 합니다.");
+        helpPanelData.Add(10, "[모바일 조작키]\n- 미니맵 버튼 : 지도를 펼쳐서 현재\n위치를 확인합니다.\n\n- 말풍선 버튼 : NPC 혹은 사물과 상호\n작용을 합니다.");
+        helpPanelData.Add(11, "[PC 조작키]\n- ESC 키 : 메뉴창을 켜거나 끄거나\n혹은 열려있는 모든 창을 닫습니다.\n\n- 스페이스 바 키 : NPC 혹은 사물과 상호\n작용을 합니다.\n\n- E 키 : 장비창을 열거나 닫습니다.");
+        helpPanelData.Add(12, "[PC 조작키]\n- I 키 : 인벤토리 창을 열거나 닫습니다.\n\n- A 키 : 장착중인 무기로 적을 공격합니다.\n\n- S 키 : 스탯창을 열거나 닫습니다.\n\n- Q 키 : 퀘스트창을 열거나 닫습니다.");
+    }
+
+    private void GenerateAlertData() {
         alertData.Add(0, " 획득");
         alertData.Add(1, "\n아이템을 구매하였습니다.");
         alertData.Add(2, "\n아이템을 판매하였습니다.");
@@ -38,19 +56,6 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(18, "화살을 소지하지 않아서 공격할 수 없습니다.");
         alertData.Add(19, "소지한 아이템의 갯수보다\n많이 판매하실 수 없습니다.");
         alertData.Add(20, "인벤토리가 가득차서\n아이템을 찾을 수 없습니다.");
-        
-        alertData.Add(21, "[도움말]\n- 집 밖에 있을 경우에는 추위로 인해\n체력이 지속적으로 감소합니다.\n\n- 인벤토리창에서 아이템을 길게 누를 경우\n아이템에 대한 설명창을 볼 수 있습니다.\n\n- 화면 왼쪽 상단에 표시된 퀘스트를 따라\n게임을 진행하세요.");
-        alertData.Add(22, "[도움말]\n- 벽난로와 상호작용을 하면 체력을\n회복할 수 있습니다.\n\n- 침대에서 잠을 자게 되면 체력과 마나를\n모두 회복할 수 있습니다.\n\n- 집 밖에 있는 덤불이나 나무 밑동을\n공격하면 재료 아이템을 얻을 수 있습니다.");
-        alertData.Add(23, "[도움말]\n- 광장 혹은 방에 있는 괘종시계와 상호\n작용을 하면 현재 시간을 알 수 있습니다.\n\n- 집 안에는 위험한 공간도 있으니 주의\n하세요.\n\n- 물약중에는 먹으면 즉사하는 것도\n있으니 아이템 설명을 잘 읽어보세요.");
-        alertData.Add(24, "[미니맵]\n- 초록색 : 플레이어 캐릭터입니다.\n\n- 보라색 : 상호작용 할 수 있는 사물입니다.\n\n- 하얀색 : 기능을 가진 NPC 혹은 사물\n입니다.\n\n- 분홍색 : 이동할 수 있는 포인트입니다.");
-        alertData.Add(25, "[미니맵]\n- 파란색 : 획득할 수 있는 아이템입니다.\n\n- 빨간색 : 플레이어에게 피해를 끼칠 수\n있는 몬스터 혹은 장애물입니다.\n\n- 노란색 : 대화할 수 있는 NPC 입니다.");
-        alertData.Add(26, "[모바일 조작키]\n- HP MP 버튼 : 캐릭터의 스탯창을\n열거나 닫습니다.\n\n- 퀘스트 버튼 : 퀘스트창을 열거나 닫습\n니다.\n\n- 퀘스트 화살표 버튼 : 진행중인 퀘스트를\n펼치거나 접습니다.");
-        alertData.Add(27, "[모바일 조작키]\n- FPS 버튼 : 현재 게임의 프레임 수를\n보여줍니다.\n\n- 톱니바퀴 버튼 : 메뉴창을 열거나 닫습\n니다.\n\n- 상자 버튼 : 인벤토리창을 열거나 닫습\n니다.");
-        alertData.Add(28, "[모바일 조작키]\n- 조이스틱 버튼 : 모바일용 가상키를\n켜거나 끕니다.\n\n- 갑옷 버튼 : 장비창을 열거나 닫습니다.\n\n- 무기 버튼 : 장착중인 무기로 적을\n공격을 합니다.");
-        alertData.Add(29, "[모바일 조작키]\n- 미니맵 버튼 : 지도를 펼쳐서 현재\n위치를 확인합니다.\n\n- 말풍선 버튼 : NPC 혹은 사물과 상호\n작용을 합니다.");
-        alertData.Add(30, "[PC 조작키]\n- ESC 키 : 메뉴창을 켜거나 끄거나\n혹은 열려있는 모든 창을 닫습니다.\n\n- 스페이스 바 키 : NPC 혹은 사물과 상호\n작용을 합니다.\n\n- E 키 : 장비창을 열거나 닫습니다.");
-        alertData.Add(31, "[PC 조작키]\n- I 키 : 인벤토리 창을 열거나 닫습니다.\n\n- A 키 : 장착중인 무기로 적을 공격합니다.\n\n- S 키 : 스탯창을 열거나 닫습니다.\n\n- Q 키 : 퀘스트창을 열거나 닫습니다.");
-        
         alertData.Add(41, "창고에 보관중인 아이템의 갯수보다\n많이 찾으실 수 없습니다.");
     }
     
