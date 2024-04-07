@@ -539,7 +539,7 @@ public class Player : MonoBehaviour {
             return;
         }
         
-        
+        VibrationWebGL.Vibrate(100); // 플레이어가 대미지를 입으면 진동 피드백을 주기
 
         if(targetPos != Vector2.zero) {
             gameObject.layer = 10; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해주기
