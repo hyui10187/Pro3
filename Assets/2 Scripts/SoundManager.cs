@@ -29,6 +29,8 @@ public class SoundManager : MonoBehaviour {
     public AudioClip equipSound;
     public AudioClip questSound;
     public AudioClip panelSound;
+    public AudioClip quitSound;
+    public AudioClip keySound;
 
     private void Awake() {
         instance = this;
@@ -36,6 +38,14 @@ public class SoundManager : MonoBehaviour {
         audioSourceB = gameObject.AddComponent<AudioSource>();
         audioSourceA.playOnAwake = false;
         audioSourceB.playOnAwake = false;
+    }
+
+    public void PlayKeySound() {
+        audioSourceA.PlayOneShot(keySound);
+    }
+    
+    public void PlayQuitSound() {
+        audioSourceA.PlayOneShot(quitSound);
     }
 
     public void PlayPanelSound() {

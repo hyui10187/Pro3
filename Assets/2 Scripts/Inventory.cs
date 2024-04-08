@@ -247,8 +247,8 @@ public class Inventory : MonoBehaviour {
                 
                 AlertManager.instance.AcquisitionMessageOn(itemNameStr, 0); // 아이템을 획득하였다는 메시지를 띄워주기
                 SoundManager.instance.PlayAcquisitionSound();
-                Destroy(itemScript.gameObject);
-                //fieldItems.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
+                //Destroy(itemScript.gameObject);
+                itemScript.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
 
             } else { // 인벤토리가 꽉 차있다면
                 AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 5);

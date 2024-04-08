@@ -19,6 +19,7 @@ public class QuestManager : MonoBehaviour {
     public GameObject offButton;
     public GameObject onButton;
     public GameObject exclamationPanel;
+    public GameObject minimapExclamationPanel;
 
     [Header("Quest Item")]
     public GameObject coin;
@@ -105,12 +106,31 @@ public class QuestManager : MonoBehaviour {
         questId += 10;
         questActionIndex = 0;
         SoundManager.instance.PlayQuestSound();
+        StopCoroutine("QuestTextFlicker");
+        StartCoroutine("QuestTextFlicker");
         GameManager.instance.questTitle.text = questList[questId].questName;
         GameManager.instance.questText.text = questText[questId];
     }
 
-    private void ControlExclamationPanel() {
-        exclamationPanel.transform.position = npcTransforms[questActionIndex].position + Vector3.up;
+    private IEnumerator QuestTextFlicker() {
+        Color[] colors = { Color.white, Color.gray };
+
+        for (int i = 0; i < 6; i++) {
+            GameManager.instance.currentQuestText.color = colors[i % 2];
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private void ControlExclamationPanel(int index) {
+
+        if(0 < index) {
+            npcTransforms[index -1].gameObject.SetActive(true); // 그전에 꺼둔 NPC의 아이콘을 켜주기
+        }
+
+        npcTransforms[index].GetComponentInChildren<GameObject>();
+        exclamationPanel.transform.position = npcTransforms[index].position + Vector3.up;
+        minimapExclamationPanel.transform.position = npcTransforms[index].position;
+        minimapExclamationPanel.SetActive(true);
     }
 
     public void ControlObject() {
@@ -119,10 +139,10 @@ public class QuestManager : MonoBehaviour {
             
             case 10: // 카밀과 대화하기
                 if(questActionIndex == 0) {
-                    ControlExclamationPanel();
+                    ControlExclamationPanel(0);
                     exclamationPanel.SetActive(true);
                 } else { // 카밀과 대화가 끝나면 루나 머리위로 느낌표를 옮겨주기
-                    ControlExclamationPanel();
+                    ControlExclamationPanel(1);
                 }
                 break;
             
@@ -139,7 +159,7 @@ public class QuestManager : MonoBehaviour {
                 }
 
                 if(questActionIndex == 1) {
-                    ControlExclamationPanel();
+                    //ControlExclamationPanel();
                 }
                 if(questActionIndex == 2) { // 코인, 루나와 대화를 마치고 나면
                     int num = Inventory.instance.possessItems.Count;
@@ -152,7 +172,7 @@ public class QuestManager : MonoBehaviour {
                     }
                     
                     GameManager.instance.curExp += 50;
-                    ControlExclamationPanel();
+                    //ControlExclamationPanel();
                     ring.SetActive(true); // 루나 앞에 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
