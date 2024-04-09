@@ -56,7 +56,8 @@ public class AlertManager : MonoBehaviour {
         alertData.Add(18, "화살을 소지하지 않아서 공격할 수 없습니다.");
         alertData.Add(19, "소지한 아이템의 갯수보다\n많이 판매하실 수 없습니다.");
         alertData.Add(20, "인벤토리가 가득차서\n아이템을 찾을 수 없습니다.");
-        alertData.Add(41, "창고에 보관중인 아이템의 갯수보다\n많이 찾으실 수 없습니다.");
+        alertData.Add(21, "창고에 보관중인 아이템의 갯수보다\n많이 찾으실 수 없습니다.");
+        alertData.Add(22, "퀘스트 조건을 달성하였습니다.");
     }
     
     public void SaveMessageOn() {

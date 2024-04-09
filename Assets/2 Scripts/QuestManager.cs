@@ -121,17 +121,17 @@ public class QuestManager : MonoBehaviour {
         }
     }
 
-    private void ControlExclamationPanel(int index) {
-
-        if(0 < index) {
-            npcTransforms[index -1].gameObject.SetActive(true); // 그전에 꺼둔 NPC의 아이콘을 켜주기
-        }
-
-        npcTransforms[index].GetComponentInChildren<GameObject>();
-        exclamationPanel.transform.position = npcTransforms[index].position + Vector3.up;
-        minimapExclamationPanel.transform.position = npcTransforms[index].position;
-        minimapExclamationPanel.SetActive(true);
-    }
+    // private void ControlExclamationPanel(int index) {
+    //
+    //     if(0 < index) {
+    //         npcTransforms[index -1].gameObject.SetActive(true); // 그전에 꺼둔 NPC의 아이콘을 켜주기
+    //     }
+    //
+    //     npcTransforms[index].GetComponentInChildren<GameObject>();
+    //     exclamationPanel.transform.position = npcTransforms[index].position + Vector3.up;
+    //     minimapExclamationPanel.transform.position = npcTransforms[index].position;
+    //     minimapExclamationPanel.SetActive(true);
+    // }
 
     public void ControlObject() {
 
@@ -139,10 +139,10 @@ public class QuestManager : MonoBehaviour {
             
             case 10: // 카밀과 대화하기
                 if(questActionIndex == 0) {
-                    ControlExclamationPanel(0);
+                    //ControlExclamationPanel(0);
                     exclamationPanel.SetActive(true);
                 } else { // 카밀과 대화가 끝나면 루나 머리위로 느낌표를 옮겨주기
-                    ControlExclamationPanel(1);
+                    //ControlExclamationPanel(1);
                 }
                 break;
             
@@ -188,6 +188,7 @@ public class QuestManager : MonoBehaviour {
 
             case 50: // 몬스터 처치하기
                 if(questActionIndex == 1) {
+                    AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 22); // 몬스터를 전부 처지하면 알림 메시지 띄워주기
                     exclamationPanel.SetActive(true);
                     exclamationPanel.transform.position = npcTransforms[2].position + Vector3.up; // 촌장 머리 위로 느낌표 옮기기
                 }

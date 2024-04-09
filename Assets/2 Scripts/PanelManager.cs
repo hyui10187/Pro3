@@ -153,7 +153,7 @@ public class PanelManager : MonoBehaviour {
     private void WithdrawLogic() {
         
         if(item.itemCount < amount) {
-            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 41);
+            AlertManager.instance.BigAlertMessageOn(ItemName.공백, 21);
             return;
         } else if(amount == 0) {
             return;
