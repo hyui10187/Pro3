@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MarksAssets.VibrationWebGL;
+//using MarksAssets.VibrationWebGL;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
@@ -41,9 +41,10 @@ public class Player : MonoBehaviour {
     public bool rightUp;
     public VirtualJoystick virtualJoystick;
 
+    [Header("ETC")]
     public RangedWeapon rangedWeapon;
-
     public bool isFlipInit;
+    public Admob admob;
     
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
@@ -212,6 +213,8 @@ public class Player : MonoBehaviour {
         GameManager.instance.curHealth = GameManager.instance.maxHealth;
         GameManager.instance.curMana = GameManager.instance.maxMana;
         PanelManager.instance.SleepConfirmOff();
+        admob.ShowInterstitialAd();
+        
         StopCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
         StartCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
         
@@ -539,7 +542,7 @@ public class Player : MonoBehaviour {
             return;
         }
         
-        VibrationWebGL.Vibrate(100); // 플레이어가 대미지를 입으면 진동 피드백을 주기
+        //VibrationWebGL.Vibrate(100); // 플레이어가 대미지를 입으면 진동 피드백을 주기
 
         if(targetPos != Vector2.zero) {
             gameObject.layer = 10; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해주기

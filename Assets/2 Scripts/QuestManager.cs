@@ -121,17 +121,21 @@ public class QuestManager : MonoBehaviour {
         }
     }
 
-    // private void ControlExclamationPanel(int index) {
-    //
-    //     if(0 < index) {
-    //         npcTransforms[index -1].gameObject.SetActive(true); // 그전에 꺼둔 NPC의 아이콘을 켜주기
-    //     }
-    //
-    //     npcTransforms[index].GetComponentInChildren<GameObject>();
-    //     exclamationPanel.transform.position = npcTransforms[index].position + Vector3.up;
-    //     minimapExclamationPanel.transform.position = npcTransforms[index].position;
-    //     minimapExclamationPanel.SetActive(true);
-    // }
+    private void ControlExclamationPanel(int index) {
+    
+        if(0 < index) {
+            Transform[] prevTransforms = npcTransforms[index - 1].GetComponentsInChildren<Transform>(true);
+            prevTransforms[1].gameObject.SetActive(true); // 그전에 꺼둔 NPC의 미니맵 아이콘을 켜주기
+        }
+
+        Transform[] curTransforms = npcTransforms[index].GetComponentsInChildren<Transform>(true);
+        curTransforms[1].gameObject.SetActive(false); // 현재 NPC의 미니맵 아이콘을 꺼주기
+        
+        exclamationPanel.transform.position = npcTransforms[index].position + Vector3.up; // 메인 카메라에 보이는 느낌표 아이콘
+        minimapExclamationPanel.transform.position = npcTransforms[index].position; // 미니맵 카메라에 보이는 느낌표 아이콘
+        exclamationPanel.SetActive(true);
+        minimapExclamationPanel.SetActive(true);
+    }
 
     public void ControlObject() {
 
@@ -139,17 +143,17 @@ public class QuestManager : MonoBehaviour {
             
             case 10: // 카밀과 대화하기
                 if(questActionIndex == 0) {
-                    //ControlExclamationPanel(0);
+                    ControlExclamationPanel(0);
                     exclamationPanel.SetActive(true);
                 } else { // 카밀과 대화가 끝나면 루나 머리위로 느낌표를 옮겨주기
-                    //ControlExclamationPanel(1);
+                    ControlExclamationPanel(1);
                 }
                 break;
             
             case 20: // 루나와 대화하기
                 if(questActionIndex == 1 && coin != null) { // 루나와 대화가 끝나고 나면
                     coin.SetActive(true); // 동전 켜주기
-                    exclamationPanel.transform.position = coin.transform.position + Vector3.up;
+                    ControlExclamationPanel(2);
                 }
                 break;
                 
@@ -159,7 +163,7 @@ public class QuestManager : MonoBehaviour {
                 }
 
                 if(questActionIndex == 1) {
-                    //ControlExclamationPanel();
+                    ControlExclamationPanel(1);
                 }
                 if(questActionIndex == 2) { // 코인, 루나와 대화를 마치고 나면
                     int num = Inventory.instance.possessItems.Count;
@@ -172,7 +176,7 @@ public class QuestManager : MonoBehaviour {
                     }
                     
                     GameManager.instance.curExp += 50;
-                    //ControlExclamationPanel();
+                    ControlExclamationPanel(3);
                     ring.SetActive(true); // 루나 앞에 꺼져있던 반지를 켜줘서 플레이어가 먹을 수 있도록 해주기
                 }
                 break;
@@ -180,6 +184,7 @@ public class QuestManager : MonoBehaviour {
             case 40: // 촌장의 근심거리 듣기
                 if(questActionIndex == 1) { // 촌장과 대화가 끝나면
                     exclamationPanel.SetActive(false);
+                    minimapExclamationPanel.SetActive(false);
                     SpawnManager.instance.GenerateEnemy(); // 몬스터를 전부 켜주기
                     GameManager.instance.monsterPanel.SetActive(true); // 몬스터 패널을 켜주기
                     sword.SetActive(true); // 촌장 앞에 꺼져있던 무기를 켜줘서 플레이어가 먹을 수 있도록 해주기
@@ -189,8 +194,7 @@ public class QuestManager : MonoBehaviour {
             case 50: // 몬스터 처치하기
                 if(questActionIndex == 1) {
                     AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 22); // 몬스터를 전부 처지하면 알림 메시지 띄워주기
-                    exclamationPanel.SetActive(true);
-                    exclamationPanel.transform.position = npcTransforms[2].position + Vector3.up; // 촌장 머리 위로 느낌표 옮기기
+                    ControlExclamationPanel(3);
                 }
                 break;
             
@@ -198,32 +202,32 @@ public class QuestManager : MonoBehaviour {
                 if(questActionIndex == 1) {
                     storeKey.SetActive(true); // 촌장 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
                     GameManager.instance.monsterPanel.SetActive(false); // 몬스터 패널을 꺼주기
-                    exclamationPanel.transform.position = npcTransforms[3].position + Vector3.up; // 조니 머리 위로 느낌표 옮기기
+                    ControlExclamationPanel(4);
                 }
                 break;
             
             case 70: // 조니의 근황 듣기
                 if(questActionIndex == 1) {
-                    exclamationPanel.transform.position = npcTransforms[4].position + Vector3.up; // 콜린 머리 위로 느낌표 옮기기
+                    ControlExclamationPanel(5); // 콜린 머리 위로 느낌표 옮기기
                 }
                 break;
             
             case 80: // 콜린의 선물받기
                 if(questActionIndex == 1) {
                     chestKey.SetActive(true); // 콜린 앞에 꺼져있던 열쇠를 켜줘서 플레이어가 먹을 수 있도록 해주기
-                    exclamationPanel.transform.position = npcTransforms[5].position + Vector3.up; // 사탕상자 위로 느낌표 옮기기
+                    ControlExclamationPanel(6); // 사탕상자 위로 느낌표 옮기기
                 }
                 break;
             
             case 90: // 상자에서 사탕 얻기
                 if(questActionIndex == 1) {
-                    exclamationPanel.transform.position = npcTransforms[6].position + Vector3.up; // 써니 머리 위로 느낌표 옮기기
+                    ControlExclamationPanel(7); // 써니 머리 위로 느낌표 옮기기
                 }
                 break;
             
             case 100: // 써니에게 사탕주기
                 if(questActionIndex == 1) {
-                    exclamationPanel.transform.position = npcTransforms[7].position + Vector3.up; // 대니 머리 위로 느낌표 옮기기
+                    ControlExclamationPanel(8); // 대니 머리 위로 느낌표 옮기기
                     int num = Inventory.instance.possessItems.Count;
                     for(int i = 0; i < num; i++) { // 퀘스트 아이템인 사탕을 인벤토리에서 제거하기
                         if(Inventory.instance.possessItems[i].itemType == ItemType.Quest) {
@@ -238,18 +242,19 @@ public class QuestManager : MonoBehaviour {
             
             case 110: // 대니의 부탁 들어주기
                 if(questActionIndex == 1) {
-                    exclamationPanel.transform.position = questPot.transform.position + Vector3.up; // 항아리 위로 느낌표 올리기
+                    ControlExclamationPanel(9); // 항아리 위로 느낌표 올리기
                     questPot.transform.GetChild(0).gameObject.SetActive(false); // 멀쩡한 항아리 꺼주기
                     questPot.transform.GetChild(1).gameObject.SetActive(true); // 깨진 항아리 켜주기
                 } else if(questActionIndex == 2) {
                     questPot.SetActive(false); // 깨진 항아리와 대화가 끝나면 꺼주기
-                    exclamationPanel.transform.position = npcTransforms[7].position + Vector3.up; // 대니 머리 위로 느낌표 옮기기
+                    ControlExclamationPanel(8); // 대니 머리 위로 느낌표 옮기기
                 }
                 break;
             
             case 120: // 대니에게 알려주기
                 if(questActionIndex == 1) {
                     exclamationPanel.SetActive(false); // 느낌표 꺼주기
+                    minimapExclamationPanel.SetActive(false); // 미니맵 느낌표 꺼주기
                 }
                 break;
             

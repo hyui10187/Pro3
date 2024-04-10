@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MarksAssets.VibrationWebGL;
+//using MarksAssets.VibrationWebGL;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -187,6 +187,7 @@ public class GameManager : MonoBehaviour {
     public int frozenDamage;
     public int obstacleDamage;
     public GameObject scanObject; // 스캔한 게임 오브젝트
+    public Admob admob; // 구글 애드몹
 
     public int objId;
     public bool isNpc;
@@ -362,14 +363,14 @@ public class GameManager : MonoBehaviour {
             scanObject.gameObject.SetActive(false);
             Inventory.instance.isDoorOpen = true;
             SoundManager.instance.PlayKeySound();
-            VibrationWebGL.Vibrate(100); // 문이 열리면 진동 피드백을 주기
+            //VibrationWebGL.Vibrate(100); // 문이 열리면 진동 피드백을 주기
 
         } else if(objId == 6300) { // 열쇠로 상자를 여는 대사가 끝나면
             scanObject.gameObject.SetActive(false);
             Transform parentTransform = scanObject.transform.parent;
             Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
             SoundManager.instance.PlayKeySound();
-            VibrationWebGL.Vibrate(100); // 상자가 열리면 진동 피드백을 주기
+            //VibrationWebGL.Vibrate(100); // 상자가 열리면 진동 피드백을 주기
 
             foreach(Transform childTransform in childTransforms) {
                 if(childTransform.gameObject.name == "Candy") {
