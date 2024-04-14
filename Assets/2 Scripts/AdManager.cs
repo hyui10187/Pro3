@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GoogleMobileAds.Api;
+using UnityEngine.UI;
 
-public class Admob : MonoBehaviour {
+public class AdManager : MonoBehaviour {
 
     private BannerView bannerView; // 배너광고
     private InterstitialAd interstitialAd; // 전면광고
@@ -19,7 +20,6 @@ public class Admob : MonoBehaviour {
     
     public void Start() {
         MobileAds.Initialize((InitializationStatus initStatus) => { });
-        RequestBanner();
     }
 
     public void ShowInterstitialAd() {
@@ -38,19 +38,40 @@ public class Admob : MonoBehaviour {
         }
     }
 
-    private void RequestBanner() { // 배너광고를 로드하는 메소드
+    public void GenerateBannerAds() { // 배너 광고를 생성하는 메소드
         if(bannerView != null) { // 이미 배너가 존재할 경우
             bannerView.Destroy(); // 배너를 삭제해주기
             bannerView = null;
         }
-
-        //AdSize adaptiveSize = AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
-        AdSize adSize = new AdSize(300, 200);
         
-        bannerView = new BannerView(adUnitId, adSize, 0, -400);
-
+        bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Center);
         AdRequest adRequest = new AdRequest();
         bannerView.LoadAd(adRequest);
+        AdjustBannerAds();
+    }
+
+    private void AdjustBannerAds() {
+        GameObject bannerParent = GameObject.Find("BANNER(Clone)"); // 배너 광고의 부모 게임 오브젝트를 찾기
+        bannerParent.name = "BannerParent"; // 배너 광고의 부모 게임 오브젝트의 이름을 변경해주기
+        Canvas bannerCanvas = bannerParent.GetComponent<Canvas>();
+        bannerCanvas.sortingOrder = 0; // 배너 광고가 속한 Canvas의 Sort Order를 0으로 변경하기
+        
+        Image bannerImage = bannerParent.GetComponentInChildren<Image>(); // 배너 광고의 이미지 컴포넌트를 가져오기
+        RectTransform rectTransform = bannerImage.GetComponent<RectTransform>();
+        //Instantiate(bannerImage.gameObject, bannerObjectParent.transform); // 배너 광고를 복제하기
+
+        // Rect Transform 컴포넌트의 Pivot을 좌측 상단으로 설정하기
+        rectTransform.pivot = new Vector2(0f, 1); // Rect Transform 컴포넌트의 Pivot X와 Y를 수정
+        rectTransform.anchorMin = new Vector2(0f, 1); // Rect Transform 컴포넌트의 Anchors의 Min X와 Y를 수정
+        rectTransform.anchorMax = new Vector2(0f, 1); // Rect Transform 컴포넌트의 Anchors의 Max X와 Y를 수정
+        
+        rectTransform.anchoredPosition = new Vector2(15, -260); // Rect Transform 컴포넌트의 Pos X와 Pos Y를 수정
+        rectTransform.sizeDelta = new Vector2(250, 50); // Rect Transform 컴포넌트의 Width와 Height를 수정
+
+        Button bannerButton = bannerImage.GetComponent<Button>();
+        Navigation navigation = new Navigation();
+        navigation.mode = Navigation.Mode.None;
+        bannerButton.navigation = navigation;
     }
 
     private void LoadInterstitialAd() { // 전면광고를 로드하는 메소드

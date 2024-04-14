@@ -9,20 +9,15 @@ public class FPS : MonoBehaviour {
 
     public static FPS instance;
     
-    public Text uiText; // 표시할 Text
-    public float fps; // fps 프레임
-    public float worstFps;
+    public Text uiText; // FPS를 표시할 Text 부분
+    public float fps; // 화면의 초당 프레임 수
 
     private void Awake() {
-        worstFps = 100;
         instance = this;
     }
 
     private void Update() {
-        fps = 1 / Time.deltaTime;
-        if(fps < worstFps) {
-            worstFps = fps;
-        }
+        fps = 1 / Time.smoothDeltaTime;
     }
 
     public void ControlFPSPanel() {

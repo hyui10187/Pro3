@@ -187,7 +187,7 @@ public class GameManager : MonoBehaviour {
     public int frozenDamage;
     public int obstacleDamage;
     public GameObject scanObject; // 스캔한 게임 오브젝트
-    public Admob admob; // 구글 애드몹
+    public AdManager adManager; // 구글 애드몹
 
     public int objId;
     public bool isNpc;
@@ -515,6 +515,7 @@ public class GameManager : MonoBehaviour {
     public void NewGameButtonClick() { // New Game 버튼을 클릭했을때 실행하는 메소드
 
         SoundManager.instance.PlayClickSound();
+        adManager.GenerateBannerAds();
         
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {

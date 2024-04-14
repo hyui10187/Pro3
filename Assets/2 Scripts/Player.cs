@@ -44,7 +44,7 @@ public class Player : MonoBehaviour {
     [Header("ETC")]
     public RangedWeapon rangedWeapon;
     public bool isFlipInit;
-    public Admob admob;
+    public AdManager adManager;
     
     private Rigidbody2D rigid;
     private Vector3 dirVec; // 플레이어의 방향에 대한 변수
@@ -213,7 +213,7 @@ public class Player : MonoBehaviour {
         GameManager.instance.curHealth = GameManager.instance.maxHealth;
         GameManager.instance.curMana = GameManager.instance.maxMana;
         PanelManager.instance.SleepConfirmOff();
-        admob.ShowInterstitialAd();
+        adManager.ShowInterstitialAd(); // 전면광고 재생
         
         StopCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
         StartCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
