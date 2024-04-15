@@ -7,7 +7,11 @@ using UnityEngine.UI;
 
 public class AdManager : MonoBehaviour {
 
-    private BannerView bannerView; // 배너광고
+    public Transform groceryStoreSlotHolder; // 잡화상점 슬롯들의 부모
+    public Transform equipmentSlotHolder; // 장비상점 슬롯들의 부모
+    public Transform turnTableSlotHolder; // 턴테이블 슬롯들의 부모
+
+    private BannerView bannerAd; // 배너광고
     private InterstitialAd interstitialAd; // 전면광고
 
     #if UNITY_ANDROID
@@ -21,6 +25,10 @@ public class AdManager : MonoBehaviour {
     public void Start() {
         MobileAds.Initialize((InitializationStatus initStatus) => { });
     }
+    
+    public void ShowIBannerAd() {
+        GenerateBannerAds();
+    }
 
     public void ShowInterstitialAd() {
         LoadInterstitialAd();
@@ -28,29 +36,48 @@ public class AdManager : MonoBehaviour {
         StartCoroutine("ShowInterstitialAdCoroutine");
     }
 
-    private IEnumerator ShowInterstitialAdCoroutine() { // 전면광고를 표시해주기 위한 코루틴
+    private void AdjustInterstitialAds() { // 전면 광고의 위치와 크기를 수정해주는 메소드
+        GameObject interstitialParent = GameObject.Find("1024x768(Clone)"); // 전면 광고의 부모 게임 오브젝트를 찾기
+        interstitialParent.name = "InterstitialParent"; // 전면 광고의 부모 게임 오브젝트의 이름을 변경해주기
+
+        Navigation navigationOption = new Navigation();
+        navigationOption.mode = Navigation.Mode.None;
+
+        Button[] buttons = interstitialParent.GetComponentsInChildren<Button>();
+        buttons[0].navigation = navigationOption;
+        Button closeButton = buttons[1];
+        closeButton.navigation = navigationOption;
+        Text closeButtonText = closeButton.GetComponentInChildren<Text>();
+        closeButtonText.text = "광고 닫기"; // 광고 닫는 버튼의 Text를 수정해주기
+    }
+
+    private IEnumerator ShowInterstitialAdCoroutine() { // 전면 광고를 표시해주기 위한 코루틴
         while(!interstitialAd.CanShowAd()) {
             yield return new WaitForSeconds(0.2f);
         }
 
         if(interstitialAd != null) {
-            interstitialAd.Show();   
+            interstitialAd.Show();
+            AdjustInterstitialAds();
         }
     }
 
-    public void GenerateBannerAds() { // 배너 광고를 생성하는 메소드
-        if(bannerView != null) { // 이미 배너가 존재할 경우
-            bannerView.Destroy(); // 배너를 삭제해주기
-            bannerView = null;
-        }
+    private void GenerateBannerAds() { // 배너 광고를 생성하는 메소드
+        // if(bannerAd != null) { // 이미 배너가 존재할 경우
+        //     bannerAd.Destroy(); // 배너를 삭제해주기
+        //     bannerAd = null;
+        // }
         
-        bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Center);
+        bannerAd = new BannerView(adUnitId, AdSize.Banner, AdPosition.Center);
         AdRequest adRequest = new AdRequest();
-        bannerView.LoadAd(adRequest);
-        AdjustBannerAds();
+        bannerAd.LoadAd(adRequest);
+
+        if(bannerAd != null) {
+            AdjustBannerAds();   
+        }
     }
 
-    private void AdjustBannerAds() {
+    private void AdjustBannerAds() { // 배너 광고의 위치와 크기를 수정해주는 메소드
         GameObject bannerParent = GameObject.Find("BANNER(Clone)"); // 배너 광고의 부모 게임 오브젝트를 찾기
         bannerParent.name = "BannerParent"; // 배너 광고의 부모 게임 오브젝트의 이름을 변경해주기
         Canvas bannerCanvas = bannerParent.GetComponent<Canvas>();
@@ -69,9 +96,28 @@ public class AdManager : MonoBehaviour {
         rectTransform.sizeDelta = new Vector2(250, 50); // Rect Transform 컴포넌트의 Width와 Height를 수정
 
         Button bannerButton = bannerImage.GetComponent<Button>();
-        Navigation navigation = new Navigation();
-        navigation.mode = Navigation.Mode.None;
-        bannerButton.navigation = navigation;
+        Navigation navigationOption = new Navigation();
+        navigationOption.mode = Navigation.Mode.None;
+        bannerButton.navigation = navigationOption;
+
+        GameObject groceryStoreBanner = Instantiate(bannerImage.gameObject, groceryStoreSlotHolder);
+        groceryStoreBanner.name = "GroceryStoreBanner";
+        GameObject equipmentStoreBanner = Instantiate(bannerImage.gameObject, equipmentSlotHolder);
+        equipmentStoreBanner.name = "EquipmentStoreBanner";
+        GameObject turnTableBanner = Instantiate(bannerImage.gameObject, turnTableSlotHolder);
+        turnTableBanner.name = "TurnTableBanner";
+
+        RectTransform groceryStoreBannerTransform = groceryStoreBanner.GetComponent<RectTransform>();
+        groceryStoreBannerTransform.pivot = new Vector2(0, 0.8f);
+        groceryStoreBannerTransform.localScale = new Vector3(1, 0.85f, 1);
+        
+        RectTransform equipmentStoreBannerTransform = equipmentStoreBanner.GetComponent<RectTransform>();
+        equipmentStoreBannerTransform.pivot = new Vector2(0, 0.8f);
+        equipmentStoreBannerTransform.localScale = new Vector3(1, 0.85f, 1);
+        
+        RectTransform turnTableBannerTransform = turnTableBanner.GetComponent<RectTransform>();
+        turnTableBannerTransform.pivot = new Vector2(0, 0.8f);
+        turnTableBannerTransform.localScale = new Vector3(1, 0.85f, 1);
     }
 
     private void LoadInterstitialAd() { // 전면광고를 로드하는 메소드
@@ -94,7 +140,7 @@ public class AdManager : MonoBehaviour {
         }
     }
 
-    private void CloseInterstitialAd() { // 전면광고를 닫는 버튼을 클릭했을때 호출할 메소드
+    private void CloseInterstitialAd() { // 전면 광고를 닫는 버튼을 클릭했을때 호출할 메소드
         
     }
     

@@ -367,7 +367,7 @@ public class PanelManager : MonoBehaviour {
     }
 
     public void FPSOnOff() {
-        
+
         if(Player.instance.isDead || !GameManager.instance.isLive) {
             return;
         }
