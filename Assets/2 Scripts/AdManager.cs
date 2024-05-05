@@ -11,23 +11,62 @@ public class AdManager : MonoBehaviour {
     public Transform equipmentSlotHolder; // 장비상점 슬롯들의 부모
     public Transform turnTableSlotHolder; // 턴테이블 슬롯들의 부모
 
-    private BannerView bannerAd; // 배너광고
+    //private BannerView bannerAd; // 배너광고
     private InterstitialAd interstitialAd; // 전면광고
+    private NativeAd nativeAd;
+    private bool nativeAdLoaded;
+    private GameObject icon;
+
+    public RawImage adImage; // 광고 이미지를 표시할 UI RawImage
+    private RewardedAd rewardedAd;
 
     #if UNITY_ANDROID
         private string adUnitId = "ca-app-pub-3940256099942544/1033173712";
     #elif UNITY_IPHONE
       private string adUnitId = "ca-app-pub-3940256099942544/4411468910";
     #else
-      private string adUnitId = "unused";
+      //private string adUnitId = "unused";
+        private string adUnitId = "ca-app-pub-3940256099942544/1033173712";
     #endif
     
     public void Start() {
         MobileAds.Initialize((InitializationStatus initStatus) => { });
+        ShowIBannerAd();
+        //RequestNativeAd();
+        //LoadRewardedAd();
+        //GenerateBannerAds();
+    }
+
+    public void LoadRewardedAd() {
+        // Clean up the old ad before loading a new one.
+        if(rewardedAd != null) {
+            rewardedAd.Destroy();
+            rewardedAd = null;
+        }
+
+        // create our request used to load the ad.
+        var adRequest = new AdRequest();
+    
+        // send the request to load the ad.
+        RewardedAd.Load("ca-app-pub-3940256099942544/5224354917", adRequest, (RewardedAd ad, LoadAdError error) => {
+                // if error is not null, the load request failed.
+                if(error != null || ad == null) {
+                    return;
+                }
+                rewardedAd = ad;
+            });
     }
     
+    public void ShowRewardedAd() {
+        const string rewardMsg = "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
+    
+        if(rewardedAd != null && rewardedAd.CanShowAd()) {
+            rewardedAd.Show((Reward reward) => {  });
+        }
+    }
+
     public void ShowIBannerAd() {
-        GenerateBannerAds();
+        Invoke("GenerateBannerAds", 4f);
     }
 
     public void ShowInterstitialAd() {
@@ -68,17 +107,44 @@ public class AdManager : MonoBehaviour {
         //     bannerAd = null;
         // }
         
-        bannerAd = new BannerView(adUnitId, AdSize.Banner, AdPosition.Center);
+        //adUnitId = ca-app-pub-9657195435454128/8512104085 // 고급광고 ID
+        //adUnitId = "ca-app-pub-9657195435454128/7960408507"; // 배너광고 ID
+        //adUnitId = "ca-app-pub-3940256099942544/1033173712"; // 테스트 ID
+        
+        BannerView bannerAd = new BannerView(adUnitId, AdSize.Banner, 15, 260);
         AdRequest adRequest = new AdRequest();
         bannerAd.LoadAd(adRequest);
 
-        if(bannerAd != null) {
-            AdjustBannerAds();   
-        }
+        //AdjustBannerAds();
+        //Invoke("AdjustBannerAds", 5f);
+        // if(bannerAd != null) {
+        //     AdjustBannerAds();   
+        // }
+    }
+    
+    private void RequestNativeAd() { // 고급 광고를 요청하는 메소드
+        AdLoader adLoader = new AdLoader.Builder("ca-app-pub-3940256099942544/1033173712").ForNativeAd().Build();
+        AdRequest adRequest = new AdRequest();
+        
+        adLoader.LoadAd(adRequest);
+        adLoader.OnNativeAdLoaded += HandleNativeAdLoaded;
+        adLoader.OnAdFailedToLoad  += HandleNativeAdFailedToLoad;
+        Debug.Log("adLoader: " + adLoader);
+    }
+    
+    private void HandleNativeAdFailedToLoad(object sender, AdFailedToLoadEventArgs args) {
+        Debug.Log("Native ad failed to load: ");
+    }
+    
+    private void HandleNativeAdLoaded(object sender, NativeAdEventArgs args) {
+        nativeAd = args.nativeAd;
+        Debug.Log("Native ad loaded:");
+        Debug.Log("nativeAd: " + nativeAd);
     }
 
     private void AdjustBannerAds() { // 배너 광고의 위치와 크기를 수정해주는 메소드
         GameObject bannerParent = GameObject.Find("BANNER(Clone)"); // 배너 광고의 부모 게임 오브젝트를 찾기
+        //ButtonBehaviour bannerParent = FindObjectOfType<ButtonBehaviour>();
         bannerParent.name = "BannerParent"; // 배너 광고의 부모 게임 오브젝트의 이름을 변경해주기
         Canvas bannerCanvas = bannerParent.GetComponent<Canvas>();
         bannerCanvas.sortingOrder = 0; // 배너 광고가 속한 Canvas의 Sort Order를 0으로 변경하기
@@ -127,7 +193,8 @@ public class AdManager : MonoBehaviour {
         }
 
         AdRequest adRequest = new AdRequest(); // create our request used to load the ad.
-
+        //adUnitId = "ca-app-pub-9657195435454128/4242656780"; // 전면광고 ID
+        
         // send the request to load the ad.
         InterstitialAd.Load(adUnitId, adRequest, (InterstitialAd ad, LoadAdError error) => {
                 if(ad == null || error != null) // if error is not null, the load request failed.

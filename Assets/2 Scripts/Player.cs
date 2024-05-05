@@ -213,8 +213,8 @@ public class Player : MonoBehaviour {
         GameManager.instance.curHealth = GameManager.instance.maxHealth;
         GameManager.instance.curMana = GameManager.instance.maxMana;
         PanelManager.instance.SleepConfirmOff();
-        adManager.ShowInterstitialAd(); // 전면 광고 호출하기
-        adManager.ShowIBannerAd();
+        //adManager.ShowInterstitialAd(); // 전면 광고 호출하기
+        //adManager.ShowIBannerAd();
         
         StopCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
         StartCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());

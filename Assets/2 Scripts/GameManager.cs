@@ -315,7 +315,7 @@ public class GameManager : MonoBehaviour {
         currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
         
         if(scanObject.CompareTag("Heal")) {
-            adManager.ShowInterstitialAd();
+            //adManager.ShowInterstitialAd();
             FadeOutAndInEffect();
             SoundManager.instance.PlayHealSound();
             curHealth = maxHealth;
@@ -516,8 +516,8 @@ public class GameManager : MonoBehaviour {
     public void NewGameButtonClick() { // 새로하기 버튼을 클릭했을때 실행하는 메소드
 
         SoundManager.instance.PlayClickSound();
-        adManager.ShowIBannerAd(); // 배너 광고 호출하기
-        
+        //adManager.ShowIBannerAd(); // 배너 광고 호출하기
+
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
             for(int i = 0; i < ItemManager.instance.fieldItemParent.transform.childCount; i++) {
                 Transform targetObject = ItemManager.instance.fieldItemParent.transform.GetChild(i);
