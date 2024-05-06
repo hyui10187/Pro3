@@ -58,7 +58,7 @@ public class AdManager : MonoBehaviour {
     }
     
     public void ShowRewardedAd() {
-        const string rewardMsg = "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
+        //const string rewardMsg = "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
     
         if(rewardedAd != null && rewardedAd.CanShowAd()) {
             rewardedAd.Show((Reward reward) => {  });
@@ -128,13 +128,13 @@ public class AdManager : MonoBehaviour {
         
         adLoader.LoadAd(adRequest);
         adLoader.OnNativeAdLoaded += HandleNativeAdLoaded;
-        adLoader.OnAdFailedToLoad  += HandleNativeAdFailedToLoad;
+        //adLoader.OnAdFailedToLoad  += HandleNativeAdFailedToLoad;
         Debug.Log("adLoader: " + adLoader);
     }
     
-    private void HandleNativeAdFailedToLoad(object sender, AdFailedToLoadEventArgs args) {
-        Debug.Log("Native ad failed to load: ");
-    }
+    // private void HandleNativeAdFailedToLoad(object sender, AdFailedToLoadEventArgs args) {
+    //     Debug.Log("Native ad failed to load: ");
+    // }
     
     private void HandleNativeAdLoaded(object sender, NativeAdEventArgs args) {
         nativeAd = args.nativeAd;
