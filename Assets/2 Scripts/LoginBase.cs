@@ -22,7 +22,7 @@ public class LoginBase : MonoBehaviour {
 
     protected void GuideForIncorrectlyEnteredData(Image image, string msg) {
         message.text = msg;
-        image.color = Color.red;
+        image.color = Color.red; // InputField 색상을 빨간색으로 표시해주기
     }
 
     protected bool IsFieldDataEmpty(Image image, string field, string result) {

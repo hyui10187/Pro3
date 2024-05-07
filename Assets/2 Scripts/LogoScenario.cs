@@ -16,8 +16,8 @@ public class LogoScenario : MonoBehaviour {
     }
 
     private void SystemSetup() {
-        Application.runInBackground = true; // 활성화되지 않은 상태에서도 게임이 계속 진행
-        Screen.sleepTimeout = SleepTimeout.NeverSleep; // 화면이 거지지 않도록 설정
+        Application.runInBackground = true; // 활성화되지 않은 상태에서도 게임이 계속 진행되도록
+        Screen.sleepTimeout = SleepTimeout.NeverSleep; // 화면이 꺼지지 않도록 설정
         progress.Play(OnAfterProgress); // 로딩 애니메이션 시작, 재생 완료시 OnAfterProgress 메소드 실행
     }
 

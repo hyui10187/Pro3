@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
-public enum SceneNames { LoadingScene, MainScene, LoginScene }
+public enum SceneNames { LoadingScene, MainScene, LoginScene, LobbyScene }
 
 public enum InputFieldType { 아이디, 비밀번호, 비밀번호확인, 이메일 }
 

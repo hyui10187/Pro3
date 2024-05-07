@@ -42,8 +42,10 @@ public class Login : LoginBase { // MonoBehaviour 클래스가 아니라 LoginBa
         Backend.BMember.CustomLogin(id, pw, callback => {
             response = true; // 서버로부터 응답이 오면 로그인 로딩 애니메이션은 꺼주기
             
-            if(callback.IsSuccess()) {
+            if(callback.IsSuccess()) { // 로그인 성공시
                 SetMessage($"{idInputField.text}님 환영합니다.");
+                ChangeSceneManager.LoadScene(SceneNames.LobbyScene);
+
             } else {
                 loginBtn.interactable = true; // 로그인에 실패했을 경우에는 다시 로그인을 해야하니 로그인 버튼을 다시 활성화 해주기
                 string message = string.Empty;
