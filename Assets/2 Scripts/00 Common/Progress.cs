@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -36,5 +35,5 @@ public class Progress : MonoBehaviour {
         
         action?.Invoke(); // 파라미터로 받은 action이 null이 아니면 action 메소드 실행
     }
-    
+
 }

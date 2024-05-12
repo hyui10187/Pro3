@@ -27,7 +27,7 @@ public class HUD : MonoBehaviour {
                 float maxHealth = GameManager.instance.maxHealth;
                 slider.value = curHealth / maxHealth;
                 break;
-            
+
             case InfoType.HealthText:
                 uiText.text = GameManager.instance.curHealth + " / " + GameManager.instance.maxHealth;
                 break;

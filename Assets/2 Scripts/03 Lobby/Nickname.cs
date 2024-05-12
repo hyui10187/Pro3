@@ -24,7 +24,7 @@ public class Nickname : LoginBase {
         // 닉네임 변경에 실패해 에러 메시지를 출력한 상태에서
         // 닉네임 변경 팝업을 닫았다가 열 수 있기 때문에 상태를 초기화
         ResetUI(nicknameImage);
-        SetMessage("닉네임을 입력하세요");
+        SetMessage("변경할 닉네임을 입력하세요");
     }
 
     public void OnClickUpdateNickname() {
@@ -34,7 +34,7 @@ public class Nickname : LoginBase {
         if(IsFieldDataEmpty(nicknameImage, nicknameInputField.text, "Nickname")) return;
 
         nicknameUpdateButton.interactable = false;
-        SetMessage("닉네임 변경중입니다...");
+        SetMessage("닉네임을 변경중입니다...");
         UpdateNickname();
     }
 

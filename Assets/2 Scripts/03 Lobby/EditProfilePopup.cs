@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class EditProfilePopup : MonoBehaviour {
 
     [SerializeField]
-    private Text nicknameText;
+    private TextMeshProUGUI nicknameText;
     
     [SerializeField]
-    private Text gamerIdText;
+    private TextMeshProUGUI gamerIdText;
 
     public void UpdateNickname() {
         nicknameText.text = UserInfo.Data.nickname == null ? UserInfo.Data.gamerId : UserInfo.Data.nickname;
