@@ -47,7 +47,7 @@ public class Player : MonoBehaviour {
     public AdManager adManager;
     
     private Rigidbody2D rigid;
-    private Vector3 dirVec; // 플레이어의 방향에 대한 변수
+    public Vector3 dirVec; // 플레이어의 방향에 대한 변수
     public GameObject scanObj;
     public Animator anim;
     private SpriteRenderer sprite;
@@ -232,14 +232,22 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public void PlayerScan() { // 플레이어가 NPC한테 가까이 다가갔을때 NPC 이름을 띄워주기 위한 메소드
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position, boxSize * 2, 0);
+    private void PlayerScan() { // 플레이어가 NPC한테 가까이 다가갔을때 NPC 이름을 띄워주기 위한 메소드
+        
+        Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 1f, LayerMask.GetMask("Object", "NPC", "Animal"));
+                                                                                                               // 네번째 파라미터는 스캔할 Layer
+        if(rayHit.collider != null) { // 찾아낸 게임 오브젝트가 뭐라도 있으면
+            scanObj = rayHit.collider.gameObject;
+        } else {
+            scanObj = null;
+        }
 
-        foreach(Collider2D collision in collider2Ds) {
-            ObjData objData = collision.GetComponent<ObjData>();
+        if(scanObj) {
+            ObjData objData = scanObj.GetComponent<ObjData>();
             if(objData != null && objData.isNpc) {
-                GameManager.instance.npcNamePanel.transform.position = Camera.main.WorldToScreenPoint(collision.transform.position + new Vector3(0, 1, 0));
-                GameManager.instance.npcNamePanelText.text = collision.gameObject.name;
+                GameManager.instance.npcNamePanel.transform.position = Camera.main.WorldToScreenPoint(scanObj.transform.position + new Vector3(0, 1, 0));
+                GameManager.instance.npcNamePanelText.text = scanObj.gameObject.name;
                 GameManager.instance.npcNamePanel.SetActive(true);
 
                 if(!GameManager.instance.talkPanel.activeSelf) {
@@ -251,6 +259,9 @@ public class Player : MonoBehaviour {
                 GameManager.instance.npcNamePanel.SetActive(false);
                 GameManager.instance.talkInformMessage.SetActive(false);
             }
+        } else {
+            GameManager.instance.npcNamePanel.SetActive(false);
+            GameManager.instance.talkInformMessage.SetActive(false);
         }
     }
     
@@ -385,15 +396,6 @@ public class Player : MonoBehaviour {
             anim.SetInteger("dirY", 0);
             Vector2 moveVec = isHorizonMove ? new Vector2(h, 0) : new Vector2(0, v); // 대각선 이동을 막아주기 위한 로직
             rigid.velocity = moveVec * moveSpeed;
-        }
-        
-        Debug.DrawRay(rigid.position, dirVec * 1f, new Color(0, 2f, 0)); // 첫번째 파라미터는 광선을 쏘는 위치, 두번째 파라미터는 광선을 쏘는 방향, 세번째 파라미터는 광선의 길이
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 1f, LayerMask.GetMask("Object", "NPC", "Animal"));
-                                                                                                               // 네번째 파라미터는 스캔할 Layer
-        if(rayHit.collider != null) { // 찾아낸 게임 오브젝트가 뭐라도 있으면
-            scanObj = rayHit.collider.gameObject;
-        } else {
-            scanObj = null;
         }
     }
 

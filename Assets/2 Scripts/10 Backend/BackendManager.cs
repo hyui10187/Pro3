@@ -1,8 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using BackEnd; // 뒤끝 SDK
+using BackEnd;
+using TMPro;
+using UnityEngine.UI; // 뒤끝 SDK
 
 public class BackendManager : MonoBehaviour {
     
@@ -14,6 +13,7 @@ public class BackendManager : MonoBehaviour {
     private void Update() {
         if(Backend.IsInitialized) {
             Backend.AsyncPoll();
+            
         }
     }
 
@@ -25,7 +25,7 @@ public class BackendManager : MonoBehaviour {
         } else {
             Debug.Log($"초기화 실패 : {bro}"); // 초기화 실패시 statusCode 400대 에러 발생
         }
-        
+
     }
     
 }
