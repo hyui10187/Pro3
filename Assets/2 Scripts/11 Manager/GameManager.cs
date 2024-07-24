@@ -178,6 +178,10 @@ public class GameManager : MonoBehaviour {
     public bool isHouse; // 집에 들어갔는지 체크하기 위한 플래그값
     public bool isHealing;
     public bool canEatQuestItem = true; // 퀘스트 아이템을 먹을 수 있는지 플래그값
+    
+    [Header("Tile")]
+    public GameObject[] iceInfinite;
+    public GameObject[] treeInfinite;
 
     [Header("Etc")]
     public GameObject globalLight;
@@ -187,7 +191,7 @@ public class GameManager : MonoBehaviour {
     public int frozenDamage;
     public int obstacleDamage;
     public GameObject scanObject; // 스캔한 게임 오브젝트
-    public AdManager adManager; // 구글 애드몹
+    //public AdManager adManager; // 구글 애드몹
 
     public int objId;
     public bool isNpc;
@@ -312,15 +316,16 @@ public class GameManager : MonoBehaviour {
         timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
         SoundManager.instance.StopClockSound();
         talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
-        currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려줌
+        currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려주기
         
         if(scanObject.CompareTag("Heal")) {
-            //adManager.ShowInterstitialAd();
             FadeOutAndInEffect();
             SoundManager.instance.PlayHealSound();
             curHealth = maxHealth;
             return;
-        } else if(scanObject.CompareTag("Bed")) {
+        }
+        
+        if(scanObject.CompareTag("Bed")) {
             isAction = true;
             PanelManager.instance.SleepConfirmOn();
             return;
@@ -480,6 +485,10 @@ public class GameManager : MonoBehaviour {
     public void LoadGameButtonClick() {
         
         SoundManager.instance.PlayClickSound();
+        for(int i = 0; i < iceInfinite.Length; i++) {
+            iceInfinite[i].transform.position = new Vector3(0, 0, 0);
+            treeInfinite[i].transform.position = new Vector3(0, 0, 0);
+        }
 
         if(!PlayerPrefs.HasKey("PlayerX")) { // 한번도 저장한 적이 없으면
             NewGameButtonClick(); // 새로운 게임을 시작
@@ -533,7 +542,7 @@ public class GameManager : MonoBehaviour {
             Inventory.instance.possessItems.Clear(); // 보유한 아이템 전부 삭제하기
             Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
         }
-        
+
         player.transform.position = Vector3.zero;
         maxHealth = 100;
         curHealth = maxHealth; // 체력 초기화
@@ -557,7 +566,19 @@ public class GameManager : MonoBehaviour {
         InitGame();
     }
 
+    private void ResetTile()
+    {
+        for(int i = 0; i < iceInfinite.Length; i++) // 빙판 타일과 나무 타일을 원래 위치로 돌려주기
+        {
+            iceInfinite[i].transform.position = Vector3.zero;
+            treeInfinite[i].transform.position = Vector3.zero;
+        }
+    }
+    
     private void InitGame() {
+
+        Invoke("ResetTile", 1.5f);
+        
         questManager.ControlObject();
         isLive = true;
         Player.instance.isDead = false;
