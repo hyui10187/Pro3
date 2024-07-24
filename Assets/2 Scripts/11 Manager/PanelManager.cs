@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Mime;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -491,14 +492,21 @@ public class PanelManager : MonoBehaviour {
     
     public void InventoryOnOff() {
         
-        if(Player.instance.isDead || !GameManager.instance.isLive) {
+        if(Player.instance.isDead || !GameManager.instance.isLive)
             return;
-        }
-        
-        if(!GameManager.instance.inventoryPanel.activeSelf) {
+
+        if(!GameManager.instance.inventoryPanel.activeSelf) { // 인벤토리 패널이 꺼져있는 상태이면
             GameManager.instance.inventoryPanel.SetActive(true);
-        } else {
-            GameManager.instance.inventoryPanel.SetActive(false);
+            GameManager.instance.inventoryPanel.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f); // 먼저 인벤토리 패널의 크기를 줄여주기
+            GameManager.instance.inventoryPanel.transform.DOScale(1, 1) // 첫번째 파라미터: 최종 크기, 두번째 파라미터: 걸리는 시간
+                .SetEase(Ease.OutElastic);
+
+        } else { // 인벤토리 패널이 켜져있는 상태이면
+            GameManager.instance.inventoryPanel.transform.DOScale(0.2f, 0.15f)
+                .SetEase(Ease.Linear)
+                .OnComplete(() => { // 인벤토리 패널이 작아지는게 끝나면
+                    GameManager.instance.inventoryPanel.SetActive(false); // 인벤토리 패널 꺼주기
+                });
         }
         SoundManager.instance.PlayPanelSound();
     }
