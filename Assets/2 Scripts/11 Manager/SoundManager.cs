@@ -3,9 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour {
+public enum AudioClipName
+{
+    Attack, Acquisition, Clock, Dead, Door, Heal, LevelUp, Alert, Talk, Stair, FirePlace,
+    Water, Click, Buy, Plus, Consume, Equip, Quest, Panel, Quit, Key
+}
+
+public class SoundManager : MonoBehaviour
+{
 
     public static SoundManager instance;
+
+    [SerializeField]
+    private AudioClip[] audioClips;
+    
+    private Queue<AudioSource> audioSourceQueue;
+    
+    [SerializeField]
+    private AudioSource audioSourcePrefab;
     
     public AudioSource audioSourceA;
     public AudioSource audioSourceB;
@@ -32,12 +47,45 @@ public class SoundManager : MonoBehaviour {
     public AudioClip quitSound;
     public AudioClip keySound;
 
-    private void Awake() {
+    private void Awake()
+    {
         instance = this;
+        DontDestroyOnLoad(gameObject);
+        audioSourceQueue = new Queue<AudioSource>();
+
         audioSourceA = gameObject.AddComponent<AudioSource>();
         audioSourceB = gameObject.AddComponent<AudioSource>();
         audioSourceA.playOnAwake = false;
         audioSourceB.playOnAwake = false;
+    }
+
+    private void PlaySound(AudioClipName audioClipName)
+    {
+
+        if(audioSourceQueue.Count < 1) // 모든 Audio Source가 사용중인 상태이면
+        {
+            GenerateAudioSource(); // 새로운 Audio Source를 생성해주기
+        }
+        
+        AudioSource remainAudioSource = audioSourceQueue.Dequeue();
+        remainAudioSource.clip = audioClips[(int)audioClipName];
+        remainAudioSource.gameObject.SetActive(true);
+        remainAudioSource.Play();
+        
+        StartCoroutine(RetrieveAudioSource(remainAudioSource, audioClips[(int)audioClipName]));
+    }
+
+    private IEnumerator RetrieveAudioSource(AudioSource audioSource, AudioClip audioClip)
+    {
+        yield return new WaitForSeconds(audioClip.length); // AudioClip이 전부 재생되기를 기다렸다가
+        audioSource.gameObject.SetActive(false); // Audio Source 꺼주기
+        audioSourceQueue.Enqueue(audioSource);
+    }
+
+    private void GenerateAudioSource()
+    {
+        AudioSource newAudioSource = Instantiate(audioSourcePrefab, transform);
+        audioSourceQueue.Enqueue(newAudioSource);
     }
 
     public void PlayKeySound() {
