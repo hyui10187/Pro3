@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-//using MarksAssets.VibrationWebGL;
+using MarksAssets.VibrationWebGL;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
@@ -43,15 +43,18 @@ public class Player : MonoBehaviour {
 
     [Header("ETC")]
     public RangedWeapon rangedWeapon;
+    public GameObject area;
     public bool isFlipInit;
-    public AdManager adManager;
+    //public AdManager adManager;
     
     private Rigidbody2D rigid;
     public Vector3 dirVec; // 플레이어의 방향에 대한 변수
     public GameObject scanObj;
     public Animator anim;
     private SpriteRenderer sprite;
-    
+
+    public Action OnSleepHandler;
+
     private void Awake() {
         instance = this;
         rigid = GetComponent<Rigidbody2D>();
@@ -67,6 +70,8 @@ public class Player : MonoBehaviour {
         if(curTime > 0) {
             curTime -= Time.deltaTime;
         }
+
+        area.transform.position = transform.position;
         
         JoystickTouch();
         PlayerMove();
@@ -196,30 +201,15 @@ public class Player : MonoBehaviour {
         }
         GameManager.instance.Action(scanObj); // GameManager한테 스캔한 게임 오브젝트를 파라미터로 던져주기
     }
-    
+
     public void PlayerSleep() {
-
-        float curGameTime = GameManager.instance.curGameTime; // 현재 게임시간
-        
-        int sleepHour = Mathf.FloorToInt(curGameTime / 3600) % 24;  // 플레이어가 잠에 든 시간
-        int sleepMin = Mathf.FloorToInt((curGameTime % 3600) / 60); // 플레이어가 잠에 든 분
-
-        int wakeUpHour = 7 + 24; // 다음날 오전 7시에 일어나도록
-        int wakeUpMin = 0;
-
-        float timeToNextMorning = ((wakeUpHour - sleepHour) * 3600) + ((wakeUpMin - sleepMin) * 60);
-        GameManager.instance.curGameTime += timeToNextMorning;
-        SoundManager.instance.PlayHealSound();
-        GameManager.instance.curHealth = GameManager.instance.maxHealth;
-        GameManager.instance.curMana = GameManager.instance.maxMana;
-        PanelManager.instance.SleepConfirmOff();
+        SoundManager.instance.PlaySound(AudioClipName.Heal);
         //adManager.ShowInterstitialAd(); // 전면 광고 호출하기
         //adManager.ShowIBannerAd();
-        
-        StopCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
-        StartCoroutine(GameManager.instance.FilterPanelFadeOutAndIn());
-        
+
         Invoke("PlayerDirFlip", 1.5f);
+
+        OnSleepHandler?.Invoke();
     }
 
     private void PlayerDirFlip() {
@@ -250,7 +240,7 @@ public class Player : MonoBehaviour {
                 GameManager.instance.npcNamePanelText.text = scanObj.gameObject.name;
                 GameManager.instance.npcNamePanel.SetActive(true);
 
-                if(!GameManager.instance.talkPanel.activeSelf) {
+                if(!GameManager.instance.talkPanel.activeSelf && !GameManager.instance.IsPanelOn()) {
                     GameManager.instance.talkInformMessage.SetActive(true);   
                 } else {
                     GameManager.instance.talkInformMessage.SetActive(false);
@@ -272,7 +262,7 @@ public class Player : MonoBehaviour {
         }
         
         if(!Inventory.instance.equipSword && !Inventory.instance.equipBow) { // 무기를 장착하고 있지 않으면
-            SoundManager.instance.PlayAlertSound();
+            SoundManager.instance.PlaySound(AudioClipName.Alert);
             AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 6); // 공격불가 알림메시지 띄워주기
             return;
         }
@@ -280,7 +270,7 @@ public class Player : MonoBehaviour {
         if(Inventory.instance.equipSword) { // 소드를 장착하고 공격할 경우
             anim.SetTrigger("attack");
             anim.SetBool("isAttack", true);
-            SoundManager.instance.PlayAttackSound();
+            SoundManager.instance.PlaySound(AudioClipName.Attack);
             curTime = coolTime; // 쿨타임을 초기화 해줌
             isAttack = true;
 
@@ -406,12 +396,12 @@ public class Player : MonoBehaviour {
         }
 
         if(other.gameObject.CompareTag("HouseEnter")) { // 플레이어가 집으로 들어가면
-            SoundManager.instance.PlayDoorSound();
+            SoundManager.instance.PlaySound(AudioClipName.Door);
             transform.position = GameManager.instance.housePos.position; // 건물 안의 위치로 이동시킴
             GameManager.instance.isHouse = true; // 집으로 들어갔다는 플래그 값을 올려줌
 
         } else if(other.gameObject.CompareTag("FieldEnter")) { // 플레이어가 필드로 나가면
-            SoundManager.instance.PlayStairSound();
+            SoundManager.instance.PlaySound(AudioClipName.Stair);
             transform.position = GameManager.instance.winterFieldPos.position; // 건물 밖의 위치로 이동시킴
             GameManager.instance.isHouse = false; // 집으로 들어갔다는 플래그 값을 내려줌
             
@@ -440,20 +430,20 @@ public class Player : MonoBehaviour {
 
         for(int i = 1; i < GameManager.instance.downStairPos.Length; i++) { // 계단을 이용했을때 이동로직
             if(other.gameObject.name == "DownStair " + i) {
-                SoundManager.instance.PlayStairSound();
+                SoundManager.instance.PlaySound(AudioClipName.Stair);
                 transform.position = GameManager.instance.downStairPos[i].position;
             } else if(other.gameObject.name == "UpStair " + i) {
-                SoundManager.instance.PlayStairSound();
+                SoundManager.instance.PlaySound(AudioClipName.Stair);
                 transform.position = GameManager.instance.upStairPos[i].position;
             }
         }
 
         for(int i = 1; i < GameManager.instance.downLadderPos.Length; i++) { // 사다리를 이용했을때 이동로직
             if(other.gameObject.name == "DownLadder " + i) {
-                SoundManager.instance.PlayStairSound();
+                SoundManager.instance.PlaySound(AudioClipName.Stair);
                 transform.position = GameManager.instance.downLadderPos[i].position;
             } else if(other.gameObject.name == "UpLadder " + i) {
-                SoundManager.instance.PlayStairSound();
+                SoundManager.instance.PlaySound(AudioClipName.Stair);
                 transform.position = GameManager.instance.upLadderPos[i].position;
             }
         }
@@ -494,7 +484,7 @@ public class Player : MonoBehaviour {
         
         for(int i = 1; i < GameManager.instance.doorInPos.Length; i++) { // 문을 이용했을때 이동로직
             if(other.gameObject.name == "DoorIn " + i) {
-                SoundManager.instance.PlayDoorSound();
+                SoundManager.instance.PlaySound(AudioClipName.Door);
                 transform.position = GameManager.instance.doorInPos[i].position;
             } else if(other.gameObject.name == "DoorOut " + i) {
                 transform.position = GameManager.instance.doorOutPos[i].position;
@@ -502,21 +492,21 @@ public class Player : MonoBehaviour {
         }
         
         if(other.CompareTag("FireplaceSound")) {
-            SoundManager.instance.PlayFireplaceSound();
+            SoundManager.instance.PlaySound(AudioClipName.FirePlace, true);
         }
         
         if(other.CompareTag("WaterSound")) {
-            SoundManager.instance.PlayWaterSound();
+            SoundManager.instance.PlaySound(AudioClipName.Water, true);
         }
     }
 
     private void OnTriggerExit2D(Collider2D other) {
         if(other.CompareTag("FireplaceSound")) {
-            SoundManager.instance.StopFireplaceSound();
+            SoundManager.instance.StopSound();
         }
         
         if(other.CompareTag("WaterSound")) {
-            SoundManager.instance.StopWaterSound();
+            SoundManager.instance.StopSound();
         }
     }
 
@@ -545,7 +535,7 @@ public class Player : MonoBehaviour {
             return;
         }
         
-        //VibrationWebGL.Vibrate(100); // 플레이어가 대미지를 입으면 진동 피드백을 주기
+        VibrationWebGL.Vibrate(100); // 플레이어가 대미지를 입으면 진동 피드백을 주기
 
         if(targetPos != Vector2.zero) {
             gameObject.layer = 10; // 무적 효과를 위해 플레이어의 Layer를 PlayerDamaged로 변경해주기
@@ -590,7 +580,7 @@ public class Player : MonoBehaviour {
             return;
         }
 
-        SoundManager.instance.PlayDeadSound();
+        SoundManager.instance.PlaySound(AudioClipName.Dead);
         anim.SetTrigger("dead"); // 묘비로 변하는 애니메이션 켜주기
         rigid.velocity = Vector2.zero;
         GameManager.instance.expSlider.SetActive(false);

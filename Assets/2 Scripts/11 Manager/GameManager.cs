@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MarksAssets.VibrationWebGL;
 //using MarksAssets.VibrationWebGL;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -197,10 +198,37 @@ public class GameManager : MonoBehaviour {
     public bool isNpc;
     public string npcName;
 
-    private void Awake() {
+    private void Awake() 
+    {
         instance = this;
         InitPos();
         Invoke("StartPanelOn", 0.5f);
+
+        BindEvent();
+    }
+
+    private void BindEvent()
+    {
+        Player.instance.OnSleepHandler += PlayerSleep;
+    }
+    
+    private void PlayerSleep()
+    {
+        int sleepHour = Mathf.FloorToInt(curGameTime / 3600) % 24;  // 플레이어가 잠에 든 시간
+        int sleepMin = Mathf.FloorToInt((curGameTime % 3600) / 60); // 플레이어가 잠에 든 분
+
+        int wakeUpHour = 7 + 24; // 다음날 오전 7시에 일어나도록
+        int wakeUpMin = 0;
+
+        float timeToNextMorning = ((wakeUpHour - sleepHour) * 3600) + ((wakeUpMin - sleepMin) * 60);
+        
+        curGameTime += timeToNextMorning;
+        curHealth = maxHealth; // 체력을 전부 채워주기
+        curMana = maxMana;     // 마나를 전부 채워주기
+        
+        PanelManager.instance.SleepConfirmOff();
+        StopCoroutine(FilterPanelFadeOutAndIn());
+        StartCoroutine(FilterPanelFadeOutAndIn());
     }
 
     private void StartPanelOn() {
@@ -241,7 +269,7 @@ public class GameManager : MonoBehaviour {
         }
 
         if(!isAction) {
-            SoundManager.instance.PlayTalkSound();
+            SoundManager.instance.PlaySound(AudioClipName.Talk);
         }
         
         expSlider.SetActive(false);
@@ -249,7 +277,7 @@ public class GameManager : MonoBehaviour {
         
         if(scanObject.CompareTag("Clock")) { // 괘종시계에 말을 걸었으면
             timePanel.SetActive(true); // 시계 패널을 켜주기
-            SoundManager.instance.PlayClockSound();
+            SoundManager.instance.PlaySound(AudioClipName.Clock, true);
         }
         
         ObjData objData = scanObject.GetComponent<ObjData>();
@@ -313,14 +341,18 @@ public class GameManager : MonoBehaviour {
 
     private void EndTalk() {
         isAction = false; // isAction을 false로 줘서 대화창 끄기
-        timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
-        SoundManager.instance.StopClockSound();
+
+        if(timePanel.activeSelf)
+        {
+            timePanel.SetActive(false); // 대화가 끝났을때는 시계 패널은 항상 꺼주는 것으로 처리
+            SoundManager.instance.StopSound();   
+        }
         talkIndex = 0; // 대화가 끝나면 talkIndex 초기화
         currentQuestText.text = questManager.CheckQuest(objId); // 다음에 진행할 퀘스트명을 UI에 뿌려주기
         
         if(scanObject.CompareTag("Heal")) {
             FadeOutAndInEffect();
-            SoundManager.instance.PlayHealSound();
+            SoundManager.instance.PlaySound(AudioClipName.Heal);
             curHealth = maxHealth;
             return;
         }
@@ -368,15 +400,15 @@ public class GameManager : MonoBehaviour {
         if(objId == 6200) { // 열쇠로 문을 여는 대사가 끝나면
             scanObject.gameObject.SetActive(false);
             Inventory.instance.isDoorOpen = true;
-            SoundManager.instance.PlayKeySound();
-            //VibrationWebGL.Vibrate(100); // 문이 열리면 진동 피드백을 주기
+            SoundManager.instance.PlaySound(AudioClipName.Key);
+            VibrationWebGL.Vibrate(100); // 문이 열리면 진동 피드백을 주기
 
         } else if(objId == 6300) { // 열쇠로 상자를 여는 대사가 끝나면
             scanObject.gameObject.SetActive(false);
             Transform parentTransform = scanObject.transform.parent;
             Transform[] childTransforms = parentTransform.GetComponentsInChildren<Transform>(true);
-            SoundManager.instance.PlayKeySound();
-            //VibrationWebGL.Vibrate(100); // 상자가 열리면 진동 피드백을 주기
+            SoundManager.instance.PlaySound(AudioClipName.Key);
+            VibrationWebGL.Vibrate(100); // 상자가 열리면 진동 피드백을 주기
 
             foreach(Transform childTransform in childTransforms) {
                 if(childTransform.gameObject.name == "Candy") {
@@ -417,7 +449,7 @@ public class GameManager : MonoBehaviour {
             curHealth = maxHealth;
             curMana = maxMana;
             statsPoint++;
-            SoundManager.instance.PlayLevelUpSound();
+            SoundManager.instance.PlaySound(AudioClipName.LevelUp);
             
             PanelManager.instance.RedrawStatsPanel();
             PanelManager.instance.StatsOnOff(); // 레벨업 하면 자동으로 스탯창 켜주기
@@ -461,7 +493,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void SaveButtonClick() {
-        SoundManager.instance.PlayClickSound();
+        SoundManager.instance.PlaySound(AudioClipName.Click);
         SaveData();
         menuPanel.SetActive(false);
         AlertManager.instance.SaveMessageOn();
@@ -484,7 +516,7 @@ public class GameManager : MonoBehaviour {
 
     public void LoadGameButtonClick() {
         
-        SoundManager.instance.PlayClickSound();
+        SoundManager.instance.PlaySound(AudioClipName.Click);
         for(int i = 0; i < iceInfinite.Length; i++) {
             iceInfinite[i].transform.position = new Vector3(0, 0, 0);
             treeInfinite[i].transform.position = new Vector3(0, 0, 0);
@@ -514,17 +546,17 @@ public class GameManager : MonoBehaviour {
     }
 
     public void GoToMainMenuButtonClick() { // 메인메뉴로 나가는 메소드
-        SoundManager.instance.PlayClickSound();
+        SoundManager.instance.PlaySound(AudioClipName.Click);
         isLive = false;
         PanelManager.instance.PanelOff(); // 모든 패널 꺼주기
-        SoundManager.instance.PlayQuitSound();
+        SoundManager.instance.PlaySound(AudioClipName.Quit);
         StopCoroutine("FilterPanelFadeOut");
         StartCoroutine("FilterPanelFadeOut");
     }
 
     public void NewGameButtonClick() { // 새로하기 버튼을 클릭했을때 실행하는 메소드
 
-        SoundManager.instance.PlayClickSound();
+        SoundManager.instance.PlaySound(AudioClipName.Click);
         //adManager.ShowIBannerAd(); // 배너 광고 호출하기
 
         if(ItemManager.instance.fieldItemParent.transform.childCount > 0) { // 이미 만들어진 필드 아이템이 있다면
