@@ -3,23 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster : MonoBehaviour {
-
-    public static Monster instance;
-    
-    public float curHealth; // 적의 현재체력
-    public float maxHealth; // 적의 최대체력
-    public float exp;
-    public int collisionDamage;
-    public bool isDead;
-    public Scanner scanner;
-
+public class Monster : MonoBehaviour 
+{
+    [Header("Component")]
     private Rigidbody2D rigid;
     private Animator anim;
     private SpriteRenderer sprite;
     private WaitForFixedUpdate wait;
+    
+    public Scanner scanner;
+    
+    [Header("Setting")]
+    [SerializeField] private float curHealth; // 적의 현재체력
+    [SerializeField] private float maxHealth; // 적의 최대체력
+    public float exp;
+    public int collisionDamage;
+    public bool isDead;
 
-    private void Awake() {
+    public float CurHealth
+    {
+        get => curHealth;
+        set => curHealth = value;
+    }
+
+    private void Awake()
+    {
         curHealth = maxHealth; // 몬스터의 현재 체력을 최대 체력으로 초기화 해줌
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
@@ -28,8 +36,8 @@ public class Monster : MonoBehaviour {
         wait = new WaitForFixedUpdate();
     }
 
-    private void Update() {
-
+    private void Update() 
+    {
         if(!isDead && curHealth <= 0) { // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
             Dead();
         }
