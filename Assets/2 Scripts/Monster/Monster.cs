@@ -3,6 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public class MonsterData
+{
+    [SerializeField] private float curHealth; // 적의 현재체력
+    [SerializeField] private float maxHealth; // 적의 최대체력
+    [SerializeField] private float exp;
+
+    public float CurHealth
+    {
+        get => curHealth;
+        set => curHealth = value;
+    }
+    
+    public float MaxHealth => maxHealth;
+    public float EXP => exp;
+}
+
 public class Monster : MonoBehaviour 
 {
     [Header("Component")]
@@ -14,21 +31,16 @@ public class Monster : MonoBehaviour
     public Scanner scanner;
     
     [Header("Setting")]
-    [SerializeField] private float curHealth; // 적의 현재체력
-    [SerializeField] private float maxHealth; // 적의 최대체력
-    public float exp;
+    
     public int collisionDamage;
     public bool isDead;
 
-    public float CurHealth
-    {
-        get => curHealth;
-        set => curHealth = value;
-    }
+    public MonsterData monsterData;
 
     private void Awake()
     {
-        curHealth = maxHealth; // 몬스터의 현재 체력을 최대 체력으로 초기화 해줌
+        monsterData = new MonsterData();
+        monsterData.CurHealth = monsterData.MaxHealth; // 몬스터의 현재 체력을 최대 체력으로 초기화 해줌
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
@@ -38,14 +50,14 @@ public class Monster : MonoBehaviour
 
     private void Update() 
     {
-        if(!isDead && curHealth <= 0) { // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
+        if(!isDead && monsterData.CurHealth <= 0) { // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
             Dead();
         }
     }
 
     public void Damaged(Vector3 playerPos) {
         
-        if(!isDead && curHealth > 0) // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
+        if(!isDead && monsterData.CurHealth > 0) // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
             StartCoroutine(KnockBack(playerPos));
     }
 
@@ -66,7 +78,7 @@ public class Monster : MonoBehaviour
     }
     
     private void Dead() {
-        GameManager.instance.curExp += exp;
+        GameManager.instance.curExp += monsterData.EXP;
         rigid.velocity = Vector2.zero;
         anim.SetTrigger("dead");
         sprite.color = new Color(1, 1, 1, 1);
