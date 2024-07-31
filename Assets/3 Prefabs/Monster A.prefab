@@ -98,8 +98,8 @@ GameObject:
   - component: {fileID: 2102000108502674320}
   - component: {fileID: 3857233947403959833}
   - component: {fileID: 5708118750060961872}
-  - component: {fileID: 8351850128137552536}
   - component: {fileID: 6044074040595981479}
+  - component: {fileID: 4449685941118754604}
   m_Layer: 8
   m_Name: Monster A
   m_TagString: Monster
@@ -122,7 +122,7 @@ Transform:
   - {fileID: 1855748054781237898}
   - {fileID: 676218992032811394}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4707403445432409869
 SpriteRenderer:
@@ -283,24 +283,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objId: 0
   isNpc: 0
---- !u!114 &8351850128137552536
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7600231457247915225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 846f545b00586964cbbe542ae9665c92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  curHealth: 0
-  maxHealth: 60
-  exp: 20
-  collisionDamage: 10
-  isDead: 0
-  scanner: {fileID: 0}
 --- !u!114 &6044074040595981479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,6 +300,25 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   rad: 2
+--- !u!114 &4449685941118754604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7600231457247915225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fac8fd6c9ef078a43bc31d29894ec501, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scanner: {fileID: 0}
+  collisionDamage: 0
+  isDead: 0
+  monsterData:
+    curHealth: 0
+    maxHealth: 0
+    exp: 0
 --- !u!1 &8135028385547077083
 GameObject:
   m_ObjectHideFlags: 0

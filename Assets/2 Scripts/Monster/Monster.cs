@@ -3,12 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class MonsterData
+public abstract class Monster : MonoBehaviour 
 {
-    [SerializeField] private float curHealth; // 적의 현재체력
-    [SerializeField] private float maxHealth; // 적의 최대체력
-    [SerializeField] private float exp;
+    [Header("Component")]
+    private Rigidbody2D rigid;
+    private Animator anim;
+    private SpriteRenderer sprite;
+
+    [Header("Stats")]
+    [SerializeField] private float curHealth; // 몬스터의 현재체력
+    [SerializeField] protected float maxHealth; // 몬스터의 최대체력
+    [SerializeField] protected float exp; // 몬스터를 잡으면 주는 경험치
+    [SerializeField] protected int collisionDamage;
+    [SerializeField] private bool isDead;
+    
+    [Header("ETC")]
+    private WaitForFixedUpdate wait;
+    public Scanner scanner;
 
     public float CurHealth
     {
@@ -18,46 +29,28 @@ public class MonsterData
     
     public float MaxHealth => maxHealth;
     public float EXP => exp;
-}
-
-public class Monster : MonoBehaviour 
-{
-    [Header("Component")]
-    private Rigidbody2D rigid;
-    private Animator anim;
-    private SpriteRenderer sprite;
-    private WaitForFixedUpdate wait;
+    public int CollisionDamage => collisionDamage;
     
-    public Scanner scanner;
-    
-    [Header("Setting")]
-    
-    public int collisionDamage;
-    public bool isDead;
+    public bool IsDead => isDead;
 
-    public MonsterData monsterData;
-
-    private void Awake()
+    private void Update() 
     {
-        monsterData = new MonsterData();
-        monsterData.CurHealth = monsterData.MaxHealth; // 몬스터의 현재 체력을 최대 체력으로 초기화 해줌
+        if(!isDead && CurHealth <= 0) // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
+            Dead();
+    }
+
+    protected virtual void Init()
+    {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         scanner = GetComponent<Scanner>();
-        wait = new WaitForFixedUpdate();
+        wait = new WaitForFixedUpdate();        
     }
 
-    private void Update() 
+    public void Damaged(Vector3 playerPos)
     {
-        if(!isDead && monsterData.CurHealth <= 0) { // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
-            Dead();
-        }
-    }
-
-    public void Damaged(Vector3 playerPos) {
-        
-        if(!isDead && monsterData.CurHealth > 0) // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
+        if(!isDead && CurHealth > 0) // 죽지 않았으면서 현재 체력이 0보다 크다면
             StartCoroutine(KnockBack(playerPos));
     }
 
@@ -72,29 +65,29 @@ public class Monster : MonoBehaviour
         StartCoroutine(KnockBackEnd());
     }
 
-    private IEnumerator KnockBackEnd() { // 몬스터가 맞아서 밀려난 이후 다시 원래 자리를 찾는 메소드
+    private IEnumerator KnockBackEnd() // 몬스터가 맞아서 밀려난 이후 다시 원래 자리를 찾는 메소드
+    {
         yield return wait;
         rigid.velocity = Vector2.zero;
     }
     
-    private void Dead() {
-        GameManager.instance.curExp += monsterData.EXP;
+    private void Dead()
+    {
+        GameManager.instance.curExp += EXP;
         rigid.velocity = Vector2.zero;
         anim.SetTrigger("dead");
         sprite.color = new Color(1, 1, 1, 1);
         isDead = true; // 죽었다는 플래그 값 올려주기
-        
-        Invoke("Delete", 2f);
+
+        Invoke("Delete", 2);
         Invoke("SpawnItem", 2.1f);
     }
 
-    private void SpawnItem() { // 몬스터가 죽으면 Gold를 드랍해주는 메소드
-        ItemManager.instance.DropGold(transform.position);
-    }
-
-    private void Delete() { // 몬스터의 묘지를 꺼주는 메소드
+    protected virtual void Delete() // 몬스터가 죽고 묘지를 꺼주는 메소드
+    {
         gameObject.SetActive(false);
-        SpawnManager.instance.enemyCount--; // 몬스터가 죽을때마다 몬스터의 숫자를 하나씩 빼주기
     }
     
+    protected abstract void SpawnItem(); // 몬스터가 죽고 아이템을 드롭해주는 메소드
+
 }
