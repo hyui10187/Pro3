@@ -20,6 +20,7 @@ public abstract class Monster : MonoBehaviour
     [Header("ETC")]
     private WaitForFixedUpdate wait;
     public Scanner scanner;
+    public int jsonIndex; // JSON에서 가져온 값의 인덱스
 
     public float CurHealth
     {
@@ -33,19 +34,31 @@ public abstract class Monster : MonoBehaviour
     
     public bool IsDead => isDead;
 
+    private void Start()
+    {
+        Init();
+    }
+
     private void Update() 
     {
         if(!isDead && CurHealth <= 0) // 죽지 않았으면서 현재 체력이 0보다 작거나 같으면
             Dead();
     }
 
-    protected virtual void Init()
+    private void Init()
     {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         scanner = GetComponent<Scanner>();
-        wait = new WaitForFixedUpdate();        
+        wait = new WaitForFixedUpdate();
+        
+        EnemyDataJson enemyDataJson = JsonManager.Instance.enemyDataJson;
+        
+        maxHealth = enemyDataJson.monsterData[jsonIndex].maxHealth;
+        CurHealth = MaxHealth;
+        exp = enemyDataJson.monsterData[jsonIndex].exp;
+        collisionDamage = enemyDataJson.monsterData[jsonIndex].collisionDamage;
     }
 
     public void Damaged(Vector3 playerPos)

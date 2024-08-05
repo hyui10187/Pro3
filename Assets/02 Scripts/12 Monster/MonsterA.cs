@@ -7,16 +7,7 @@ public class MonsterA : Monster
 {
     private void Awake()
     {
-        Init();
-    }
-
-    protected override void Init()
-    {
-        base.Init();
-        maxHealth = 100;
-        CurHealth = MaxHealth;
-        exp = 20;
-        collisionDamage = 10;
+        jsonIndex = 0;
     }
 
     protected override void Delete()
