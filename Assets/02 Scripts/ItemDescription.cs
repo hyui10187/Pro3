@@ -3,19 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemDescription : MonoBehaviour {
+public class ItemDescription : MonoBehaviour
+{
 
     public static ItemDescription instance;
     
     private Dictionary<ItemName, string> descriptionData;
     
-    private void Awake() {
+    private void Awake()
+    {
         descriptionData = new Dictionary<ItemName, string>();
         GenerateData();
         instance = this;
     }
 
-    private void GenerateData() {
+    private void GenerateData()
+    {
         descriptionData.Add(ItemName.빨강물약, "사용시 HP를 10 회복시킴");
         descriptionData.Add(ItemName.파랑물약, "사용시 MP를 10 회복시킴");
         descriptionData.Add(ItemName.초록물약, "사용시 즉시 사망함");
@@ -45,7 +48,8 @@ public class ItemDescription : MonoBehaviour {
         descriptionData.Add(ItemName.사계, "비발디가 작곡한 사계 중 봄이다.");
     }
     
-    public string GetDescription(ItemName itemName) {
+    public string GetDescription(ItemName itemName)
+    {
         string itemDescription = descriptionData[itemName];
         return itemDescription;
     }
