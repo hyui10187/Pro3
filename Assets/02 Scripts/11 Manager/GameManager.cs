@@ -1,14 +1,10 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using MarksAssets.VibrationWebGL;
-//using MarksAssets.VibrationWebGL;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour {
-
+public class GameManager : MonoBehaviour
+{
     public static GameManager instance;
     
     [Header("Manager")]
@@ -58,6 +54,7 @@ public class GameManager : MonoBehaviour {
     public GameObject helpButton;
     public GameObject fpsButton;
     public GameObject fpsPanel;
+    public GameObject chatButton;
 
     [Header("UI - UpMiddle")]
     public GameObject goldPanel;
@@ -137,6 +134,7 @@ public class GameManager : MonoBehaviour {
 
     [Header("UI - BottomBottom")]
     public GameObject talkInformMessage;
+    public GameObject chatPanel;
     public GameObject talkPanel; // 대화창
     public Text talkText; // 대화창의 대화 내용
     public GameObject expSlider;
@@ -492,51 +490,58 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void SaveButtonClick() {
+    public void SaveButtonClick() // 저장하기 버튼을 클릭했을때 호출되는 메소드
+    {
         SoundManager.instance.PlaySound(AudioClipName.Click);
         SaveData();
         menuPanel.SetActive(false);
         AlertManager.instance.SaveMessageOn();
     }
 
-    private void SaveData() {
-        int tempIsHouse = isHouse ? 1 : 0;
+    private void SaveData()
+    {
+        PlayerData playerData = new PlayerData();
+        playerData.playerX = player.transform.position.x;
+        playerData.playerY = player.transform.position.y;
+        playerData.questId = questManager.questId;
+        playerData.questActionIndex = questManager.questActionIndex;
+        playerData.isHouse = isHouse;
+        playerData.level = curLevel;
+        playerData.exp = curExp;
+        playerData.gold = curGold;
+        playerData.hp = curHealth;
+        playerData.mp = curMana;
         
-        PlayerPrefs.SetFloat("PlayerX", player.transform.position.x);
-        PlayerPrefs.SetFloat("PlayerY", player.transform.position.y);
-        PlayerPrefs.SetInt("QuestId", questManager.questId);
-        PlayerPrefs.SetInt("QuestActionIndex", questManager.questActionIndex);
-        PlayerPrefs.SetInt("isHouse", tempIsHouse);
-        PlayerPrefs.SetInt("Level", curLevel);
-        PlayerPrefs.SetInt("Gold", curGold);
-        PlayerPrefs.SetFloat("Health", curHealth);
-        PlayerPrefs.SetFloat("Mana", curMana);
-        PlayerPrefs.Save();
+        JsonManager.Instance.SavePlayerData(playerData);
     }
 
     public void LoadGameButtonClick() {
-        
         SoundManager.instance.PlaySound(AudioClipName.Click);
-        for(int i = 0; i < iceInfinite.Length; i++) {
-            iceInfinite[i].transform.position = new Vector3(0, 0, 0);
-            treeInfinite[i].transform.position = new Vector3(0, 0, 0);
-        }
+        PlayerData savedData = JsonManager.Instance.LoadPlayerData();
 
-        if(!PlayerPrefs.HasKey("PlayerX")) { // 한번도 저장한 적이 없으면
+        if(savedData == null) // 한번도 저장한 적이 없으면
+        {
             NewGameButtonClick(); // 새로운 게임을 시작
             return;
         }
         
-        float x = PlayerPrefs.GetFloat("PlayerX");
-        float y = PlayerPrefs.GetFloat("PlayerY");
-        int questId = PlayerPrefs.GetInt("QuestId");
-        int questActionIndex = PlayerPrefs.GetInt("QuestActionIndex");
+        SetLoadData(savedData);
+    }
+
+    private void SetLoadData(PlayerData playerData)
+    {
+        float x = playerData.playerX;
+        float y = playerData.playerY;
 
         player.transform.position = new Vector3(x, y, 0);
-        questManager.questId = questId;
-        questManager.questActionIndex = questActionIndex;
-        curHealth = maxHealth;
-        curMana = maxMana;
+        questManager.questId = playerData.questId;
+        questManager.questActionIndex = playerData.questActionIndex;
+        curHealth = playerData.hp;
+        curMana = playerData.mp;
+        curLevel = playerData.level;
+        curExp = playerData.exp;
+        curGold = playerData.gold;
+        isHouse = playerData.isHouse;
 
         InitGame();
     }
@@ -607,9 +612,9 @@ public class GameManager : MonoBehaviour {
         }
     }
     
-    private void InitGame() {
-
-        Invoke("ResetTile", 1.5f);
+    private void InitGame()
+    {
+        Invoke("ResetTile", 1.5f); // 무한맵 타일의 위치를 초기화 해주기
         
         questManager.ControlObject();
         isLive = true;
@@ -710,7 +715,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public bool IsPanelOn() {
-        if(equipmentPanel.activeSelf || statsPanel.activeSelf || questPanel.activeSelf || inventoryPanel.activeSelf || turnTablePanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf || helpPanel.activeSelf) {
+        if(equipmentPanel.activeSelf || statsPanel.activeSelf || questPanel.activeSelf || inventoryPanel.activeSelf || turnTablePanel.activeSelf || storagePanel.activeSelf || groceryStorePanel.activeSelf || equipmentStorePanel.activeSelf || helpPanel.activeSelf || chatPanel.activeSelf) {
             return true;
         } else {
             return false;
@@ -736,6 +741,7 @@ public class GameManager : MonoBehaviour {
         purchaseConfirmPanel.SetActive(false);
         
         helpPanel.SetActive(false);
+        PanelManager.instance.ChatPanelOnOff(1);
 
         TurnTableManager.instance.StopTurnTable();
     }
