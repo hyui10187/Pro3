@@ -1,6 +1,10 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using MarksAssets.VibrationWebGL;
 using UnityEngine;
+using UnityEngine.U2D;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -189,6 +193,7 @@ public class GameManager : MonoBehaviour
     public float frozenCoolTime;
     public int frozenDamage;
     public int obstacleDamage;
+    public SpriteAtlas spriteAtlas;
     public GameObject scanObject; // 스캔한 게임 오브젝트
     //public AdManager adManager; // 구글 애드몹
 
@@ -493,12 +498,13 @@ public class GameManager : MonoBehaviour
     public void SaveButtonClick() // 저장하기 버튼을 클릭했을때 호출되는 메소드
     {
         SoundManager.instance.PlaySound(AudioClipName.Click);
-        SaveData();
+        SavePlayerData();
+        SaveInventoryData();
         menuPanel.SetActive(false);
         AlertManager.instance.SaveMessageOn();
     }
 
-    private void SaveData()
+    private void SavePlayerData() // 플레이어의 정보를 저장하는 메소드
     {
         PlayerData playerData = new PlayerData();
         playerData.playerX = player.transform.position.x;
@@ -515,20 +521,42 @@ public class GameManager : MonoBehaviour
         JsonManager.Instance.SavePlayerData(playerData);
     }
 
-    public void LoadGameButtonClick() {
-        SoundManager.instance.PlaySound(AudioClipName.Click);
-        PlayerData savedData = JsonManager.Instance.LoadPlayerData();
+    private void SaveInventoryData() // 인벤토리에 보유한 아이템 정보를 저장하는 메소드
+    {
+        InventorySlot[] inventorySlots = InventoryManager.instance.inventorySlots;
+        List<InventoryData> inventoryDataList = new List<InventoryData>();
 
-        if(savedData == null) // 한번도 저장한 적이 없으면
+        for(int i = 0; i < InventoryManager.instance.inventory.possessItems.Count; i++)
+        {
+            InventoryData inventoryData = new InventoryData();
+            inventoryData.index = inventorySlots[i].item.itemIndex;
+            inventoryData.itemCount = inventorySlots[i].item.itemCount;
+            inventoryData.slotNum = inventorySlots[i].slotNum;
+            inventoryData.isEquipped = inventorySlots[i].item.isEquipped;
+            
+            inventoryDataList.Add(inventoryData);
+        }
+
+        JsonManager.Instance.SaveInventoryData(inventoryDataList);
+    }
+
+    public void LoadGameButtonClick()
+    {
+        SoundManager.instance.PlaySound(AudioClipName.Click);
+        PlayerData playerData = JsonManager.Instance.LoadPlayerData();
+        List<InventoryData> inventoryDataList = JsonManager.Instance.LoadInventoryData();
+
+        if(playerData == null) // 한번도 저장한 적이 없으면
         {
             NewGameButtonClick(); // 새로운 게임을 시작
             return;
         }
         
-        SetLoadData(savedData);
+        SetLoadPlayerData(playerData);
+        SetLoadInventoryData(inventoryDataList);
     }
 
-    private void SetLoadData(PlayerData playerData)
+    private void SetLoadPlayerData(PlayerData playerData)
     {
         float x = playerData.playerX;
         float y = playerData.playerY;
@@ -544,6 +572,46 @@ public class GameManager : MonoBehaviour
         isHouse = playerData.isHouse;
 
         InitGame();
+    }
+
+    private void SetLoadInventoryData(List<InventoryData> inventoryDataList)
+    {
+        if(Inventory.instance.possessItems.Count > 0) { // 현재 인벤토리에 보유중인 아이템이 있다면
+            Inventory.instance.possessItems.Clear(); // 보유한 아이템 전부 삭제하기
+            Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
+        }
+        InventorySlot[] inventorySlots = InventoryManager.instance.inventorySlots;
+
+        string folderPath = Path.Combine(Application.dataPath, "10 Data").Replace("\\", "/");
+        string filePath = Path.Combine(folderPath, "ItemData.xlsx").Replace("\\", "/"); // 저장해줄 JSON 파일명
+        List<Dictionary<string, object>> excelDataList = JsonManager.Instance.LoadExcel(filePath);
+
+        for(int i = 0; i < inventoryDataList.Count; i++) // 저장되었던 아이템의 갯수만큼 루프를 돌아주기
+        {
+            for(int j = 0; j < excelDataList.Count; j++)
+            {
+                int index = Convert.ToInt32(excelDataList[j]["index"]); // 아이템의 인덱스 번호
+                
+                if(inventoryDataList[i].index == index) // 일치하는 아이템 데이터를 찾았으면
+                {
+                    string spriteName = excelDataList[j]["itemSpriteName"].ToString();
+
+                    if(inventorySlots[i].item == null)
+                        inventorySlots[i].item = new Item();
+
+                    inventorySlots[i].item.itemImage = spriteAtlas.GetSprite(spriteName);
+                    break;
+                }
+            }
+
+            inventorySlots[i].item.itemCount = inventoryDataList[i].itemCount;
+            inventorySlots[i].slotNum = inventoryDataList[i].slotNum;
+            inventorySlots[i].item.isEquipped = inventoryDataList[i].isEquipped;
+            
+            InventoryManager.instance.inventory.possessItems.Add(inventorySlots[i].item);
+            Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
+        }
+        
     }
     
     public void GameExit() { // 게임을 종료하는 메소드
