@@ -596,8 +596,8 @@ public class GameManager : MonoBehaviour
                 {
                     string spriteName = excelDataList[j]["itemSpriteName"].ToString();
 
-                    if(inventorySlots[i].item == null)
-                        inventorySlots[i].item = new Item();
+                    if(inventorySlots[i].item == null) // 아이템이 비어있을 경우
+                        inventorySlots[i].item = new Item(); // 객체를 생성해서 넣어주기
 
                     inventorySlots[i].item.itemImage = spriteAtlas.GetSprite(spriteName);
                     break;
@@ -790,7 +790,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EscPanelOff() { // ESC 키를 눌렀을때 한번에 꺼줄 패널들
+    public void EscPanelOff() // ESC 키를 눌렀을때 한번에 꺼줄 패널들
+    {
         equipmentPanel.SetActive(false);
         statsPanel.SetActive(false);
         inventoryPanel.SetActive(false);
@@ -814,7 +815,8 @@ public class GameManager : MonoBehaviour
         TurnTableManager.instance.StopTurnTable();
     }
 
-    public void DetailPanelOff() {
+    public void DetailPanelOff()
+    {
         itemDescriptionPanel.SetActive(false);
         entrustAmountPanel.SetActive(false);
         purchaseAmountPanel.SetActive(false);
