@@ -25,7 +25,7 @@ public class JsonManager : Singleton<JsonManager>
     public void SavePlayerData(PlayerData playerData) // 플레이어의 정보를 JSON 파일로 저장해주는 메소드
     {
         // JSON 데이터를 저장할 폴더 경로
-        string folderPath = Path.Combine(Application.dataPath, "10 Data").Replace("\\", "/"); 
+        string folderPath = Path.Combine(Application.persistentDataPath, "10 Data").Replace("\\", "/"); 
         
         if(!Directory.Exists(folderPath)) // 이런 폴더 경로가 없다면
             Directory.CreateDirectory(folderPath); // 경로에 폴더를 새로 생성해주기
@@ -38,7 +38,7 @@ public class JsonManager : Singleton<JsonManager>
 
     public PlayerData LoadPlayerData() // 저장되어 있는 플레이어의 정보를 불러오는 메소드
     {
-        string folderPath = Path.Combine(Application.dataPath, "10 Data").Replace("\\", "/");
+        string folderPath = Path.Combine(Application.persistentDataPath, "10 Data").Replace("\\", "/");
         string filePath = Path.Combine(folderPath, "playerData.json").Replace("\\", "/"); // 저장해줄 JSON 파일명
         
         if(!File.Exists(filePath)) // 기존에 저장된 파일이 없으면
@@ -52,7 +52,7 @@ public class JsonManager : Singleton<JsonManager>
 
     public void SaveInventoryData(List<InventoryData> inventoryDataList) // 인벤토리의 아이템 정보를 JSON 파일로 저장해주는 메소드
     {
-        string folderPath = Path.Combine(Application.dataPath, "10 Data").Replace("\\", "/");
+        string folderPath = Path.Combine(Application.persistentDataPath, "10 Data").Replace("\\", "/");
         string json = JsonConvert.SerializeObject(inventoryDataList, Formatting.Indented);
         string filePath = Path.Combine(folderPath, "inventoryData.json").Replace("\\", "/");
         
@@ -61,7 +61,7 @@ public class JsonManager : Singleton<JsonManager>
 
     public List<InventoryData> LoadInventoryData()
     {
-        string folderPath = Path.Combine(Application.dataPath, "10 Data").Replace("\\", "/");
+        string folderPath = Path.Combine(Application.persistentDataPath, "10 Data").Replace("\\", "/");
         string filePath = Path.Combine(folderPath, "inventoryData.json").Replace("\\", "/"); // 저장해줄 JSON 파일명
         
         if(!File.Exists(filePath)) // 기존에 저장된 파일이 없으면
@@ -73,9 +73,9 @@ public class JsonManager : Singleton<JsonManager>
         return playerData;
     }
     
-    public List<Dictionary<string, object>> LoadExcel(string filePath)
+    public List<Dictionary<string, object>> LoadExcel(string filePath) // 엑셀 파일을 불러오는 메소드
     {
-        FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+        FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read); // 엑셀파일 열기
         IExcelDataReader reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
         DataSet dataSet = reader.AsDataSet(); // 엑셀 파일에서 데이터 읽기
         reader.Close();
