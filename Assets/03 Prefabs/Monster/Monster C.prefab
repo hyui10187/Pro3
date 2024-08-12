@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4200176534052174660}
   - component: {fileID: 3922479484852556588}
   - component: {fileID: 981074807035098364}
-  - component: {fileID: 972330768714713028}
+  - component: {fileID: 6870446637168627272}
   m_Layer: 8
   m_Name: Monster C
   m_TagString: Monster
@@ -216,7 +216,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   rad: 2
---- !u!114 &972330768714713028
+--- !u!114 &6870446637168627272
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -225,16 +225,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2557889976785427093}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65eede1a727bc9a4280c9893d26effd4, type: 3}
+  m_Script: {fileID: 11500000, guid: 5dc5cc492de01a84aab771f75af71440, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curHealth: 0
-  maxHealth: 0
-  exp: 0
-  collisionDamage: 0
-  isDead: 0
-  scanner: {fileID: 0}
-  jsonIndex: 0
 --- !u!1 &5228846794179201179
 GameObject:
   m_ObjectHideFlags: 0

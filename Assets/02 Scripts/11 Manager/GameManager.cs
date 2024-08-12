@@ -581,9 +581,8 @@ public class GameManager : MonoBehaviour
             Inventory.instance.onChangeItem.Invoke(); // 인벤토리 다시 그려주기
         }
         InventorySlot[] inventorySlots = InventoryManager.instance.inventorySlots;
-
-        string folderPath = Path.Combine(Application.dataPath, "10 Data").Replace("\\", "/");
-        string filePath = Path.Combine(folderPath, "ItemData.xlsx").Replace("\\", "/"); // 저장해줄 JSON 파일명
+        
+        string filePath = Path.Combine(Application.streamingAssetsPath, "ItemData.xlsx").Replace("\\", "/"); // 저장해줄 JSON 파일명
         List<Dictionary<string, object>> excelDataList = JsonManager.Instance.LoadExcel(filePath);
 
         for(int i = 0; i < inventoryDataList.Count; i++) // 저장되었던 아이템의 갯수만큼 루프를 돌아주기

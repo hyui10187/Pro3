@@ -312,13 +312,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fac8fd6c9ef078a43bc31d29894ec501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scanner: {fileID: 0}
+  curHealth: 0
+  maxHealth: 0
+  exp: 0
   collisionDamage: 0
   isDead: 0
-  monsterData:
-    curHealth: 0
-    maxHealth: 0
-    exp: 0
+  scanner: {fileID: 0}
+  jsonIndex: 0
 --- !u!1 &8135028385547077083
 GameObject:
   m_ObjectHideFlags: 0

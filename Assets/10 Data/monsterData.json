@@ -1,0 +1,14 @@
+{
+    "monsterData": [
+        {
+            "maxHealth": 100,
+            "exp": 20,
+            "collisionDamage": 10
+        },
+        {
+            "maxHealth": 150,
+            "exp": 30,
+            "collisionDamage": 15
+        }
+    ]
+}
