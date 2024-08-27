@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class EquipmentSlot : MonoBehaviour
 {
-    
     public static EquipmentSlot instance;
     
     public ItemType itemType;
@@ -20,7 +19,6 @@ public class EquipmentSlot : MonoBehaviour
 
     public void ButtonDown() // 장비창의 장착된 아이템 슬롯을 클릭해서 장비를 해제하는 메소드
     {
-
         for(int i = 0; i < Inventory.instance.possessItems.Count; i++)
         {
             if(InventoryManager.instance.inventorySlots[i].item.itemName == itemName)
