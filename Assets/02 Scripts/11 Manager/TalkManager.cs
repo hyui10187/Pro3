@@ -7,13 +7,14 @@ public class TalkManager : MonoBehaviour {
     
     private Dictionary<int, string[]> talkData;
 
-    private void Awake() {
+    private void Awake()
+    {
         talkData = new Dictionary<int, string[]>();
         GenerateData();
     }
 
-    private void GenerateData() {
-        
+    private void GenerateData()
+    {
         // 사물 대사   // 사물 대사는 100 단위   // 퀘스트 아이템은 1000 단위
         talkData.Add(100, new string[] { "영롱한 촛불이다." });
         talkData.Add(200, new string[] { "따뜻한 벽난로 앞에서 몸을 녹이니까 체력이 회복되는것 같다." });
@@ -159,15 +160,18 @@ public class TalkManager : MonoBehaviour {
                 return talkData[objId][talkIndex];
         }
 
-        if(!talkData.ContainsKey(sumId)) {
-            
-            if(!talkData.ContainsKey(sumId - sumId % 10)) { // questId에 해당하는 대사가 없는 NPC한테 말을 걸었을 경우
+        if(!talkData.ContainsKey(sumId))
+        {
+            if(!talkData.ContainsKey(sumId - sumId % 10)) // questId에 해당하는 대사가 없는 NPC한테 말을 걸었을 경우
+            {
                 if(talkIndex == talkData[sumId - sumId % 1000].Length) // 해당 NPC의 기본대사를 마지막까지 말했으면
                     return null;
                 else
                     return talkData[sumId - sumId % 1000][talkIndex]; // 해당 NPC의 기본 대사를 return
 
-            } else {
+            }
+            else
+            {
                 // 해당 퀘스트 진행순서 대사가 없을때
                 // 퀘스트 맨 처음 대사를 가지고 온다
                 if(talkIndex == talkData[sumId - sumId % 10].Length)
