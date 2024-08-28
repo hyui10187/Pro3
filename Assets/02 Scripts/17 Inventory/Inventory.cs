@@ -26,7 +26,8 @@ public class Inventory : MonoBehaviour {
     public bool isChestOpen;
     public bool isInventorySlotClick;
 
-    public int CurSlotCnt {
+    public int CurSlotCnt
+    {
         get => curSlotCnt;
         set {
             curSlotCnt = value;
@@ -34,13 +35,15 @@ public class Inventory : MonoBehaviour {
         }
     }
     
-    private void Awake() {
+    private void Awake()
+    {
         instance = this;
     }
 
-    public bool AddItem(Item eatItem) {
-
-        if(eatItem == null) {
+    public bool AddItem(Item eatItem)
+    {
+        if(eatItem == null)
+        {
             return false;
         }
         
@@ -48,10 +51,14 @@ public class Inventory : MonoBehaviour {
         int index = -1;
         int itemCount = 0;
         
-        if(possessItems.Count < CurSlotCnt) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
-            if(possessItems.Count > 0) {
-                for(int i = 0; i < possessItems.Count; i++) {
-                    if(possessItems[i].itemName == eatItem.itemName) {
+        if(possessItems.Count < CurSlotCnt) // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
+        {
+            if(possessItems.Count > 0)
+            {
+                for(int i = 0; i < possessItems.Count; i++)
+                {
+                    if(possessItems[i].itemName == eatItem.itemName)
+                    {
                         isAdded = true;
                         index = i;
                         itemCount = eatItem.itemCount;
@@ -59,62 +66,82 @@ public class Inventory : MonoBehaviour {
                     }
                 }
 
-                if(isAdded) { // 이미 보유중인 아이템일 경우
-
-                    if(eatItem.itemCount == 0) { // 아이템의 갯수가 0개이면 = 장비아이템일 경우
+                if(isAdded) // 이미 보유중인 아이템일 경우
+                {
+                    if(eatItem.itemCount == 0) // 아이템의 갯수가 0개이면 = 장비아이템일 경우
+                    {
                         possessItems.Add(eatItem.Clone()); // 새롭게 아이템을 추가해주기
-                    } else {
+                    }
+                    else
+                    {
                         possessItems[index].itemCount += itemCount; // 기존 아이템의 갯수를 먹은 아이템의 갯수만큼 늘려주기
                     }
                     
-                } else { // 기존에 가지고 있지 않은 아이템일 경우
+                }
+                else // 기존에 가지고 있지 않은 아이템일 경우
+                {
                     possessItems.Add(eatItem.Clone());
                 }
 
-            } else {
+            }
+            else
+            {
                 possessItems.Add(eatItem.Clone()); // 새롭게 아이템을 추가해줌
             }
 
-            if(onChangeItem != null) {
+            if(onChangeItem != null)
+            {
                 onChangeItem.Invoke(); // 인벤토리 다시 그려주기
             }
             
             return true; // 아이템 슬롯의 갯수에 여유가 있으면 아이템을 먹어서 인벤토리에 추가해주고 true 반환
             
-        } else { // 현재 보유 슬롯과 현재 보유중인 아이템의 갯수가 같으면
-            for(int i = 0; i < possessItems.Count; i++) {
-                if(possessItems[i].itemName == eatItem.itemName) {
+        }
+        else // 현재 보유 슬롯과 현재 보유중인 아이템의 갯수가 같으면
+        {
+            for(int i = 0; i < possessItems.Count; i++)
+            {
+                if(possessItems[i].itemName == eatItem.itemName)
+                {
                     isAdded = true;
                     index = i;
                     break;
                 }
             }
 
-            if(isAdded) { // 기존에 가지고 있눈 아이템일 경우
+            if(isAdded) // 기존에 가지고 있눈 아이템일 경우
+            {
                 possessItems[index].itemCount++; // 기존 아이템의 갯수만 1개 늘려줌
                 if(onChangeItem != null) {
                     onChangeItem.Invoke();   
                 }
                 return true;
-            } else {
+            }
+            else
+            {
                 return false; // 아이템 슬롯에 여유가 없으면 아이템을 그대로 두고 false 반환
             }
         }
     }
     
-    public bool AddItem(Item purchaseItem, int purchaseCount) {
-
-        if(purchaseItem == null) {
+    public bool AddItem(Item purchaseItem, int purchaseCount)
+    {
+        if(purchaseItem == null)
+        {
             return false;
         }
         
         bool isAdded = false;
         int index = -1;
 
-        if(possessItems.Count < CurSlotCnt) { // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
-            if(0 < possessItems.Count) { // 보유중인 아이템이 있을 경우
-                for(int i = 0; i < possessItems.Count; i++) {
-                    if(possessItems[i].itemName == purchaseItem.itemName) {
+        if(possessItems.Count < CurSlotCnt) // 현재 보유 슬롯보다 현재 보유중인 아이템의 갯수가 적으면
+        {
+            if(0 < possessItems.Count) // 보유중인 아이템이 있을 경우
+            {
+                for(int i = 0; i < possessItems.Count; i++)
+                {
+                    if(possessItems[i].itemName == purchaseItem.itemName)
+                    {
                         isAdded = true;
                         index = i;
                         break;
@@ -171,22 +198,29 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    public void RemoveItem(int index) {
-        if(1 < possessItems[index].itemCount) {
+    public void RemoveItem(int index)
+    {
+        if(1 < possessItems[index].itemCount)
+        {
             possessItems[index].itemCount--;
-        } else {
+        }
+        else
+        {
             possessItems.RemoveAt(index); // 리스트에서 삭제할때는 RemoveAt 메소드 사용    
         }
         
         onChangeItem.Invoke();
     }
     
-    public void EntrustOrSellItem(int index, int itemCount, int amount) {
-
-        if(itemCount < 2 || itemCount == amount) { // 소모 아이템이 1개 있거나 장비 아이템이거나 아이템 갯수를 전부 맡길 경우
+    public void EntrustOrSellItem(int index, int itemCount, int amount)
+    {
+        if(itemCount < 2 || itemCount == amount) // 소모 아이템이 1개 있거나 장비 아이템이거나 아이템 갯수를 전부 맡길 경우
+        {
             possessItems.RemoveAt(index); // 인벤토리의 보유 아이템을 삭제해주기
             onChangeItem.Invoke();   
-        } else {
+        }
+        else
+        {
             possessItems[index].itemCount -= amount;
             onChangeItem.Invoke();
         }
