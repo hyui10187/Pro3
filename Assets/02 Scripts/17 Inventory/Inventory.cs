@@ -149,50 +149,61 @@ public class Inventory : MonoBehaviour {
                 }
 
                 if(isAdded) { // 이미 보유중인 아이템일 경우
-                    if(purchaseItem.itemCount == 0) { // 아이템의 갯수가 0개이면 = 장비아이템일 경우
+                    if(purchaseItem.itemCount == 0) // 아이템의 갯수가 0개이면 = 장비아이템일 경우
                         possessItems.Add(purchaseItem.Clone()); // 새롭게 아이템을 추가해주기
-                    } else {
-                        possessItems[index].itemCount += purchaseCount; // 기존 아이템의 갯수를 구입한 아이템의 갯수만큼 늘려주기
-                    }
                     
-                } else { // 기존에 가지고 있지 않은 아이템일 경우
+                    else
+                        possessItems[index].itemCount += purchaseCount; // 기존 아이템의 갯수를 구입한 아이템의 갯수만큼 늘려주기
+
+                } else // 기존에 가지고 있지 않은 아이템일 경우
+                {
                     Item copyPurchaseItem = purchaseItem.Clone();
-                    if(purchaseItem.itemCount != 0) { // 장비 아이템이 아닐 경우
+                    if(purchaseItem.itemCount != 0) // 장비 아이템이 아닐 경우
+                    {
                         copyPurchaseItem.itemCount = purchaseCount; // 구입한 갯수만큼 아이템을 생성하여 인벤토리에 넣어주기    
                     }
                     possessItems.Add(copyPurchaseItem);
                 }
 
-            } else { // 보유중인 아이템이 없을 경우
+            }
+            else // 보유중인 아이템이 없을 경우
+            {
                 Item copyPurchaseItem = purchaseItem.Clone();
-                if(purchaseItem.itemCount != 0) { // 장비 아이템이 아닐 경우
+                if(purchaseItem.itemCount != 0) // 장비 아이템이 아닐 경우
+                {
                     copyPurchaseItem.itemCount = purchaseCount; // 구입한 갯수만큼 아이템을 생성하여 인벤토리에 넣어주기    
                 }
                 possessItems.Add(copyPurchaseItem);
             }
 
-            if(onChangeItem != null) {
+            if(onChangeItem != null) 
                 onChangeItem.Invoke(); // 인벤토리 다시 그려주기
-            }
-            
+
             return true; // 아이템 슬롯의 갯수에 여유가 있으면 아이템을 먹어서 인벤토리에 추가해주고 true 반환
             
-        } else { // 현재 보유 슬롯과 현재 보유중인 아이템의 갯수가 같으면
-            for(int i = 0; i < possessItems.Count; i++) {
-                if(possessItems[i].itemName == purchaseItem.itemName) {
+        }
+        else // 현재 보유 슬롯과 현재 보유중인 아이템의 갯수가 같으면
+        {
+            for(int i = 0; i < possessItems.Count; i++)
+            {
+                if(possessItems[i].itemName == purchaseItem.itemName)
+                {
                     isAdded = true;
                     index = i;
                     break;
                 }
             }
 
-            if(isAdded) { // 기존에 가지고 있눈 아이템일 경우
+            if(isAdded) // 기존에 가지고 있눈 아이템일 경우
+            {
                 possessItems[index].itemCount += purchaseCount; // 기존 아이템의 갯수를 구입한 아이템의 갯수만큼 늘려주기
-                if(onChangeItem != null) {
+                if(onChangeItem != null)
                     onChangeItem.Invoke();   
-                }
+                
                 return true;
-            } else {
+            }
+            else
+            {
                 return false; // 아이템 슬롯에 여유가 없으면 아이템을 그대로 두고 false 반환
             }
         }
