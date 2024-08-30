@@ -237,27 +237,31 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        
-        if(other.CompareTag("Item") || other.CompareTag("QuestItem")) { // 닿은 물체의 태그가 Item이거나 QuestItem 이라면
-            
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.CompareTag("Item") || other.CompareTag("QuestItem")) // 닿은 물체의 태그가 Item이거나 QuestItem 이라면
+        {
             ItemScript itemScript = other.GetComponent<ItemScript>();
 
-            if(itemScript.item.itemName == ItemName.골드소) {
+            if(itemScript.item.itemName == ItemName.골드소)
+            {
                 GameManager.instance.curGold += 5;
                 AlertManager.instance.AcquisitionMessageOn("5 ", 11);
                 SoundManager.instance.PlaySound(AudioClipName.Acquisition);
                 Destroy(itemScript.gameObject);
                 return;
-                
-            } else if(itemScript.item.itemName == ItemName.골드중) {
+            }
+            else if(itemScript.item.itemName == ItemName.골드중)
+            {
                 GameManager.instance.curGold += 10;
                 AlertManager.instance.AcquisitionMessageOn("10 ", 11);
                 SoundManager.instance.PlaySound(AudioClipName.Acquisition);
                 Destroy(itemScript.gameObject);
                 return;
                 
-            } else if(itemScript.item.itemName == ItemName.골드대) {
+            }
+            else if(itemScript.item.itemName == ItemName.골드대)
+            {
                 GameManager.instance.curGold += 15;
                 AlertManager.instance.AcquisitionMessageOn("15 ", 11);
                 SoundManager.instance.PlaySound(AudioClipName.Acquisition);
@@ -267,22 +271,29 @@ public class Inventory : MonoBehaviour {
             
             bool canEat = AddItem(itemScript.GetItem()); // 아이템을 먹을 수 있는지 판단하는 플래그값
             
-            if(canEat) { // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
-                if(itemScript.item.itemType == ItemType.Quest) { // 퀘스트 아이템을 먹을 경우 퀘스트 인덱스 올려주기
+            if(canEat) // 아이템을 먹을 수 있는 조건이 충족되면(슬롯의 갯수가 남아있거나 슬롯이 갯수가 꽉 차 있더라도 기존에 보유한 아이템의 갯수를 늘릴 수 있으면)
+            {
+                if(itemScript.item.itemType == ItemType.Quest) // 퀘스트 아이템을 먹을 경우 퀘스트 인덱스 올려주기
+                {
                     QuestManager.instance.CheckQuest(0);
                 }
                 
-                if(itemScript.item.itemName == ItemName.상점열쇠) {
+                if(itemScript.item.itemName == ItemName.상점열쇠)
+                {
                     hasStoreKey = true;
-                } else if(itemScript.item.itemName == ItemName.상자열쇠) {
+                }
+                else if(itemScript.item.itemName == ItemName.상자열쇠)
+                {
                     hasChestKey = true;
                 }
 
-                if(itemScript.item.itemName == ItemName.화살) {
+                if(itemScript.item.itemName == ItemName.화살)
+                {
                     arrowCnt += itemScript.item.itemCount;
                 }
                 
-                if(itemScript.item.itemType == ItemType.Record) { // 먹은 아이템의 타입이 음반이라면
+                if(itemScript.item.itemType == ItemType.Record) // 먹은 아이템의 타입이 음반이라면
+                {
                     recordCnt++; // 보유중인 레코드의 갯수 1개 올려주기
                     TurnTableManager.instance.changeTurnTablePanel.Invoke();
                 }
@@ -294,8 +305,9 @@ public class Inventory : MonoBehaviour {
                 SoundManager.instance.PlaySound(AudioClipName.Acquisition);
                 //Destroy(itemScript.gameObject);
                 itemScript.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
-
-            } else { // 인벤토리가 꽉 차있다면
+            }
+            else // 인벤토리가 꽉 차있다면
+            {
                 AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 5);
             }
         }
