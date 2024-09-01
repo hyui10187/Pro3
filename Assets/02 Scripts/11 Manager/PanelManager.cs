@@ -30,45 +30,58 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.purchaseAmountText.text = amount.ToString(); // 상점에서 구매할 갯수를 업데이트 해주기
         GameManager.instance.sellAmountText.text = amount.ToString(); // 상점에 판매할 갯수를 업데이트 해주기
         
-        if(helpPanelPage == 1) { // 첫번째 페이지일 경우 왼쪽으로 가는 버튼을 비활성화 하기
+        if(helpPanelPage == 1) // 첫번째 페이지일 경우 왼쪽으로 가는 버튼을 비활성화 하기
+        {
             GameManager.instance.leftPageButton.interactable = false;
             GameManager.instance.rightPageButton.interactable = true;
-        } else if(AlertManager.instance.helpPanelData.Count <= helpPanelPage) { // 마지막 페이지일 경우 오른쪽으로 가는 버튼을 비활성화 하기
+        }
+        else if(AlertManager.instance.helpPanelData.Count <= helpPanelPage) // 마지막 페이지일 경우 오른쪽으로 가는 버튼을 비활성화 하기
+        {
             GameManager.instance.rightPageButton.interactable = false;
-        } else {
+        }
+        else
+        {
             GameManager.instance.leftPageButton.interactable = true;
             GameManager.instance.rightPageButton.interactable = true;
         }
     }
 
-    public void TipTabClick() { // HelpPanel의 도움말 탭을 클릭할 경우 호출할 메소드
+    public void TipTabClick() // HelpPanel의 도움말 탭을 클릭할 경우 호출할 메소드
+    {
         helpPanelPage = 1; // Help 패널의 페이지 번호를 1로 변경
         SoundManager.instance.PlaySound(AudioClipName.Plus);
         GetHelpPanelText();
     }
     
-    public void MiniMapTabClick() { // HelpPanel의 미니맵 탭을 클릭할 경우 호출할 메소드
+    public void MiniMapTabClick() // HelpPanel의 미니맵 탭을 클릭할 경우 호출할 메소드
+    {
         helpPanelPage = 5;
         SoundManager.instance.PlaySound(AudioClipName.Plus);
         GetHelpPanelText();
     }
     
-    public void KeyTabClick() { // HelpPanel의 조작키 탭을 클릭할 경우 호출할 메소드
+    public void KeyTabClick() // HelpPanel의 조작키 탭을 클릭할 경우 호출할 메소드
+    {
         helpPanelPage = 7;
         SoundManager.instance.PlaySound(AudioClipName.Plus);
         GetHelpPanelText();
     }
 
-    public void TurnTablePanelOnOff() {
-        if(!GameManager.instance.turnTablePanel.activeSelf) {
+    public void TurnTablePanelOnOff()
+    {
+        if(!GameManager.instance.turnTablePanel.activeSelf)
+        {
             GameManager.instance.turnTablePanel.SetActive(true);
-        } else {
+        }
+        else
+        {
             GameManager.instance.turnTablePanel.SetActive(false);
             TurnTableManager.instance.StopTurnTable(); // 턴테이블 패널이 꺼지면 음반도 멈춰주기
         }
     }
     
-    public void SellConfirmPanelOn(int slotNum, Item sellItem) {
+    public void SellConfirmPanelOn(int slotNum, Item sellItem)
+    {
         Text confirmText = GameManager.instance.sellConfirmPanel.GetComponentInChildren<Text>();
         confirmText.text = sellItem.itemName + " 아이템을\n정말로 판매하시겠습니까?";
         PurchaseAmountPanelOff();
@@ -80,7 +93,8 @@ public class PanelManager : MonoBehaviour
         item = sellItem;
     }
 
-    public void SellConfirmPanelOff() {
+    public void SellConfirmPanelOff()
+    {
         GameManager.instance.sellConfirmPanel.SetActive(false);
     }
     
