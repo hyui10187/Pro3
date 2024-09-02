@@ -98,7 +98,8 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.sellConfirmPanel.SetActive(false);
     }
     
-    public void PurchaseConfirmPanelOn(Item purchaseItem) {
+    public void PurchaseConfirmPanelOn(Item purchaseItem)
+    {
         Text confirmText = GameManager.instance.purchaseConfirmPanel.GetComponentInChildren<Text>();
         confirmText.text = purchaseItem.itemName + " 아이템을\n구매하시겠습니까?";
         SellAmountPanelOff();
@@ -108,11 +109,13 @@ public class PanelManager : MonoBehaviour
         amount = 1;
     }
 
-    public void PurchaseConfirmPanelOff() {
+    public void PurchaseConfirmPanelOff()
+    {
         GameManager.instance.purchaseConfirmPanel.SetActive(false);
     }
 
-    public void PurchaseAmountPanelOn(Item purchaseItem) { // 구매 수량을 선택하는 패널
+    public void PurchaseAmountPanelOn(Item purchaseItem) // 구매 수량을 선택하는 패널
+    {
         item = purchaseItem;
         amount = 0;
         GameManager.instance.purchaseText.text = purchaseItem.itemName + " 아이템을\n얼마나 구매하시겠습니까?";
@@ -122,7 +125,8 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.purchaseAmountPanel.SetActive(true);
     }
 
-    public void PurchaseAmountPanelOff() {
+    public void PurchaseAmountPanelOff()
+    {
         GameManager.instance.purchaseAmountPanel.SetActive(false);
     }
 
@@ -143,7 +147,8 @@ public class PanelManager : MonoBehaviour
         }
     }
     
-    public void SellAmountPanelOn(int slotNum, Item sellItem) { // 판매 수량을 선택하는 패널
+    public void SellAmountPanelOn(int slotNum, Item sellItem) // 판매 수량을 선택하는 패널
+    {
         this.slotNum = slotNum;
         item = sellItem;
         amount = 0;
@@ -155,7 +160,8 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.sellAmountPanel.SetActive(true);
     }
     
-    public void SellAmountPanelOff() {
+    public void SellAmountPanelOff()
+    {
         amount = 0;
         GameManager.instance.sellAmountPanel.SetActive(false);
     }
