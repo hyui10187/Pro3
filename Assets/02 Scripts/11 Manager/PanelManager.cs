@@ -166,7 +166,8 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.sellAmountPanel.SetActive(false);
     }
     
-    public void WithdrawAmountPanelOn(int slotNum, Item withdrawItem) {
+    public void WithdrawAmountPanelOn(int slotNum, Item withdrawItem)
+    {
         this.slotNum = slotNum;
         item = withdrawItem;
         amount = 0;
@@ -176,33 +177,40 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.withdrawAmountPanel.SetActive(true);
     }
 
-    public void WithdrawAmountPanelOff() {
+    public void WithdrawAmountPanelOff()
+    {
         GameManager.instance.withdrawAmountPanel.SetActive(false);
     }
 
-    public void WithdrawButtonClick() {
+    public void WithdrawButtonClick()
+    {
         WithdrawLogic();
     }
     
-    public void WithdrawButtonClick(int slotNum, Item withdrawItem) {
+    public void WithdrawButtonClick(int slotNum, Item withdrawItem)
+    {
         amount = 1;
         this.slotNum = slotNum;
         item = withdrawItem;
         WithdrawLogic();
     }
 
-    private void WithdrawLogic() {
-        
-        if(item.itemCount < amount) {
+    private void WithdrawLogic()
+    {
+        if(item.itemCount < amount)
+        {
             AlertManager.instance.BigAlertMessageOn(ItemName.공백, 21);
             return;
-        } else if(amount == 0) {
+        }
+        else if(amount == 0)
+        {
             return;
         }
         
         bool canWithdraw = Inventory.instance.AddItem(item, amount); // 아이템을 찾을 수 있는지 없는지 = 플레이어의 인벤토리 슬롯이 비어있는지
         
-        if(canWithdraw) {
+        if(canWithdraw)
+        {
             if(item.itemType == ItemType.Quest) {
                 QuestManager.instance.questActionIndex++;
             } else if(item.itemType == ItemType.Record) {
@@ -219,7 +227,8 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.withdrawAmountPanel.SetActive(false);
     }
 
-    public void SellButtonClick() {
+    public void SellButtonClick()
+    {
         SellLogic();
     }
 
