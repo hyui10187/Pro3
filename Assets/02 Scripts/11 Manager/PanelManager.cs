@@ -232,21 +232,24 @@ public class PanelManager : MonoBehaviour
         SellLogic();
     }
 
-    private void SellLogic() {
-        
+    private void SellLogic()
+    {    
         SellConfirmPanelOff();
         
-        if(item.isEquipped) { // 장착중인 아이템을 상점에 판매하려고 할 경우
+        if(item.isEquipped) // 장착중인 아이템을 상점에 판매하려고 할 경우
+        {
             AlertManager.instance.BigAlertMessageOn(ItemName.공백, 14);
             return;
         }
 
-        if(item.itemType == ItemType.Quest) { // 퀘스트 아이템을 상점에 판매하려고 할 경우
+        if(item.itemType == ItemType.Quest) // 퀘스트 아이템을 상점에 판매하려고 할 경우
+        {
             AlertManager.instance.BigAlertMessageOn(ItemName.공백, 16);
             return;
         }
 
-        if(item.itemType == ItemType.Record) { // 퀘스트 아이템을 상점에 판매했을 경우
+        if(item.itemType == ItemType.Record) // 퀘스트 아이템을 상점에 판매했을 경우
+        {
             GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
             Inventory.instance.EntrustOrSellItem(slotNum, item.itemCount, item.itemCount);
@@ -256,7 +259,8 @@ public class PanelManager : MonoBehaviour
             return;
         }
 
-        if(item.itemCount < 2 && amount == 0) {
+        if(item.itemCount < 2 && amount == 0)
+        {
             GameManager.instance.curGold += item.itemPrice; // 판매한 아이템의 금액만큼 플레이어의 소지금을 올려주기
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 2); // 아이템을 판매하였다는 메시지를 띄워주기
             SoundManager.instance.PlaySound(AudioClipName.Buy);
@@ -282,11 +286,13 @@ public class PanelManager : MonoBehaviour
 
     public void PurchaseButtonClick() { // 구매 버튼 클릭 메소드
 
-        if(amount == 0) { // 0개를 구매하려고 할 경우 되돌려 보내기
+        if(amount == 0) // 0개를 구매하려고 할 경우 되돌려 보내기
+        {
             return;
         }
 
-        if(GameManager.instance.curGold < amount * item.itemPrice) { // 구매하려는 갯수보다 돈이 적으면
+        if(GameManager.instance.curGold < amount * item.itemPrice) // 구매하려는 갯수보다 돈이 적으면
+        {
             AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 7); // 소지금 부족 메시지 띄워주기
             return;
         }
@@ -310,7 +316,8 @@ public class PanelManager : MonoBehaviour
         }
     }
     
-    public void EntrustAmountPanelOn(int slotNum, Item entrustItem) { // 창고에 맡기는 아이템 갯수 설정하는 패널
+    public void EntrustAmountPanelOn(int slotNum, Item entrustItem) // 창고에 맡기는 아이템 갯수 설정하는 패널
+    {
         this.slotNum = slotNum;
         item = entrustItem; // 파라미터로 받아온 아이템으로 전역변수 item을 갱신해주기
         amount = 0;
