@@ -45,6 +45,7 @@ public class ItemDescription : MonoBehaviour
         descriptionData.Add(ItemName.강아지왈츠, "쇼팽이 작곡한 아름다운 왈츠다.");
         descriptionData.Add(ItemName.결혼행진곡, "멘델스존이 작곡한 힘찬 행진곡이다.");
         descriptionData.Add(ItemName.사계, "비발디가 작곡한 사계 중 봄이다.");
+        descriptionData.Add(ItemName.강화석, "아이템을 강화할 수 있는 보석이다.");
     }
     
     public string GetDescription(ItemName itemName)
