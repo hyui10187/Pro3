@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class ItemManager : MonoBehaviour {
-
+public class ItemManager : MonoBehaviour
+{
     public static ItemManager instance;
     
     public List<Item> itemDB;
@@ -13,17 +13,21 @@ public class ItemManager : MonoBehaviour {
     public List<Item> materialDB;
     public List<Item> foodDB;
     public List<Item> goldDB;
+    public List<Item> enchantDB;
     public GameObject itemPrefab;
     public Transform[] itemSpawnPos;
     public int itemSpawnNum; // 생성해줄 아이템의 갯수
     public GameObject fieldItemParent;
     
-    private void Awake() {
+    private void Awake()
+    {
         instance = this;
     }
 
-    public void GenerateItem() {
-        for(int i = 0; i < itemSpawnNum; i++) {
+    public void GenerateItem()
+    {
+        for(int i = 0; i < itemSpawnNum; i++)
+        {
             GameObject obj = Instantiate(itemPrefab, itemSpawnPos[i].position, Quaternion.identity, fieldItemParent.transform);
             ItemScript fieldItems = obj.GetComponent<ItemScript>();
             fieldItems.SetItem(itemDB[Random.Range(0, 5)]);
