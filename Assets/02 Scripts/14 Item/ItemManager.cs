@@ -34,7 +34,8 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    public void DropItem(Vector3 dropPos) {
+    public void DropItem(Vector3 dropPos)
+    {
         GameObject obj = Instantiate(itemPrefab, dropPos, Quaternion.identity, fieldItemParent.transform);
         ItemScript itemScript = obj.GetComponent<ItemScript>();
         itemScript.SetItem(itemDB[Random.Range(0, 5)]);
