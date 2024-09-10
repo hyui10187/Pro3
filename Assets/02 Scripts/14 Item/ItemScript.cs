@@ -7,12 +7,13 @@ public class ItemScript : MonoBehaviour {
     public Item item;
     public SpriteRenderer image;
 
-    public Item GetItem() {
+    public Item GetItem()
+    {
         return item;
     }
     
-    public void SetItem(Item paramItem) {
-        
+    public void SetItem(Item paramItem)
+    {
         item.itemType = paramItem.itemType;
         item.itemName = paramItem.itemName;
         item.itemImage = paramItem.itemImage;
@@ -23,7 +24,8 @@ public class ItemScript : MonoBehaviour {
         image.sprite = item.itemImage;
     }
 
-    public void DestroyItem() {
+    public void DestroyItem()
+    {
         gameObject.SetActive(false);
     }
     
