@@ -21,6 +21,7 @@ public class Item
     public ItemName itemName;
     public Sprite itemImage;
     public int itemCount;
+    public int itemEnchant;
     public int itemPrice;
     public int itemAttackPower;
     public bool isEquipped;
