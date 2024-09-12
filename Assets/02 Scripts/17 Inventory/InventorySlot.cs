@@ -24,6 +24,8 @@ public class InventorySlot : MonoBehaviour
 
     private void Update()
     {
+        itemCount.text = item.itemCount.ToString();
+        
         if(!isCoolEnded)
             CheckCoolTime();
 
@@ -99,13 +101,21 @@ public class InventorySlot : MonoBehaviour
         GameManager.instance.longPressBarBackground.SetActive(false);
         GameManager.instance.longPressBarFillArea.SetActive(false); // 롱프레스바를 꺼주기
 
-        if(minClickTime < clickTime) { // 롱프레스일 경우
+        if(minClickTime < clickTime) // 롱프레스일 경우
             return;
 
-        } else { // 일반 클릭일 경우
-            if(GameManager.instance.storagePanel.activeSelf && item != null) { // 창고 패널이 켜져있는 상태면
-
-                if(1 < item.itemCount) { // 아이템의 갯수가 2개 이상이면
+        else // 일반 클릭일 경우
+        {
+            if(GameManager.instance.enchantPanel.activeSelf) // 아이템 강화 패널이 켜져있는 상태라면
+            {
+                EnchantManager.instance.SetEquipmentSlot(item, slotNum);
+                return;
+            }
+            
+            if(GameManager.instance.storagePanel.activeSelf && item != null) // 창고 패널이 켜져있는 상태면
+            {
+                if(1 < item.itemCount) // 아이템의 갯수가 2개 이상이면
+                {
                     SoundManager.instance.PlaySound(AudioClipName.Plus);
                     PanelManager.instance.EntrustAmountPanelOn(slotNum, item); // 맡기는 갯수 설정하는 패널 띄워주기
                     return;
@@ -116,9 +126,10 @@ public class InventorySlot : MonoBehaviour
                 return;
             }
 
-            if(GameManager.instance.groceryStorePanel.activeSelf && item != null) { // 잡화상점 패널이 켜져있는 상태라면
-
-                if(1 < item.itemCount) {
+            if(GameManager.instance.groceryStorePanel.activeSelf && item != null) // 잡화상점 패널이 켜져있는 상태라면
+            {
+                if(1 < item.itemCount)
+                {
                     SoundManager.instance.PlaySound(AudioClipName.Plus);
                     PanelManager.instance.SellAmountPanelOn(slotNum, item);
                     return;   
@@ -180,7 +191,6 @@ public class InventorySlot : MonoBehaviour
     }
 
     public void RemoveSlot() {
-        item = null;
         itemImage.gameObject.SetActive(false);
         itemCount.gameObject.SetActive(false);
         equipImage.gameObject.SetActive(false);
