@@ -159,14 +159,14 @@ public class InventorySlot : MonoBehaviour
             
             bool isUse = false;
         
-            if(item != null) {
-                isUse = item.Use();   
-            }
+            if(item != null)
+                isUse = item.Use();
 
-            if(isUse) {
-                if(1 < item.itemCount) {
+            if(isUse)
+            {
+                if(1 < item.itemCount)
                     UseItem();   
-                }
+                
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 4); // 소비 메시지
                 SoundManager.instance.PlaySound(AudioClipName.Consume);
                 Inventory.instance.RemoveItem(slotNum);
