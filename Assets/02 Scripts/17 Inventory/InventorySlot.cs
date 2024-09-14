@@ -95,7 +95,8 @@ public class InventorySlot : MonoBehaviour
         }
     }
 
-    public void ButtonUp() {
+    public void ButtonUp()
+    {
         isClick = false;
         Inventory.instance.isInventorySlotClick = false;
         GameManager.instance.longPressBarBackground.SetActive(false);
@@ -140,9 +141,10 @@ public class InventorySlot : MonoBehaviour
                 return;
             }
             
-            if(GameManager.instance.equipmentStorePanel.activeSelf && item != null) { // 장비상점 패널이 켜져있는 상태라면
-
-                if(1 < item.itemCount) {
+            if(GameManager.instance.equipmentStorePanel.activeSelf && item != null) // 장비상점 패널이 켜져있는 상태라면
+            {
+                if(1 < item.itemCount)
+                {
                     SoundManager.instance.PlaySound(AudioClipName.Plus);
                     PanelManager.instance.SellAmountPanelOn(slotNum, item);
                     return;   
@@ -153,10 +155,9 @@ public class InventorySlot : MonoBehaviour
                 return;
             }
 
-            if(!isCoolEnded) { // 쿨타임이 끝나지 않았으면 아이템이 먹어지지 않도록 돌려보내기
+            if(!isCoolEnded) // 쿨타임이 끝나지 않았으면 아이템이 먹어지지 않도록 돌려보내기
                 return;
-            }
-            
+
             bool isUse = false;
         
             if(item != null)
@@ -174,23 +175,24 @@ public class InventorySlot : MonoBehaviour
         }
     }
 
-    public void UpdateSlot() {
-
-        if(item == null) {
+    public void UpdateSlot()
+    {
+        if(item == null)
             return;
-        }
-        
+
         itemImage.sprite = item.itemImage;
         itemImage.gameObject.SetActive(true); // 슬롯의 아이템 이미지 켜주기
         equipImage.SetActive(item.isEquipped); // 장착 되었는지 여부 켜주거나 꺼주거나
 
-        if(item.itemCount != 0) {
+        if(item.itemCount != 0)
+        {
             itemCount.text = item.itemCount.ToString();
             itemCount.gameObject.SetActive(true); // 슬롯의 아이템 갯수 켜주기   
         }
     }
 
-    public void RemoveSlot() {
+    public void RemoveSlot()
+    {
         itemImage.gameObject.SetActive(false);
         itemCount.gameObject.SetActive(false);
         equipImage.gameObject.SetActive(false);
