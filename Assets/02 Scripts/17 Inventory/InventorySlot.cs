@@ -76,19 +76,20 @@ public class InventorySlot : MonoBehaviour
         isCoolEnded = true;
     }
 
-    public void UseItem() {
-        if(isCoolEnded) {
+    public void UseItem()
+    {
+        if(isCoolEnded)
             ResetCoolTime();
-        }
     }
 
-    private void ResetCoolTime() {
+    private void ResetCoolTime()
+    {
         curTime = 0;
         isCoolEnded = false;
     }
 
-    public void ButtonDown() {
-
+    public void ButtonDown()
+    {
         if(item != null) {
             isClick = true;
             Inventory.instance.isInventorySlotClick = true;
