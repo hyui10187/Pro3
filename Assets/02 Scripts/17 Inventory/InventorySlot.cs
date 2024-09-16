@@ -58,20 +58,23 @@ public class InventorySlot : MonoBehaviour
         }
     }
 
-    private void CheckCoolTime() {
+    private void CheckCoolTime()
+    {
         curTime += Time.deltaTime;
-        if(curTime < coolTime) {
+        if(curTime < coolTime)
             SetFillAmount(curTime);
-        } else {
+            
+        else
             EndCoolTime();
-        }
     }
     
-    private void SetFillAmount(float value) { // 쿨타임 이미지를 시계방향으로 회전하면서 채워주는 메소드
+    private void SetFillAmount(float value) // 쿨타임 이미지를 시계방향으로 회전하면서 채워주는 메소드
+    {
         coolImage.fillAmount = value / coolTime;
     }
 
-    private void EndCoolTime() {
+    private void EndCoolTime()
+    {
         SetFillAmount(0); // 쿨타임 이미지의 값을 0으로 초기화해서 안보이도록 해주기
         isCoolEnded = true;
     }
