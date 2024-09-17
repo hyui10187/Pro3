@@ -29,17 +29,19 @@ public class InventorySlot : MonoBehaviour
         if(!isCoolEnded)
             CheckCoolTime();
 
-        if(isClick) {
+        if(isClick)
             clickTime += Time.deltaTime;
-        } else {
+        else
             clickTime = 0;
-        }
 
-        if(0.2f < clickTime && clickTime < 0.3f) { // 0.2초 이상 누르고 있으면 롱프레스바 띄워주기
-            if(Input.GetMouseButton(0)) { // 마우스 왼쪽 버튼을 클릭중이라면
+        if(0.2f < clickTime && clickTime < 0.3f)
+        { // 0.2초 이상 누르고 있으면 롱프레스바 띄워주기
+            if(Input.GetMouseButton(0)) // 마우스 왼쪽 버튼을 클릭중이라면
+            {
                 GameManager.instance.longPressBar.transform.position = Input.mousePosition; // 롱프레스바의 위치를 클릭한 마우스 위치로 옮겨주기
-
-            } else if(0 < Input.touchCount) { // 모바일에서 터치 중이라면
+            }
+            else if(0 < Input.touchCount) // 모바일에서 터치 중이라면
+            {
                 Vector3 touchPosition = Input.GetTouch(0).position;
                 GameManager.instance.longPressBar.transform.position = Camera.main.ScreenToWorldPoint(touchPosition + Vector3.up * 20);
             }
@@ -48,7 +50,8 @@ public class InventorySlot : MonoBehaviour
             GameManager.instance.longPressBarFillArea.SetActive(true);
         }
         
-        if(minClickTime < clickTime && !GameManager.instance.itemDescriptionPanel.activeSelf) { // 롱프레스를 1초 이상 했을 경우
+        if(minClickTime < clickTime && !GameManager.instance.itemDescriptionPanel.activeSelf) // 롱프레스를 1초 이상 했을 경우
+        {
             GameManager.instance.longPressBarBackground.SetActive(false);
             GameManager.instance.longPressBarFillArea.SetActive(false); // 롱프레스바를 꺼주기
 
