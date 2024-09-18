@@ -96,7 +96,8 @@ public class InventorySlot : MonoBehaviour
 
     public void ButtonDown()
     {
-        if(item != null) {
+        if(item != null)
+        {
             isClick = true;
             Inventory.instance.isInventorySlotClick = true;
         }
