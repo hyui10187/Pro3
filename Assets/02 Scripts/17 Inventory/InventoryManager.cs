@@ -33,7 +33,8 @@ public class InventoryManager : MonoBehaviour
         inventorySlots = inventorySlotHolder.GetComponentsInChildren<InventorySlot>();
     }
     
-    private void RedrawSlotUI() { // 인벤토리 UI를 다시 그려주는 메소드
+    private void RedrawSlotUI() // 인벤토리 UI를 다시 그려주는 메소드
+    {
         for(int i = 0; i < inventorySlots.Length; i++)
             inventorySlots[i].RemoveSlot(); // 처음에는 for 루프를 돌면서 모든 아이템 슬롯을 다 꺼주고
 
@@ -44,8 +45,8 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void SlotChange() { // 슬롯을 켜거나 꺼주는 메소드
-
+    private void SlotChange() // 슬롯을 켜거나 꺼주는 메소드
+    {
         for(int i = 0; i < inventorySlots.Length; i++) // 슬롯 전체 길이만큼 루프를 돈다
         {
             inventorySlots[i].slotNum = i;
@@ -57,7 +58,8 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void AddSlot() {
+    public void AddSlot()
+    {
         inventory.CurSlotCnt++;
     }
 
