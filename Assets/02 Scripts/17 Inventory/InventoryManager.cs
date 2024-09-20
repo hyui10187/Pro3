@@ -26,7 +26,8 @@ public class InventoryManager : MonoBehaviour
 //        inventory.onSlotCountChange += SlotChange;
     }
 
-    private void MakeSlots() {
+    private void MakeSlots()
+    {
         for(int i = 0; i < maxSlotNum; i++)
             Instantiate(inventorySlotPrefab, inventorySlotHolder);
 
