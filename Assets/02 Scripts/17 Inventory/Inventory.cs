@@ -252,19 +252,14 @@ public class Inventory : MonoBehaviour {
                     QuestManager.instance.CheckQuest(0);
 
                 if(itemScript.item.itemName == ItemName.상점열쇠)
-                {
                     hasStoreKey = true;
-                }
+                
                 else if(itemScript.item.itemName == ItemName.상자열쇠)
-                {
                     hasChestKey = true;
-                }
 
                 if(itemScript.item.itemName == ItemName.화살)
-                {
                     arrowCnt += itemScript.item.itemCount;
-                }
-                
+
                 if(itemScript.item.itemType == ItemType.Record) // 먹은 아이템의 타입이 음반이라면
                 {
                     recordCnt++; // 보유중인 레코드의 갯수 1개 올려주기
@@ -280,9 +275,7 @@ public class Inventory : MonoBehaviour {
                 itemScript.gameObject.SetActive(false); // 필드에 떨어져 있는 아이템을 먹었으면 해당 아이템은 꺼줘서 안보이게 하기
             }
             else // 인벤토리가 꽉 차있다면
-            {
                 AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 5);
-            }
         }
     }
 
