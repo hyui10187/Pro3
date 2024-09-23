@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class PanelManager : MonoBehaviour
 {
-
     public static PanelManager instance;
     
     public int slotNum;
@@ -715,6 +714,7 @@ public class PanelManager : MonoBehaviour
                     break;
                 
                 case ItemType.Consumables: // 소비 아이템일 경우 사용 버튼을 활성화
+                case ItemType.Enchant: // 강화 아이템일 경우 사용 버튼을 활성화
                     GameManager.instance.consumptionButton.interactable = true;
                     GameManager.instance.equipButton.interactable = false;
                     break;
@@ -840,14 +840,28 @@ public class PanelManager : MonoBehaviour
         Inventory.instance.possessItems[num].isEquipped = false;
         InventoryManager.instance.inventorySlots[num].equipImage.SetActive(false);
     }
+
+    private void EnchantPanelOn()
+    {
+        GameObject enchantPanel = GameManager.instance.enchantPanel;
+        enchantPanel.SetActive(true); // 강화 패널 켜주기
+        EnchantManager.instance.SetStoneSlot(item, slotNum);
+    }
     
-    public void ConsumptionButtonClick() { // 아이템 설명 패널에서 사용 버튼을 클릭했을 경우 호출할 메소드
-        
+    public void ConsumptionButtonClick() // 아이템 설명 패널에서 사용 버튼을 클릭했을 경우 호출할 메소드
+    {
         if(slotNum != -1) { // 파라미터로 넘어온 slotNum이 존재할 경우
-            if(!InventoryManager.instance.inventorySlots[slotNum].isCoolEnded) { // 쿨타임이 끝나지 않았으면 아이템이 먹어지지 않도록 돌려보내기
+
+            if(item.itemType == ItemType.Enchant)
+            {
+                EnchantPanelOn(); // 아이템 강화 패널을 켜주기
+                ItemDescriptionOnOff(-1, null); // 아이템 설명 패널을 꺼주기
                 return;
             }
             
+            if(!InventoryManager.instance.inventorySlots[slotNum].isCoolEnded)// 쿨타임이 끝나지 않았으면 아이템이 먹어지지 않도록 돌려보내기
+                return;
+
             bool isUse = false;
             
             if(item != null) {
@@ -887,16 +901,16 @@ public class PanelManager : MonoBehaviour
         AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 13);
     }
 
-    public void GoToMainConfirmPanelOnOff() {
-        if(!GameManager.instance.goToMainConfirmPanel.activeSelf) {
+    public void GoToMainConfirmPanelOnOff()
+    {
+        if(!GameManager.instance.goToMainConfirmPanel.activeSelf)
             GameManager.instance.goToMainConfirmPanel.SetActive(true);
-        } else {
+        else
             GameManager.instance.goToMainConfirmPanel.SetActive(false);
-        }
     }
 
-    public void PanelOn() {
-
+    public void PanelOn()
+    {
         // UI - Panel
         GameManager.instance.weatherPanel.SetActive(true);
         GameManager.instance.longPressBar.SetActive(true);
@@ -933,8 +947,8 @@ public class PanelManager : MonoBehaviour
         VirtualOnOff();
     }
     
-    public void PanelOff() {
-        
+    public void PanelOff()
+    {
         // UI - Panel
         GameManager.instance.menuPanel.SetActive(false);
         GameManager.instance.deadPanel.SetActive(false);
