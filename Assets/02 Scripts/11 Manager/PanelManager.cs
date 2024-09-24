@@ -880,24 +880,29 @@ public class PanelManager : MonoBehaviour
         }
     }
     
-    public void DeleteButtonClick() { // 아이템 설명 패널에서 삭제 버튼을 클릭했을 경우 호출할 메소드
-
-        if(item.isEquipped) { // 장착중인 아이템을 삭제하려고 할 경우
+    public void DeleteButtonClick() // 아이템 설명 패널에서 삭제 버튼을 클릭했을 경우 호출할 메소드
+    {
+        if(item.isEquipped) // 장착중인 아이템을 삭제하려고 할 경우
+        {
             AlertManager.instance.BigAlertMessageOn(ItemName.공백, 15);
             return;
         }
-        if(slotNum != -1 && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
+        if(slotNum != -1 && 1 < item.itemCount) // 아이템이 2개 이상일 경우
+        {
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             
-        } else if(slotNum != -1 && item.itemCount == 1 || slotNum != -1 && item.itemCount == 0) { // 아이템이 1개만 있거나 0개 있을 경우(장비 아이템)
+        }
+        else if(slotNum != -1 && item.itemCount == 1 || slotNum != -1 && item.itemCount == 0) // 아이템이 1개만 있거나 0개 있을 경우(장비 아이템)
+        {
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
             ItemDescriptionOnOff(-1, null);
         }
     }
     
-    public void LanguageButtonClick() {
+    public void LanguageButtonClick()
+    {
         AlertManager.instance.SmallAlertMessageOn(ItemName.공백, 13);
     }
 
