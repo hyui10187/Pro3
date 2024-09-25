@@ -833,10 +833,9 @@ public class PanelManager : MonoBehaviour
             }
         }
 
-        if(num == -1) {
+        if(num == -1)
             return;
-        }
-        
+
         Inventory.instance.possessItems[num].isEquipped = false;
         InventoryManager.instance.inventorySlots[num].equipImage.SetActive(false);
     }
@@ -859,20 +858,22 @@ public class PanelManager : MonoBehaviour
                 return;
             }
             
-            if(!InventoryManager.instance.inventorySlots[slotNum].isCoolEnded)// 쿨타임이 끝나지 않았으면 아이템이 먹어지지 않도록 돌려보내기
+            if(!InventoryManager.instance.inventorySlots[slotNum].isCoolEnded) // 쿨타임이 끝나지 않았으면 아이템이 먹어지지 않도록 돌려보내기
                 return;
 
             bool isUse = false;
             
-            if(item != null) {
+            if(item != null)
                 isUse = item.Use();   
-            }
-            if(isUse && 1 < item.itemCount) { // 아이템이 2개 이상일 경우
+            
+            if(isUse && 1 < item.itemCount) // 아이템이 2개 이상일 경우
+            {
                 InventoryManager.instance.inventorySlots[slotNum].UseItem();
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 4);
                 Inventory.instance.RemoveItem(slotNum);
-
-            } else if(isUse && item.itemCount == 1) { // 아이템이 1개만 있을 경우
+            }
+            else if(isUse && item.itemCount == 1) // 아이템이 1개만 있을 경우
+            {
                 AlertManager.instance.SmallAlertMessageOn(item.itemName, 4);
                 Inventory.instance.RemoveItem(slotNum);
                 ItemDescriptionOnOff(-1, null); // 아이템 설명 패널을 꺼주기
