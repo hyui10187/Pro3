@@ -815,21 +815,24 @@ public class PanelManager : MonoBehaviour
         }
     }
 
-    public void EquipImageOff() {
-
+    public void EquipImageOff()
+    {
         int num = -1;
         
-        if(Inventory.instance.equipSword) { // 새롭게 소드를 장착했다면
-            for(int i = 0; i < Inventory.instance.possessItems.Count; i++) {
-                if(InventoryManager.instance.inventorySlots[i].item.itemName == ItemName.활) {
+        if(Inventory.instance.equipSword) // 새롭게 소드를 장착했다면
+        {
+            for(int i = 0; i < Inventory.instance.possessItems.Count; i++)
+            {
+                if(InventoryManager.instance.inventorySlots[i].item.itemName == ItemName.활)
                     num = i;
-                }
             }
-        } else if(Inventory.instance.equipBow) { // 새롭게 활을 장착했다면
-            for(int i = 0; i < Inventory.instance.possessItems.Count; i++) {
-                if(InventoryManager.instance.inventorySlots[i].item.itemName == ItemName.소드) {
+        }
+        else if(Inventory.instance.equipBow) // 새롭게 활을 장착했다면
+        {
+            for(int i = 0; i < Inventory.instance.possessItems.Count; i++)
+            {
+                if(InventoryManager.instance.inventorySlots[i].item.itemName == ItemName.소드)
                     num = i;
-                }
             }
         }
 
@@ -892,7 +895,6 @@ public class PanelManager : MonoBehaviour
         {
             AlertManager.instance.SmallAlertMessageOn(item.itemName, 9);
             Inventory.instance.RemoveItem(slotNum);
-            
         }
         else if(slotNum != -1 && item.itemCount == 1 || slotNum != -1 && item.itemCount == 0) // 아이템이 1개만 있거나 0개 있을 경우(장비 아이템)
         {
