@@ -781,26 +781,27 @@ public class PanelManager : MonoBehaviour
             
         } else { // 장착되었다는 E 문구가 켜져있는 상태면
             
-            for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++) {
-                if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType) {
+            for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++)
+            {
+                if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType)
                     EquipmentManager.instance.equipmentSlots[i].RemoveSlot(); // 장비창의 해당하는 슬롯에 장착되어 있던 이미지를 지워주기
-                }
             }
             
             InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(false); // 인벤토리의 슬롯에서 장착되었다는 E 문구 꺼주기
             Inventory.instance.possessItems[slotNum].isEquipped = false;
 
-            switch(item.itemType) {
-                
+            switch(item.itemType)
+            {
                 case ItemType.Weapon:
-                    if(item.itemName == ItemName.소드) {
+                    if(item.itemName == ItemName.소드)
                         Inventory.instance.equipSword = false;
-                    } else if(item.itemName == ItemName.활) {
+
+                    else if(item.itemName == ItemName.활)
                         Inventory.instance.equipBow = false;
-                    }
+
                     GameManager.instance.itemAttackPower = 0;
                     break;
-                
+
                 case ItemType.Ring:
                     GameManager.instance.maxMana -= 10; // 마나 10 빼주기
                     break;
