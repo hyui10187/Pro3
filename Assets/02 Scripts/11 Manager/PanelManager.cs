@@ -753,13 +753,17 @@ public class PanelManager : MonoBehaviour
                 }
             }
 
-            switch(item.itemType) {
+            switch(item.itemType)
+            {
                 case ItemType.Weapon:
-                    if(item.itemName == ItemName.소드) {
+                    if(item.itemName == ItemName.소드)
+                    {
                         Inventory.instance.equipSword = true;
                         Inventory.instance.equipBow = false;
                         EquipImageOff();
-                    } else if(item.itemName == ItemName.활) {
+                    }
+                    else if(item.itemName == ItemName.활)
+                    {
                         Inventory.instance.equipBow = true;
                         Inventory.instance.equipSword = false;
                         EquipImageOff();
@@ -779,8 +783,9 @@ public class PanelManager : MonoBehaviour
             RedrawStatsPanel();
             ItemDescriptionOff();
             
-        } else { // 장착되었다는 E 문구가 켜져있는 상태면
-            
+        }
+        else // 장착되었다는 E 문구가 켜져있는 상태면
+        {
             for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++)
             {
                 if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType)
