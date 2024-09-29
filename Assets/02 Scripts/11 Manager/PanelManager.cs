@@ -741,16 +741,18 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.itemDescriptionPanel.SetActive(false);
     }
 
-    public void EquipButtonClick() { // 장착 버튼을 클릭했을때 호출되는 메소드
-        if(!InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 장착되었다는 E 문구가 꺼져있는 상태면
+    public void EquipButtonClick() // 장착 버튼을 클릭했을때 호출되는 메소드
+    {
+        if(!InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) // 장착되었다는 E 문구가 켜져있는 상태면
+        {
             InventoryManager.instance.inventorySlots[slotNum].equipImage.SetActive(true); // 장착되었다는 E 문구 켜주기
             SoundManager.instance.PlaySound(AudioClipName.Equip);
             Inventory.instance.possessItems[slotNum].isEquipped = true;
 
-            for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++) {
-                if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType) {
+            for(int i = 0; i < EquipmentManager.instance.equipmentSlots.Length; i++)
+            {
+                if(EquipmentManager.instance.equipmentSlots[i].itemType == item.itemType)
                     EquipmentManager.instance.equipmentSlots[i].RedrawSlot(item); // 장비창의 해당하는 슬롯에 장착한 아이템 이미지 넣어주기
-                }
             }
 
             switch(item.itemType)
