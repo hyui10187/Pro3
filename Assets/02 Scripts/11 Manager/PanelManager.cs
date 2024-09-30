@@ -674,8 +674,8 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.curMoveSpeed = GameManager.instance.originMoveSpeed;
     }
     
-    public void ItemDescriptionOnOff(int clickSlotNum, Item clickItem) {
-        
+    public void ItemDescriptionOnOff(int clickSlotNum, Item clickItem)
+    {
         slotNum = clickSlotNum;
         item = clickItem;
         
@@ -686,21 +686,25 @@ public class PanelManager : MonoBehaviour
         WithdrawAmountPanelOff();
         EntrustAmountPanelOff();
 
-        if(slotNum == -1) { // 잡화상점이나 장비상점의 슬롯을 롱프레스 했을 경우에는 3개 버튼 모두 비활성화
+        if(slotNum == -1) // 잡화상점이나 장비상점의 슬롯을 롱프레스 했을 경우에는 3개 버튼 모두 비활성화
+        {
             GameManager.instance.consumptionButton.interactable = false;
             GameManager.instance.equipButton.interactable = false;
             GameManager.instance.deleteButton.interactable = false;
 
-            if(!GameManager.instance.itemDescriptionPanel.activeSelf) { // 아이템 설명창이 꺼져있을 경우
+            if(!GameManager.instance.itemDescriptionPanel.activeSelf) // 아이템 설명창이 꺼져있을 경우
                 GameManager.instance.itemDescriptionPanel.SetActive(true);
-            } else {
+            
+            else
                 GameManager.instance.itemDescriptionPanel.SetActive(false);
-            }
+            
             return;
         }
 
-        if(!GameManager.instance.itemDescriptionPanel.activeSelf) { // 아이템 설명창이 꺼져있을 경우
-            switch(item.itemType) {
+        if(!GameManager.instance.itemDescriptionPanel.activeSelf) // 아이템 설명창이 꺼져있을 경우
+        {
+            switch(item.itemType)
+            {
                 case ItemType.Helmet:
                 case ItemType.Necklace:
                 case ItemType.Armor:
@@ -725,19 +729,20 @@ public class PanelManager : MonoBehaviour
                     break;
             }
 
-            if(InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) { // 이미 장착중일 경우
+            if(InventoryManager.instance.inventorySlots[slotNum].equipImage.activeSelf) // 이미 장착중일 경우
                 GameManager.instance.equipButtonText.text = "해제"; // 가운데 버튼의 문구를 해제로 바꿔주기
-            } else {
-                GameManager.instance.equipButtonText.text = "장착"; // 기본적으로는 장착 이라는 문구로
-            }
-            GameManager.instance.itemDescriptionPanel.SetActive(true);
 
-        } else {
-            GameManager.instance.itemDescriptionPanel.SetActive(false);
+            else
+                GameManager.instance.equipButtonText.text = "장착"; // 기본적으로는 장착 이라는 문구로
+            
+            GameManager.instance.itemDescriptionPanel.SetActive(true);
         }
+        else
+            GameManager.instance.itemDescriptionPanel.SetActive(false);
     }
     
-    public void ItemDescriptionOff() {
+    public void ItemDescriptionOff()
+    {
         GameManager.instance.itemDescriptionPanel.SetActive(false);
     }
 
