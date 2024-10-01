@@ -613,25 +613,28 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.sleepConfirmPanel.SetActive(true);
     }
 
-    public void SleepConfirmOff() {
+    public void SleepConfirmOff()
+    {
         GameManager.instance.sleepConfirmPanel.SetActive(false);
         GameManager.instance.talkPanel.SetActive(false);
         GameManager.instance.isAction = false;
         GameManager.instance.expSlider.SetActive(true);
     }
     
-    public void StatsUpButtonOn() {
+    public void StatsUpButtonOn()
+    {
         GameManager.instance.statsUpButton.SetActive(true);
     }
 
-    private void StatsUpButtonOff() {
+    private void StatsUpButtonOff()
+    {
         GameManager.instance.statsUpButton.SetActive(false);
     }
 
-    public void StatsUpButtonClick(int idx) { // 스탯을 올리는 버튼을 클릭했을때 메소드
-
-        switch(idx) {
-            
+    public void StatsUpButtonClick(int idx) // 스탯을 올리는 버튼을 클릭했을때 메소드
+    {
+        switch(idx)
+        {
             case 0: // 힘
                 GameManager.instance.strPoint++;
                 break;
@@ -651,14 +654,14 @@ public class PanelManager : MonoBehaviour
 
         GameManager.instance.statsPoint--;
         
-        if(GameManager.instance.statsPoint < 1) {
+        if(GameManager.instance.statsPoint < 1)
             StatsUpButtonOff();
-        }
-        
+
         RedrawStatsPanel();
     }
 
-    public void RedrawStatsPanel() {
+    public void RedrawStatsPanel()
+    {
         GameManager.instance.statsPointText.text = "스탯 포인트 " + GameManager.instance.statsPoint;
         GameManager.instance.strPointText.text = "근력   " + GameManager.instance.strPoint;
         GameManager.instance.dexPointText.text = "민첩   " + GameManager.instance.dexPoint;
