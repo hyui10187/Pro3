@@ -581,35 +581,34 @@ public class PanelManager : MonoBehaviour
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
-    public void StatsOnOff() {
-        
-        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf) {
+    public void StatsOnOff()
+    {
+        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf)
             return;
-        }
-        
-        if(!GameManager.instance.statsPanel.activeSelf) {
+
+        if(!GameManager.instance.statsPanel.activeSelf)
             GameManager.instance.statsPanel.SetActive(true);
-        } else {
+        else
             GameManager.instance.statsPanel.SetActive(false);
-        }
+        
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
-    public void QuestOnOff() {
-        
-        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf) {
+    public void QuestOnOff()
+    {
+        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf)
             return;
-        }
-        
-        if(!GameManager.instance.questPanel.activeSelf) {
+
+        if(!GameManager.instance.questPanel.activeSelf)
             GameManager.instance.questPanel.SetActive(true);
-        } else {
+        else
             GameManager.instance.questPanel.SetActive(false);
-        }
+        
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
-    public void SleepConfirmOn() {
+    public void SleepConfirmOn()
+    {
         GameManager.instance.sleepConfirmPanel.SetActive(true);
     }
 
