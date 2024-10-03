@@ -545,18 +545,21 @@ public class PanelManager : MonoBehaviour
         GameManager.instance.helpPanelText.text = textData;
     }
     
-    public void InventoryOnOff() {
-        
+    public void InventoryOnOff()
+    {
         if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf)
             return;
 
-        if(!GameManager.instance.inventoryPanel.activeSelf) { // 인벤토리 패널이 꺼져있는 상태이면
+        if(!GameManager.instance.inventoryPanel.activeSelf) // 인벤토리 패널이 꺼져있는 상태이면
+        {
             GameManager.instance.inventoryPanel.SetActive(true);
             GameManager.instance.inventoryPanel.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f); // 먼저 인벤토리 패널의 크기를 줄여주기
             GameManager.instance.inventoryPanel.transform.DOScale(1, 1) // 첫번째 파라미터: 최종 크기, 두번째 파라미터: 걸리는 시간
                 .SetEase(Ease.OutElastic);
 
-        } else { // 인벤토리 패널이 켜져있는 상태이면
+        }
+        else // 인벤토리 패널이 켜져있는 상태이면
+        {
             GameManager.instance.inventoryPanel.transform.DOScale(0.2f, 0.15f)
                 .SetEase(Ease.Linear)
                 .OnComplete(() => { // 인벤토리 패널이 작아지는게 끝나면
@@ -567,17 +570,16 @@ public class PanelManager : MonoBehaviour
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
-    public void EquipmentOnOff() {
-        
-        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf) {
+    public void EquipmentOnOff()
+    {
+        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf)
             return;
-        }
-        
-        if(!GameManager.instance.equipmentPanel.activeSelf) {
+
+        if(!GameManager.instance.equipmentPanel.activeSelf)
             GameManager.instance.equipmentPanel.SetActive(true);
-        } else {
+        else
             GameManager.instance.equipmentPanel.SetActive(false);
-        }
+        
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
