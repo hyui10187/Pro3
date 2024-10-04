@@ -524,23 +524,28 @@ public class PanelManager : MonoBehaviour
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
 
-    public void LeftPageButtonClick() { // Help 패널에서 왼쪽으로 가는 버튼을 클릭했을때 호출되는 메소드
+    public void LeftPageButtonClick() // Help 패널에서 왼쪽으로 가는 버튼을 클릭했을때 호출되는 메소드
+    {
         SoundManager.instance.PlaySound(AudioClipName.Plus);
-        if(1 < helpPanelPage) {
+        if(1 < helpPanelPage)
+        {
             helpPanelPage--;
             GetHelpPanelText();
         }
     }
     
-    public void RightPageButtonClick() { // Help 패널에서 왼쪽으로 가는 버튼을 클릭했을때 호출되는 메소드
+    public void RightPageButtonClick() // Help 패널에서 왼쪽으로 가는 버튼을 클릭했을때 호출되는 메소드
+    {
         SoundManager.instance.PlaySound(AudioClipName.Plus);
-        if(helpPanelPage < AlertManager.instance.helpPanelData.Count) {
+        if(helpPanelPage < AlertManager.instance.helpPanelData.Count)
+        {
             helpPanelPage++;
             GetHelpPanelText();   
         }
     }
 
-    private void GetHelpPanelText() {
+    private void GetHelpPanelText()
+    {
         string textData = AlertManager.instance.helpPanelData[helpPanelPage];
         GameManager.instance.helpPanelText.text = textData;
     }
