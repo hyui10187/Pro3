@@ -505,19 +505,21 @@ public class PanelManager : MonoBehaviour
         RedrawStatsPanel();
     }
     
-    public void HelpOnOff() { // 좌측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
-
-        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf) {
+    public void HelpOnOff() // 좌측 상단의 물음표 버튼을 클릭했을때 실행할 메소드
+    {
+        if(Player.instance.isDead || !GameManager.instance.isLive || GameManager.instance.chatPanel.activeSelf)
             return;
-        }
-        
+
         helpPanelPage = 1; // Help 패널의 페이지 번호는 0로 항상 초기화
         GetHelpPanelText();
         
-        if(!GameManager.instance.helpPanel.activeSelf) { // Help 창이 꺼져 있다면
+        if(!GameManager.instance.helpPanel.activeSelf) // Help 창이 꺼져 있다면
+        {
             GameManager.instance.helpPanel.SetActive(true); // 켜주기
             GameManager.instance.expSlider.SetActive(false);
-        } else {
+        }
+        else
+        {
             GameManager.instance.helpPanel.SetActive(false);
             GameManager.instance.expSlider.SetActive(true);
         }
