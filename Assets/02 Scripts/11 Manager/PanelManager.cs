@@ -473,31 +473,35 @@ public class PanelManager : MonoBehaviour
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
-    public void VirtualOnOff() { // 가상 버튼을 켜거나 꺼주는 메소드
-
-        if(Player.instance.isDead || !GameManager.instance.isLive) {
+    public void VirtualOnOff() // 가상 버튼을 켜거나 꺼주는 메소드
+    {
+        if(Player.instance.isDead || !GameManager.instance.isLive)
             return;
-        }
-        
-        if(!GameManager.instance.virtualJoystick.activeSelf) {
+
+        if(!GameManager.instance.virtualJoystick.activeSelf)
+        {
             GameManager.instance.virtualJoystick.SetActive(true); // 가상 조이스틱 켜주기
             GameManager.instance.attackButton.SetActive(true); // 가상 공격버튼 켜주기
             GameManager.instance.actionButton.SetActive(true); // 가상 대화버튼 켜주기
-        } else {
+        }
+        else
+        {
             GameManager.instance.virtualJoystick.SetActive(false);
             GameManager.instance.attackButton.SetActive(false);
             GameManager.instance.actionButton.SetActive(false);
         }
     }
     
-    public void SpeedEffectOn() {
+    public void SpeedEffectOn()
+    {
         CancelInvoke("SpeedEffectOff"); // 기존에 이동속도 버프 꺼주는 메소드가 실행될 예정이었을 수 있으니 취소해주고 시작
         GameManager.instance.speedEffect.SetActive(true); // 이동속도 버프 켜주기
         Invoke("SpeedEffectOff", 5);
         RedrawStatsPanel();
     }
 
-    public void SpeedEffectOff() {
+    public void SpeedEffectOff()
+    {
         RedrawStatsPanel();
         GameManager.instance.speedEffect.SetActive(false); // 이동속도 버프 꺼주기
         GameManager.instance.curMoveSpeed = GameManager.instance.originMoveSpeed; // 현재 이동속도를 기본 이동속도로 초기화
