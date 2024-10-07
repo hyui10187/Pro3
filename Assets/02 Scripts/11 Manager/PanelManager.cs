@@ -449,11 +449,15 @@ public class PanelManager : MonoBehaviour
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
-    public void GroceryStoreOnOff() { // 잡화상점 패널
-        if(!GameManager.instance.groceryStorePanel.activeSelf) {
+    public void GroceryStoreOnOff() // 잡화상점 패널
+    {
+        if(!GameManager.instance.groceryStorePanel.activeSelf)
+        {
             GameManager.instance.groceryStorePanel.SetActive(true);
             GameManager.instance.inventoryPanel.SetActive(true);
-        } else {
+        }
+        else
+        {
             GameManager.instance.groceryStorePanel.SetActive(false);
             GameManager.instance.inventoryPanel.SetActive(false);
             GameManager.instance.DetailPanelOff();
@@ -461,11 +465,15 @@ public class PanelManager : MonoBehaviour
         SoundManager.instance.PlaySound(AudioClipName.Panel);
     }
     
-    public void EquipmentStoreOnOff() { // 장비상점 패널
-        if(!GameManager.instance.equipmentStorePanel.activeSelf) {
+    public void EquipmentStoreOnOff() // 장비상점 패널
+    {
+        if(!GameManager.instance.equipmentStorePanel.activeSelf)
+        {
             GameManager.instance.equipmentStorePanel.SetActive(true);
             GameManager.instance.inventoryPanel.SetActive(true);
-        } else {
+        }
+        else
+        {
             GameManager.instance.equipmentStorePanel.SetActive(false);
             GameManager.instance.inventoryPanel.SetActive(false);
             GameManager.instance.DetailPanelOff();
